@@ -1,0 +1,31 @@
+name: 📖 User story
+description: Describe a feature from the perspective of the person who benefits from it.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: story
+    attributes:
+      label: Story
+      description: Who needs what, and why?
+      placeholder: |
+        As a [type of user],
+        I want [goal],
+        so that [benefit/value].
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance criteria
+      placeholder: |
+        - [ ] First criterion
+        - [ ] Second criterion
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Mockups, constraints, links to related issues, etc.
