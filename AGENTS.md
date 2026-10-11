@@ -64,7 +64,7 @@ Before starting with the research, verify you have a clean state:
 ### 4. Plan
 
 - Create a change proposal with the `openspec-propose` skill (`/opsx-propose`).
-- Commit the proposal
+- Commit the proposal.
 
 ### 5. Implement
 
