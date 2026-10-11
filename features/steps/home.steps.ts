@@ -12,5 +12,7 @@ Then('I see the heading {string}', async ({ page }, name: string) => {
 })
 
 Then('the heading is styled with Tailwind', async ({ page }) => {
-  await expect(page.getByRole('heading')).toHaveCSS('font-size', '30px')
+  const heading = page.getByRole('heading')
+  await expect(heading).toHaveCSS('font-size', '30px')
+  await expect(heading).toHaveCSS('font-weight', '700')
 })

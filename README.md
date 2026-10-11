@@ -6,7 +6,7 @@ Built with React, TypeScript, Vite and Tailwind CSS.
 
 ## Getting started
 
-Requires npm and Node.js 22.13+ (22, 24 or 26+).
+Requires npm and Node.js 22.22.2+, 24.15+ or 26+.
 
 ```bash
 npm install
