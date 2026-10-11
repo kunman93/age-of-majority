@@ -77,8 +77,8 @@ Once the implementation is complete, have the reviewer agent
 ([.github/agents/reviewer.agent.md](.github/agents/reviewer.agent.md)) review the feature branch.
 Run it as the custom `reviewer` subagent, not as a general-purpose or code-review agent.
 
-If there are any findings, return to [5. Implement](#5-implement) and fix them,
-then run the review again. Repeat until the reviewer approves without findings.
+If there are any MAJOR findings, return to [5. Implement](#5-implement) and fix them,
+then run the review again. Repeat until the reviewer approves without any MAJOR findings.
 
 ### 7. Create PR
 
