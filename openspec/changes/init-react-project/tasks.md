@@ -16,7 +16,7 @@
 
 ## 4. Unit tests
 
-- [ ] 4.1 Add Vitest + Testing Library (jsdom) with a `test` script and a smoke test rendering `App`; verify `npm test` passes
+- [x] 4.1 Add Vitest + Testing Library (jsdom) with a `test` script and a smoke test rendering `App`; verify `npm test` passes
 
 ## 5. BDD tests
 
