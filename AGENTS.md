@@ -25,11 +25,11 @@ All work happens on feature branches. `main` is read-only: inspect it, but never
 - Name branches `feature/<branch-name-based-on-issue>` (use `fix/<...>` for bug fixes, `chore/<...>` for maintenance).
 - Commit with the `.agents/skills/git-commit` skill. Make atomic commits: one logical change per commit.
 - Pushing the feature branch is allowed.
+- Delete a feature branch only after its PR has been merged (see [9. Merge](#9-merge)).
 
 **Never**:
 
 - Force push
-- Delete any branch
 
 ---
 
@@ -53,6 +53,7 @@ All work happens on feature branches. `main` is read-only: inspect it, but never
 
 Before starting with the research, verify you have a clean state:
 
+- Install: `npm ci`
 - Build: `npm run build`
 - Test: `npm test` (unit) and `npm run test:bdd` (BDD)
 - Lint/format: `npm run lint` and `npm run format:check`
@@ -86,7 +87,14 @@ then run the review again. Repeat until the reviewer approves without any MAJOR 
 
 ### 8. Archive
 
-- After the PR has been merged, archive the completed change with the `openspec-archive-change` skill (`/opsx-archive`).
+- Wait for the user's explicit approval of the PR in the conversation. GitHub does not allow approving your own PR, so this is the approval.
+- Archive the completed change on the feature branch with the `openspec-archive-change` skill (`/opsx-archive`), commit, and push.
+- If further fixes are needed after archiving, `git revert` the archive commit, fix, review again, then archive again.
+
+### 9. Merge
+
+- After the user's approval and the archive push, merge the PR with a merge commit and delete the feature branch: `gh pr merge --merge --delete-branch`.
+- Never merge without the user's approval.
 
 ---
 
