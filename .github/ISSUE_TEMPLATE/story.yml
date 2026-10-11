@@ -25,6 +25,13 @@ body:
       required: true
 
   - type: textarea
+    id: depends-on
+    attributes:
+      label: Depends on
+      description: Issues this Story depends on, if any.
+      placeholder: '#12, #15'
+
+  - type: textarea
     id: context
     attributes:
       label: Additional context

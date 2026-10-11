@@ -2,7 +2,7 @@
 
 ## 1. Story template
 
-- [ ] 1.1 Add an optional **Depends on** textarea to `.github/ISSUE_TEMPLATE/story.yml`. Verify that the YAML parses and that `npm run format:check` passes.
+- [x] 1.1 Add an optional **Depends on** textarea to `.github/ISSUE_TEMPLATE/story.yml`. Verify that the YAML parses and that `npm run format:check` passes.
 
 ## 2. AGENTS.md workflow
 
