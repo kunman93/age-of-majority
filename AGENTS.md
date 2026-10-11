@@ -93,8 +93,8 @@ then run the review again. Repeat until the reviewer approves without any MAJOR 
 
 ### 9. Merge
 
-- Only the user merges the PR. Never merge it yourself.
-- After the merge, delete the local feature branch. Never delete the remote branch; the user does that on GitHub.
+- After the user's approval and the archive push, merge the PR with a merge commit and delete the feature branch: `gh pr merge --merge --delete-branch`.
+- Never merge without the user's approval.
 
 ---
 
