@@ -24,4 +24,5 @@ None.
 - `src/App.tsx`: heading text.
 - `src/App.test.tsx`: unit test assertion.
 - `features/home.feature`: BDD scenario step.
+- `features/steps/home.steps.ts`: heading step matches the text exactly.
 - No API, dependency, or configuration changes.
