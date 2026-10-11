@@ -20,8 +20,8 @@
 
 ## 5. BDD tests
 
-- [ ] 5.1 Add Playwright (Chromium only) and `playwright-bdd` with a `webServer` on the Vite dev server and a `test:bdd` script
-- [ ] 5.2 Add a smoke `.feature` with step definitions for the home page and verify `npm run test:bdd` passes
+- [x] 5.1 Add Playwright (Chromium only) and `playwright-bdd` with a `webServer` on the Vite dev server and a `test:bdd` script
+- [x] 5.2 Add a smoke `.feature` with step definitions for the home page and verify `npm run test:bdd` passes
 
 ## 6. Project docs and commands
 
