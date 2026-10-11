@@ -44,6 +44,13 @@ All work happens on feature branches. `main` is read-only: inspect it, but never
 
 ## Implementation Workflow
 
+The user names the Story to work on and moves its card on the project board.
+Everything except step 5 runs in the main session on Opus 5.5. Step 5 is delegated to Sonnet 5.5.
+
+### 0. Check model
+
+- Check the model reported in your environment information. If it is not Opus 5.5, or if you cannot tell, ask the user to switch with `/model` and stop.
+
 ### 1. Create feature branch
 
 - Fetch `main` from origin.
@@ -69,8 +76,9 @@ Before starting with the research, verify you have a clean state:
 
 ### 5. Implement
 
-- Implement the tasks from the change with the `openspec-apply-change` skill (`/opsx-apply`), applying TDD.
-- Make atomic commits with the `.agents/skills/git-commit` skill.
+- Delegate implementation to a `general-purpose` subagent with model `claude-sonnet-5.5`. Give it the change name, the branch, and the decisions from research and planning.
+- The subagent implements the tasks from the change with the `openspec-apply-change` skill (`/opsx-apply`), applying TDD, and makes atomic commits with the `.agents/skills/git-commit` skill.
+- When the subagent is done, verify its work in the main session with the commands from [2. Verify clean state](#2-verify-clean-state). If the subagent fails or its work does not pass verification, finish the work in the main session.
 
 ### 6. Review
 
@@ -83,13 +91,39 @@ then run the review again. Repeat until the reviewer approves without any MAJOR 
 
 ### 7. Create PR
 
+- Before the first push, clean up the history into atomic commits:
+  1. Create a backup: `git branch backup/<branch>`.
+  2. Rewrite the history, for example by squashing fixups and rewording.
+  3. Verify the content is unchanged: `git diff backup/<branch> HEAD` must be empty.
+     If it is not, run `git reset --hard backup/<branch>` and retry.
+  4. Delete the backup: `git branch -D backup/<branch>`.
 - Push the feature branch and create a PR targeting `main`.
+- Once pushed, never rewrite the history again.
+- When the user reports the PR review is done, read the findings:
+  - Review summaries and PR comments: `gh pr view <n> --json reviews,comments`.
+  - Inline review threads (skip those with `isResolved: true`; if `hasNextPage` is true, tell the user that some threads were not read):
+
+    ```bash
+    gh api graphql -F owner='{owner}' -F repo='{repo}' -F n=<n> -f query='
+      query($owner: String!, $repo: String!, $n: Int!) {
+        repository(owner: $owner, name: $repo) {
+          pullRequest(number: $n) {
+            reviewThreads(first: 100) {
+              pageInfo { hasNextPage }
+              nodes { isResolved path line comments(first: 50) { nodes { body } } }
+            }
+          }
+        }
+      }'
+    ```
+
+- If there are findings, return to [5. Implement](#5-implement), fix them with new commits, review again, and push.
+  Then tell the user and wait for their next review report. Do not archive until the user approves.
 
 ### 8. Archive
 
 - Wait for the user's explicit approval of the PR in the conversation. GitHub does not allow approving your own PR, so this is the approval.
 - Archive the completed change on the feature branch with the `openspec-archive-change` skill (`/opsx-archive`), commit, and push.
-- If further fixes are needed after archiving, `git revert` the archive commit, fix, review again, then archive again.
 
 ### 9. Merge
 
