@@ -10,7 +10,8 @@
 - [x] 2.2 Document model use: main session on Opus 5.5, step 5 delegated to a Sonnet 5.5 `general-purpose` subagent with Opus fallback. Verify by reading the doc.
 - [x] 2.3 Extend `### 7. Create PR` with backup-and-compare history cleanup before the first push, and the findings loop: read findings via `gh` when the dev reports the review is done, return to step 5, new commits only. Verify that the documented `gh` commands return review summaries, comments and inline threads (with `isResolved`) on a PR that has reviews (e.g. cli/cli#13084).
 - [x] 2.4 Remove the revert bullet from `### 8. Archive`. Verify with `grep -n "revert" AGENTS.md`, which should return no match in step 8.
-- [x] 2.5 Run `npm run format:check`. Verify it passes.
+- [x] 2.5 Set `model: Claude Opus 5.5` in `.github/agents/reviewer.agent.md`. Verify by reading the frontmatter.
+- [x] 2.6 Run `npm run format:check`. Verify it passes.
 
 ## Workflow follow-up
 
