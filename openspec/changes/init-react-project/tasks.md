@@ -7,7 +7,7 @@
 
 ## 2. Styling
 
-- [ ] 2.1 Add Tailwind CSS v4 with `@tailwindcss/vite` and verify a Tailwind utility class on the heading appears in the built CSS
+- [x] 2.1 Add Tailwind CSS v4 with `@tailwindcss/vite` and verify a Tailwind utility class on the heading appears in the built CSS
 
 ## 3. Lint and format
 
