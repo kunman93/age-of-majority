@@ -40,7 +40,7 @@ After the first push, the history is never rewritten, because that would need a 
 
 ### PR findings loop
 
-After creating the PR, wait for the dev. When the dev reports that the review is done, read the findings with `gh pr view --comments` and the review threads (`gh api repos/{owner}/{repo}/pulls/{n}/comments`). If there are findings, return to step 5, run step 6 again, and push.
+After creating the PR, wait for the dev. When the dev reports that the review is done, read the review summaries and PR comments with `gh pr view <n> --json reviews,comments`, and the inline review threads through the GraphQL `reviewThreads` field. Use GraphQL because REST does not expose `isResolved`, which lets resolved threads be skipped. If there are findings, return to step 5, run step 6 again, push, tell the dev, and wait for the next review report.
 
 ### Dependency field in the Story template
 
