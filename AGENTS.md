@@ -53,10 +53,9 @@ All work happens on feature branches. `main` is read-only: inspect it, but never
 
 Before starting with the research, verify you have a clean state:
 
-<!-- TODO: fill in once the project has tooling -->
-- Build: `<BUILD_COMMAND>`
-- Test: `<TEST_COMMAND>`
-- Lint/format: `<LINT_COMMAND>`
+- Build: `npm run build`
+- Test: `npm test` (unit) and `npm run test:bdd` (BDD)
+- Lint/format: `npm run lint` and `npm run format:check`
 
 ### 3. Research
 
@@ -65,6 +64,7 @@ Before starting with the research, verify you have a clean state:
 ### 4. Plan
 
 - Create a change proposal with the `openspec-propose` skill (`/opsx-propose`).
+- Commit the proposal.
 
 ### 5. Implement
 
@@ -75,8 +75,10 @@ Before starting with the research, verify you have a clean state:
 
 Once the implementation is complete, have the reviewer agent
 ([.github/agents/reviewer.agent.md](.github/agents/reviewer.agent.md)) review the feature branch.
+Run it as the custom `reviewer` subagent, not as a general-purpose or code-review agent.
 
-If there are any findings, return to [5. Implement](#5-implement) and fix them.
+If there are any MAJOR findings, return to [5. Implement](#5-implement) and fix them,
+then run the review again. Repeat until the reviewer approves without any MAJOR findings.
 
 ### 7. Create PR
 
