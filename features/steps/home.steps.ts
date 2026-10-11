@@ -8,7 +8,7 @@ When('I open the home page', async ({ page }) => {
 })
 
 Then('I see the heading {string}', async ({ page }, name: string) => {
-  await expect(page.getByRole('heading', { name })).toBeVisible()
+  await expect(page.getByRole('heading', { name, exact: true })).toBeVisible()
 })
 
 Then('the heading is styled with Tailwind', async ({ page }) => {
