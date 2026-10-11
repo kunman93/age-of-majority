@@ -8,6 +8,7 @@ Running the implementation workflow in `AGENTS.md` takes a lot of manual steerin
 
 - Add `### 0. Check model` to `AGENTS.md`: when the dev hands over a Story, check that the main session runs on Opus 5.5. If not, ask the dev to switch with `/model` and stop.
 - Define model use: the main session (Opus 5.5) runs research, planning and review. Step 5 (Implement) is delegated to a Sonnet 5.5 subagent, with Opus 5.5 as fallback.
+- Run the `reviewer` agent (step 6) on Opus 5.5 (`.github/agents/reviewer.agent.md`).
 - Extend `### 7. Create PR`:
   - Before the first push, clean up the git history safely (backup branch, rewrite, compare tree, delete backup).
   - When the dev reports the PR review is done, read the findings via `gh`. If there are any, return to step 5 and fix them with new commits.
@@ -33,3 +34,4 @@ None.
 
 - `AGENTS.md` (Implementation Workflow section).
 - `.github/ISSUE_TEMPLATE/story.yml`.
+- `.github/agents/reviewer.agent.md`.

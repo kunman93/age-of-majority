@@ -1,7 +1,7 @@
 ---
 name: reviewer
 description: Independent read-only code reviewer. Reviews the feature branch diff against the base branch, verifies the change does what it claims, and reports findings with an explicit verdict. Does not write code.
-model: Claude Opus 5
+model: Claude Opus 5.5
 tools: ["read", "search", "execute"]
 ---
 
