@@ -25,9 +25,9 @@
 
 ## 6. Project docs and commands
 
-- [ ] 6.1 Fill in the build, test and lint commands in `AGENTS.md` and verify each runs as written
-- [ ] 6.2 Update `README.md` with an intro (birthday card web app for a relative turning 18, where multiple families post their wishes) and a short "Getting started" section; verify the commands run as written
-- [ ] 6.3 Run build, lint, format check, unit and BDD tests together from a clean `npm ci` and verify all pass
+- [x] 6.1 Fill in the build, test and lint commands in `AGENTS.md` and verify each runs as written
+- [x] 6.2 Update `README.md` with an intro (birthday card web app for a relative turning 18, where multiple families post their wishes) and a short "Getting started" section; verify the commands run as written
+- [x] 6.3 Run build, lint, format check, unit and BDD tests together from a clean `npm ci` and verify all pass
 
 ## Workflow follow-up
 
