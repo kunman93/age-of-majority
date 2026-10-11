@@ -3,7 +3,7 @@
 ## 1. Project scaffold
 
 - [x] 1.1 Scaffold Vite + React + TypeScript in the repo root with npm (keeping existing files) and verify `npm run build` succeeds
-- [ ] 1.2 Remove starter demo content, leaving a minimal `App` page with a heading, and verify `npm run dev` serves it
+- [x] 1.2 Remove starter demo content, leaving a minimal `App` page with a heading, and verify `npm run dev` serves it
 
 ## 2. Styling
 
