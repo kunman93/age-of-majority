@@ -51,28 +51,40 @@ All work happens on feature branches. `main` is read-only: inspect it, but never
 
 ### 2. Verify clean state
 
-Before starting with the implementation, verify you have a clean state:
+Before starting with the research, verify you have a clean state:
 
 <!-- TODO: fill in once the project has tooling -->
 - Build: `<BUILD_COMMAND>`
 - Test: `<TEST_COMMAND>`
 - Lint/format: `<LINT_COMMAND>`
 
-### 3. Implement
+### 3. Research
 
-- Implement the feature by applying TDD.
+- Research the issue provided as a prompt with the `openspec-explore` skill (`/opsx-explore`).
+
+### 4. Plan
+
+- Create a change proposal with the `openspec-propose` skill (`/opsx-propose`).
+
+### 5. Implement
+
+- Implement the tasks from the change with the `openspec-apply-change` skill (`/opsx-apply`), applying TDD.
 - Make atomic commits with the `.agents/skills/git-commit` skill.
 
-### 4. Review
+### 6. Review
 
 Once the implementation is complete, have the reviewer agent
 ([.github/agents/reviewer.agent.md](.github/agents/reviewer.agent.md)) review the feature branch.
 
-If there are any findings, return to [3. Implement](#3-implement) and fix them.
+If there are any findings, return to [5. Implement](#5-implement) and fix them.
 
-### 5. Create PR
+### 7. Create PR
 
 - Push the feature branch and create a PR targeting `main`.
+
+### 8. Archive
+
+- After the PR has been merged, archive the completed change with the `openspec-archive-change` skill (`/opsx-archive`).
 
 ---
 
