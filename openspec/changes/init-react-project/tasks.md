@@ -11,8 +11,8 @@
 
 ## 3. Lint and format
 
-- [ ] 3.1 Configure ESLint flat config with `eslint-config-prettier` and add the `lint` script; verify `npm run lint` passes
-- [ ] 3.2 Configure Prettier (consistent with `.editorconfig`) and add `format` and `format:check` scripts; verify `npm run format:check` passes
+- [x] 3.1 Configure ESLint flat config with `eslint-config-prettier` and add the `lint` script; verify `npm run lint` passes
+- [x] 3.2 Configure Prettier (consistent with `.editorconfig`) and add `format` and `format:check` scripts; verify `npm run format:check` passes
 
 ## 4. Unit tests
 

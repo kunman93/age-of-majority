@@ -54,6 +54,7 @@ All work happens on feature branches. `main` is read-only: inspect it, but never
 Before starting with the research, verify you have a clean state:
 
 <!-- TODO: fill in once the project has tooling -->
+
 - Build: `<BUILD_COMMAND>`
 - Test: `<TEST_COMMAND>`
 - Lint/format: `<LINT_COMMAND>`
