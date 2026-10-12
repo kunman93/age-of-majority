@@ -13,6 +13,7 @@ Read the [README.md](README.md) to understand what the repo is about.
 - Follow the conventions already present in the code over introducing new ones.
 - Prove behavior with executable validation before declaring work done.
 - If something's unclear, ask the user instead of guessing. Never assume.
+- Prefix every message that needs the user's action or decision with 🙋, and use 🙋 for nothing else.
 - Ask for permission before modifying anything outside the repository.
 
 ---
