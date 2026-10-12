@@ -51,13 +51,14 @@ All work happens on feature branches. `main` is read-only: inspect it, but never
 
 ## Implementation Workflow
 
-The user names the Story to work on and moves its card on the project board.
+The user names the issue (Story or bug report) to work on and moves its card on the project board.
 To create a Story, use the `write-story` skill (`.agents/skills/write-story`); never create one as a free-form issue.
 The main session runs on Sonnet 5.5, except steps 3 and 4, which always run on Opus 5.5 in the main session.
 Step 7 runs the `reviewer` subagent, which is pinned to Opus 5.5 in its agent file.
 
-### 0. Check model
+### 0. Check Story and model
 
+- Before step 1, check that the user has provided the issue to work on: a Story (an issue number or link), or a bug report for a `fix/` branch. If not, ask the user for one and stop. Do not pick an issue yourself and do not start working. If the user has no Story yet, mention that the `write-story` skill can create one. `chore/` work needs no issue when the user explicitly asked for it.
 - Before starting a step, check the main session model reported in your environment information against the model named in the step.
 - If it does not match, or if you cannot tell, tell the user which model to pick with `/model` and stop.
 - The check covers the main session only; subagent models are set by their agent file or the `model` argument.
