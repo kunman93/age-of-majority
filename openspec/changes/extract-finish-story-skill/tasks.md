@@ -8,9 +8,9 @@
 
 ## 2. AGENTS.md
 
-- [ ] 2.1 Replace steps 8–10 with short entries. Each keeps its heading, "Runs on Sonnet 5.5.", a pointer to the `finish-story` skill section, and its approval gate from design.md. Verify that `grep -n "finish-story" AGENTS.md` shows a match in each of steps 8, 9 and 10, and that `grep -n "autosquash\|graphql\|log-failed" AGENTS.md` shows no match.
-- [ ] 2.2 In Feature branches, make the rewrite/force-push permission name the `finish-story` skill alongside steps 8–10. Leave the **Never** list unchanged. Verify by reading the doc, check that every `](#` link in `AGENTS.md` matches a heading, and run `npm run format:check`, which should pass.
-- [ ] 2.3 Check rule preservation: go through `git show origin/main:AGENTS.md` steps 8–10 rule by rule and confirm each rule appears in `AGENTS.md` or the skill. Verify by reporting the result. `wc -l AGENTS.md` should show a clear drop from 210.
+- [x] 2.1 Replace steps 8–10 with short entries. Each keeps its heading, "Runs on Sonnet 5.5.", a pointer to the `finish-story` skill section, and its approval gate from design.md. Verify that `grep -n "finish-story" AGENTS.md` shows a match in each of steps 8, 9 and 10, and that `grep -n "autosquash\|graphql\|log-failed" AGENTS.md` shows no match.
+- [x] 2.2 In Feature branches, make the rewrite/force-push permission name the `finish-story` skill alongside steps 8–10. Leave the **Never** list unchanged. Verify by reading the doc, check that every `](#` link in `AGENTS.md` matches a heading, and run `npm run format:check`, which should pass.
+- [x] 2.3 Check rule preservation: go through `git show origin/main:AGENTS.md` steps 8–10 rule by rule and confirm each rule appears in `AGENTS.md` or the skill. Verify by reporting the result. `wc -l AGENTS.md` should show a clear drop from 210.
 
 ## Workflow follow-up
 
