@@ -12,7 +12,7 @@ The AI instructions (`AGENTS.md`, skills, custom agents, prompts) drift from the
   - Instructions that now misdescribe the repo (wrong command, stale path, removed step) are **MAJOR**, consistent with check 9. Instructions that are incomplete but not wrong are **MINOR**.
   - For the OpenSpec-generated files (`.github/skills/openspec-*`, `.github/prompts/opsx-*`), the suggested direction is to regenerate them with `openspec update`, not to edit them by hand.
   - The reviewer stays read-only. It reports the needed update with `file:line` and a suggested direction. Fixes go back to step 6 (Implement).
-- Reword the "Hard rules" reference to "the test command, and the linter" so it covers the two test and two lint commands.
+- Reword the "Hard rules" reference from "the test command, and the linter" to "the test and lint commands listed in check 7", so it covers the two test and two lint commands.
 
 ## Capabilities
 

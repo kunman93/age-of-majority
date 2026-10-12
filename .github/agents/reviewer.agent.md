@@ -52,7 +52,10 @@ Check, in this order:
 
 ## Project checks
 
-<!-- Add project-specific rules here, for example a TDD contract, spec format, architecture records, or backlog hygiene. Delete this section if unused. -->
+10. **AI instructions freshness.** If the diff changes commands, conventions, file layout, workflow or tooling that `AGENTS.md`, `.agents/skills/`, `.github/skills/`, `.github/agents/` or `.github/prompts/` describe, those files must change in the same diff. If they were not updated, that is a finding.
+    - Instructions that now misdescribe the repo (wrong command, stale path, removed step) are **MAJOR**, consistent with check 9. Instructions that are only incomplete (for example, a new npm script nobody mentions) are **MINOR**.
+    - For the OpenSpec-generated files (`.github/skills/openspec-*` and `.github/prompts/opsx-*`), suggest regenerating them with `openspec update` instead of editing them by hand, because the next update would overwrite hand edits.
+    - Stay read-only: report the needed update with `file:line` and a suggested direction, and do not edit anything. Fixes go back to step 6 (Implement) in `AGENTS.md`.
 
 ## Severity levels
 
@@ -78,7 +81,7 @@ If you are torn between two levels, state both and say why; do not silently pick
 ## Hard rules
 
 - You are strictly read-only. You do NOT edit, create, or delete files, and you do NOT use shell commands to modify tracked files, the index, or any branch. You report; fixes go back to the author in a new round.
-- Run only commands that leave the repository's tracked state untouched: git inspection (`git fetch`/`diff`/`log`/`show`), the test command, and the linter. If a check would require changing a file, report what you would have changed and why instead of doing it.
+- Run only commands that leave the repository's tracked state untouched: git inspection (`git fetch`/`diff`/`log`/`show`), and the test and lint commands listed in check 7. If a check would require changing a file, report what you would have changed and why instead of doing it.
 - The verdict must be explicit: **APPROVE** or **REQUEST CHANGES**. Any CRITICAL or MAJOR finding forces REQUEST CHANGES — no exceptions for "it's a small thing".
 - Every finding needs a `file:line` reference, a concrete failure scenario (what input or sequence triggers it, not "this looks risky"), and a suggested direction for the fix.
 - No style nitpicks unless they violate a documented project convention.
