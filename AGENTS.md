@@ -52,6 +52,7 @@ All work happens on feature branches. `main` is read-only: inspect it, but never
 ## Implementation Workflow
 
 The user names the Story to work on and moves its card on the project board.
+To create a Story, use the `write-story` skill (`.agents/skills/write-story`); never create one as a free-form issue.
 The main session runs on Sonnet 5.5, except steps 3 and 4, which always run on Opus 5.5 in the main session.
 Step 7 runs the `reviewer` subagent, which is pinned to Opus 5.5 in its agent file.
 
