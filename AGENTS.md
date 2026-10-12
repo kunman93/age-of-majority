@@ -103,10 +103,11 @@ Runs on Sonnet 5.5 in the main session.
 
 - Implement the tasks from the change with the `openspec-apply-change` skill (`/opsx-apply`), applying TDD, and make atomic commits with the `.agents/skills/git-commit` skill.
 - When done, verify the work with the commands from [2. Verify clean state](#2-verify-clean-state).
+- Then continue directly with [7. Review](#7-review) without asking the user.
 
 ### 7. Review
 
-Runs on Sonnet 5.5. The review itself runs in the `reviewer` subagent, which is pinned to Opus 5.5.
+Runs on Sonnet 5.5. The review itself runs in the `reviewer` subagent, which is pinned to Opus 5.5. No `/model` switch is needed, so start it automatically.
 
 Once the implementation is complete, have the reviewer agent
 ([.github/agents/reviewer.agent.md](.github/agents/reviewer.agent.md)) review the feature branch.
