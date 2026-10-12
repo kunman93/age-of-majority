@@ -25,11 +25,16 @@ All work happens on feature branches. `main` is read-only: inspect it, but never
 - Name branches `feature/<branch-name-based-on-issue>` (use `fix/<...>` for bug fixes, `chore/<...>` for maintenance).
 - Commit with the `.agents/skills/git-commit` skill. Make atomic commits: one logical change per commit.
 - Pushing the feature branch is allowed.
+- Rewrite and force push your own feature branch only as described in steps 7–9, always with
+  `git push --force-with-lease --force-if-includes`. These steps are the explicit request for `git reset --hard` and
+  force pushes that the `git-commit` skill requires.
 - Delete a feature branch only after its PR has been merged (see [9. Merge](#9-merge)).
 
 **Never**:
 
-- Force push
+- Push to, rebase, or rewrite `main`
+- Force push with plain `--force`
+- Force push outside [8. Archive](#8-archive) and [9. Merge](#9-merge)
 
 ---
 
@@ -92,13 +97,22 @@ then run the review again. Repeat until the reviewer approves without any MAJOR 
 ### 7. Create PR
 
 - Before the first push, clean up the history into atomic commits:
-  1. Create a backup: `git branch backup/<branch>`.
+  1. Create a backup: `git branch -f backup/<branch>` (`-f` so a stale backup never blocks).
   2. Rewrite the history, for example by squashing fixups and rewording.
   3. Verify the content is unchanged: `git diff backup/<branch> HEAD` must be empty.
      If it is not, run `git reset --hard backup/<branch>` and retry.
   4. Delete the backup: `git branch -D backup/<branch>`.
 - Push the feature branch and create a PR targeting `main`.
-- Once pushed, never rewrite the history again.
+- After the first push, do not rewrite the history during review. Fix CI failures and review findings with
+  `git commit --fixup=<sha>` commits targeting the commit they belong to, and push them normally, so the user can
+  review incremental changes. They are squashed in [8. Archive](#8-archive). Never reword `fixup!` subjects (autosquash
+  matches on them). A finding that is a new logical change, not belonging to an existing commit, gets a normal atomic
+  commit with the `git-commit` skill instead.
+- Wait for CI with `gh pr checks <n> --watch`. Right after a push it may report "no checks reported" before the run
+  registers; wait briefly and retry, it is not a failure. If `ci` fails, get the run id from
+  `gh run list --branch <branch> --limit 1` (or the link printed by `gh pr checks`), read the log with
+  `gh run view <run-id> --log-failed`,
+  return to [5. Implement](#5-implement) and fix it with fixup commits. Do the same after pushing fixes for review findings.
 - When the user reports the PR review is done, read the findings:
   - Review summaries and PR comments: `gh pr view <n> --json reviews,comments`.
   - Inline review threads (skip those with `isResolved: true`; if `hasNextPage` is true, tell the user that some threads were not read):
@@ -117,17 +131,37 @@ then run the review again. Repeat until the reviewer approves without any MAJOR 
       }'
     ```
 
-- If there are findings, return to [5. Implement](#5-implement), fix them with new commits, review again, and push.
+- If there are findings, return to [5. Implement](#5-implement), fix them with fixup commits, review again, and push.
   Then tell the user and wait for their next review report. Do not archive until the user approves.
 
 ### 8. Archive
 
 - Wait for the user's explicit approval of the PR in the conversation. GitHub does not allow approving your own PR, so this is the approval.
-- Archive the completed change on the feature branch with the `openspec-archive-change` skill (`/opsx-archive`), commit, and push.
+- Finalize the history:
+  1. Create a backup: `git branch -f backup/<branch>` (`-f` so a stale backup never blocks).
+  2. Squash the fixups: `GIT_SEQUENCE_EDITOR=: git rebase -i --autosquash $(git merge-base HEAD origin/main)`.
+     If it stops on a conflict, run `git rebase --abort` and `git reset --hard backup/<branch>`, and ask the user how to
+     proceed. Otherwise verify `git diff backup/<branch> HEAD` is empty. If it is not, run
+     `git reset --hard backup/<branch>` and ask the user how to proceed. Keep the backup until the user decides;
+     delete it if finalizing is abandoned.
+  3. Run `git fetch origin main` and `git rebase origin/main`. If it stops on conflicts, resolve them commit by commit
+     as implementation work ([5. Implement](#5-implement)) and continue with `git rebase --continue`. If `main` brought
+     in changes, run the commands from [2. Verify clean state](#2-verify-clean-state) and tell the user. If there were conflicts, also run
+     [6. Review](#6-review), push with `git push --force-with-lease --force-if-includes`, tell the user, and wait for
+     their re-approval before continuing.
+- Archive the completed change on the feature branch with the `openspec-archive-change` skill (`/opsx-archive`), commit,
+  push with `git push --force-with-lease --force-if-includes`, and wait for `ci` with `gh pr checks <n> --watch`.
+  If `ci` fails, fix it with fixup commits ([5. Implement](#5-implement)), push them normally, finalize the history
+  again, push with lease, and wait for `ci`.
+- Delete the backup only once `ci` is green: `git branch -D backup/<branch>`.
 
 ### 9. Merge
 
-- After the user's approval and the archive push, merge the PR with a merge commit and delete the feature branch: `gh pr merge --merge --delete-branch`.
+- Only when `ci` is green and the user has approved, merge the PR with a merge commit and delete the feature branch:
+  `gh pr merge --merge --delete-branch`. Then run `git fetch --prune` to remove the stale remote-tracking branch.
+- If GitHub refuses because `main` moved since step 8, finalize the history again as in [8. Archive](#8-archive) (this
+  includes running the step 2 checks), push with lease, wait for `ci` (handle failures as in step 8), delete the backup once `ci` is green, and tell the
+  user.
 - Never merge without the user's approval.
 
 ---
