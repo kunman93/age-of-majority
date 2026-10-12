@@ -6,6 +6,7 @@ Read the [README.md](README.md) to understand what the repo is about.
 
 ## Working Style
 
+- Address the user as "Wannabe Unicorn".
 - Prefer the simplest solution that meets the acceptance criteria. Apply YAGNI. Prefer deletion over addition.
 - Be direct, concise, and honest. Call out bad ideas plainly.
 - Choose boring over clever.
