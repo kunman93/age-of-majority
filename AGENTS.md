@@ -50,20 +50,25 @@ All work happens on feature branches. `main` is read-only: inspect it, but never
 ## Implementation Workflow
 
 The user names the Story to work on and moves its card on the project board.
-Everything except step 5 runs in the main session on Opus 5.5. Step 5 is delegated to Sonnet 5.5.
+The main session runs on Sonnet 5.5, except steps 3 and 4, which always run on Opus 5.5 in the main session.
+Step 6 runs the `reviewer` subagent, which is pinned to Opus 5.5 in its agent file.
 
 ### 0. Check model
 
-- Check the model reported in your environment information. If it is not Opus 5.5, or if you cannot tell, ask the user to switch with `/model` and stop.
+- Before starting a step, check the main session model reported in your environment information against the model named in the step.
+- If it does not match, or if you cannot tell, tell the user which model to pick with `/model` and stop.
+- The check covers the main session only; subagent models are set by their agent file or the `model` argument.
 
 ### 1. Create feature branch
+
+Runs on Sonnet 5.5.
 
 - Fetch `main` from origin.
 - Create a feature branch based on `origin/main`, following the naming conventions in [Feature branches](#feature-branches).
 
 ### 2. Verify clean state
 
-Before starting with the research, verify you have a clean state:
+Runs on Sonnet 5.5. Before starting with the research, verify you have a clean state:
 
 - Install: `npm ci`
 - Build: `npm run build`
@@ -72,20 +77,28 @@ Before starting with the research, verify you have a clean state:
 
 ### 3. Research
 
+Runs on Opus 5.5.
+
 - Research the issue provided as a prompt with the `openspec-explore` skill (`/opsx-explore`).
 
 ### 4. Plan
+
+Runs on Opus 5.5.
 
 - Create a change proposal with the `openspec-propose` skill (`/opsx-propose`).
 - Commit the proposal.
 
 ### 5. Implement
 
+Runs on Sonnet 5.5.
+
 - Delegate implementation to a `general-purpose` subagent with model `claude-sonnet-5.5`. Give it the change name, the branch, and the decisions from research and planning.
 - The subagent implements the tasks from the change with the `openspec-apply-change` skill (`/opsx-apply`), applying TDD, and makes atomic commits with the `.agents/skills/git-commit` skill.
 - When the subagent is done, verify its work in the main session with the commands from [2. Verify clean state](#2-verify-clean-state). If the subagent fails or its work does not pass verification, finish the work in the main session.
 
 ### 6. Review
+
+Runs on Sonnet 5.5. The review itself runs in the `reviewer` subagent, which is pinned to Opus 5.5.
 
 Once the implementation is complete, have the reviewer agent
 ([.github/agents/reviewer.agent.md](.github/agents/reviewer.agent.md)) review the feature branch.
@@ -95,6 +108,8 @@ If there are any MAJOR findings, return to [5. Implement](#5-implement) and fix 
 then run the review again. Repeat until the reviewer approves without any MAJOR findings.
 
 ### 7. Create PR
+
+Runs on Sonnet 5.5.
 
 - Before the first push, clean up the history into atomic commits:
   1. Create a backup: `git branch -f backup/<branch>` (`-f` so a stale backup never blocks).
@@ -136,6 +151,8 @@ then run the review again. Repeat until the reviewer approves without any MAJOR 
 
 ### 8. Archive
 
+Runs on Sonnet 5.5.
+
 - Wait for the user's explicit approval of the PR in the conversation. GitHub does not allow approving your own PR, so this is the approval.
 - Finalize the history:
   1. Create a backup: `git branch -f backup/<branch>` (`-f` so a stale backup never blocks).
@@ -156,6 +173,8 @@ then run the review again. Repeat until the reviewer approves without any MAJOR 
 - Delete the backup only once `ci` is green: `git branch -D backup/<branch>`.
 
 ### 9. Merge
+
+Runs on Sonnet 5.5.
 
 - Only when `ci` is green and the user has approved, merge the PR with a merge commit and delete the feature branch:
   `gh pr merge --merge --delete-branch`. Then run `git fetch --prune` to remove the stale remote-tracking branch.
