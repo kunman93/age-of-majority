@@ -161,8 +161,16 @@ Runs on Sonnet 5.5.
      `git reset --hard backup/<branch>` and ask the user how to proceed. Keep the backup until the user decides;
      delete it if finalizing is abandoned.
   3. Run `git fetch origin main` and `git rebase origin/main`. If it stops on conflicts, resolve them commit by commit
-     as implementation work ([5. Implement](#5-implement)) and continue with `git rebase --continue`. If `main` brought
-     in changes, run the commands from [2. Verify clean state](#2-verify-clean-state) and tell the user. If there were conflicts, also run
+     and continue with `git rebase --continue`:
+     - A conflict is non-trivial if it touches logic, behavior or specs, or if one side must win. This overrides the
+       trivial examples below. Ask the user how to resolve it.
+     - Otherwise it is trivial if it is a textual overlap where both sides' intent is clear and can be combined (for
+       example adjacent edits, list or import ordering, lockfile regeneration). Resolve it yourself.
+     - If you are unsure whether it is trivial, start a `general-purpose` subagent with model `claude-opus-5.5`. Give
+       it the conflicted files, the commit being replayed, the change name, and these two definitions. It either
+       resolves the conflict, or makes no edits and reports it as non-trivial, in which case ask the user.
+
+     If `main` brought in changes, run the commands from [2. Verify clean state](#2-verify-clean-state) and tell the user. If there were conflicts, also run
      [6. Review](#6-review), push with `git push --force-with-lease --force-if-includes`, tell the user, and wait for
      their re-approval before continuing.
 - Archive the completed change on the feature branch with the `openspec-archive-change` skill (`/opsx-archive`), commit,
