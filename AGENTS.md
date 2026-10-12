@@ -161,12 +161,13 @@ skill (`.agents/skills/write-bug-report`) can create one; never create a bug rep
 - Step 0: the model check only; the bug report check above replaces the Story check. Steps 1 and 2: as in the Story
   Workflow, with a `fix/` branch.
 - Steps 3–5 (research, plan, approve plan): skipped. Reproduce and find the root cause directly. If the fix requires
-  changing a spec, stop and tell the user: it is a change, not a bug, and belongs in the Story Workflow.
+  changing an OpenSpec spec (`openspec/specs/`), stop and tell the user: it is a change, not a bug, and belongs in the
+  Story Workflow.
 - Step 6: as in the Story Workflow, but instead of `/opsx-apply`, write a failing test that reproduces the bug (TDD),
   then fix it.
 - Steps 7, 8 and 10: as in the Story Workflow.
 - Step 9: as in the Story Workflow, but without archiving: wait for the user's approval, then run "Finalize history"
-  of the `finish-story` skill without its archive step.
+  of the `finish-story` skill without its archive sub-step.
 
 ### Chore Workflow
 
