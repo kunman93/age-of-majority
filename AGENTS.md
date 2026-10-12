@@ -90,11 +90,10 @@ Runs on Opus 5.5.
 
 ### 5. Implement
 
-Runs on Sonnet 5.5.
+Runs on Sonnet 5.5 in the main session.
 
-- Delegate implementation to a `general-purpose` subagent with model `claude-sonnet-5.5`. Give it the change name, the branch, and the decisions from research and planning.
-- The subagent implements the tasks from the change with the `openspec-apply-change` skill (`/opsx-apply`), applying TDD, and makes atomic commits with the `.agents/skills/git-commit` skill.
-- When the subagent is done, verify its work in the main session with the commands from [2. Verify clean state](#2-verify-clean-state). If the subagent fails or its work does not pass verification, finish the work in the main session.
+- Implement the tasks from the change with the `openspec-apply-change` skill (`/opsx-apply`), applying TDD, and make atomic commits with the `.agents/skills/git-commit` skill.
+- When done, verify the work with the commands from [2. Verify clean state](#2-verify-clean-state).
 
 ### 6. Review
 
