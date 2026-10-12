@@ -1,11 +1,11 @@
 ---
 name: finish-story
-description: 'Finish a Story in the AGENTS.md implementation workflow, steps 8-10: clean up history and create the PR, wait for CI, read PR review findings, finalize history (autosquash and rebase on origin/main), archive the change, and merge. Use when the implementation is reviewed and it is time to push, open or update the PR, archive, or merge.'
+description: 'Finish a Story, bug fix or chore in the AGENTS.md implementation workflow: clean up history and create the PR, wait for CI, read PR review findings, finalize history (autosquash and rebase on origin/main), archive the change (Stories only), and merge. Use when the implementation is reviewed and it is time to push, open or update the PR, archive, or merge.'
 ---
 
-# Finish a Story
+# Finish a Story, Bug Fix or Chore
 
-Procedures for steps 8 (Create PR), 9 (Archive) and 10 (Merge) of the implementation workflow in `AGENTS.md`. The approval gates stay in `AGENTS.md`. Every step runs on Sonnet 5.5, so run the model check from step 0 first.
+Procedures for steps 8 (Create PR), 9 (Archive) and 10 (Merge) of the Story Workflow in `AGENTS.md`. The Bug Fix and Chore Workflows use Create PR and Merge, and run Finalize history without step 4 (no archive) before Merge. The approval gates stay in `AGENTS.md`. Every step runs on Sonnet 5.5, so run the model check from step 0 first.
 
 ## Create PR (step 8)
 
@@ -59,7 +59,7 @@ tell the user and wait for their next review report. Do not archive until the us
 
 ## Finalize history
 
-Squashes the fixups and rebases the branch on `origin/main`. Archive runs it with step 4; Merge runs it without step 4.
+Squashes the fixups and rebases the branch on `origin/main`. Archive runs it with step 4; Merge, and the pre-merge finalize of bug fixes and chores, run it without step 4.
 
 1. Create a backup: `git branch -f backup/<branch>` (`-f` so a stale backup never blocks).
 2. Squash the fixups: `GIT_SEQUENCE_EDITOR=: git rebase -i --autosquash $(git merge-base HEAD origin/main)`.
@@ -74,7 +74,7 @@ Squashes the fixups and rebases the branch on `origin/main`. Archive runs it wit
    - Otherwise it is trivial if it is a textual overlap where both sides' intent is clear and can be combined (for
      example adjacent edits, list or import ordering, lockfile regeneration). Resolve it yourself.
    - If you are unsure whether it is trivial, start a `general-purpose` subagent with model `claude-opus-5.5`. Give
-     it the conflicted files, the commit being replayed, the change name, and these two definitions. It either
+     it the conflicted files, the commit being replayed, the change name (if any), and these two definitions. It either
      resolves the conflict, or makes no edits and reports it as non-trivial, in which case ask the user.
 
    If `main` brought in changes, run the commands from step 2 (Verify clean state) and tell the user. If there were
@@ -98,5 +98,5 @@ Squashes the fixups and rebases the branch on `origin/main`. Archive runs it wit
 1. Only when `ci` is green and the user has approved, merge the PR with a merge commit and delete the feature branch:
    `gh pr merge --merge --delete-branch`. Then run `git fetch --prune` to remove the stale remote-tracking branch.
 2. If GitHub refuses because `main` moved since step 9, run [Finalize history](#finalize-history) without step 4
-   (this includes the step 2 checks; handle `ci` failures as described there), and tell the user.
+   (this includes the Verify clean state checks; handle `ci` failures as described there), and tell the user.
 3. Never merge without the user's approval.
