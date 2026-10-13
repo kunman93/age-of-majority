@@ -7,8 +7,8 @@
 
 ## 2. Own skills
 
-- [ ] 2.1 Create `.agents/skills/react-ui/SKILL.md` with `name` and a trigger-rich `description` frontmatter and the contents listed in design.md "`react-ui` skill" (stack facts, React reading of the engineering principles, non-negotiables, TDD for UI, animation and WebGL, routing to `gsap-*` and `threejs`). Verify the frontmatter parses (`name` equals the directory name, `description` non-empty) and each design bullet maps to a section.
-- [ ] 2.2 Create `.agents/skills/threejs/SKILL.md` with `name` and a trigger-rich `description` frontmatter and the contents listed in design.md "`threejs` skill" (fetch the official `llms.txt` first, R3F + drei default with raw three.js through refs, the rules, GSAP with R3F, installation). Verify the frontmatter parses as in 2.1 and that both `llms.txt` URLs return HTTP 200 with `curl -sfI`.
+- [x] 2.1 Create `.agents/skills/react-ui/SKILL.md` with `name` and a trigger-rich `description` frontmatter and the contents listed in design.md "`react-ui` skill" (stack facts, React reading of the engineering principles, non-negotiables, TDD for UI, animation and WebGL, routing to `gsap-*` and `threejs`). Verify the frontmatter parses (`name` equals the directory name, `description` non-empty) and each design bullet maps to a section.
+- [x] 2.2 Create `.agents/skills/threejs/SKILL.md` with `name` and a trigger-rich `description` frontmatter and the contents listed in design.md "`threejs` skill" (fetch the official `llms.txt` first, R3F + drei default with raw three.js through refs, the rules, GSAP with R3F, installation). Verify the frontmatter parses as in 2.1 and that both `llms.txt` URLs return HTTP 200 with `curl -sfI`.
 
 ## 3. React Developer agent
 
