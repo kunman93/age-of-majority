@@ -100,6 +100,8 @@ Squashes the fixups and rebases the branch on `origin/main`. Archive runs it wit
 
 1. Only when `ci` is green and the user has approved, merge the PR with a merge commit and delete the feature branch:
    `gh pr merge --merge --delete-branch`. Then run `git fetch --prune` to remove the stale remote-tracking branch.
+   Run `git rev-list --left-right --count main...origin/main` and report to the user whether local `main` matches
+   `origin/main` (`0 0`); never assume it, and ask before changing it.
 2. If GitHub refuses because `main` moved since step 9, run [Finalize history](#finalize-history) without sub-step 4
    (this includes the Verify clean state checks; handle `ci` failures as described there), and tell the user.
 3. Never merge without the user's approval.
