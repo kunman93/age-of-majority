@@ -16,9 +16,9 @@ If they contradict what you remember, follow them and say so. If a URL fails, us
 
 ## Default approach
 
-React Three Fiber (`@react-three/fiber`, v9 for React 19) with `@react-three/drei` helpers, inside a `<Canvas>`. Drop to raw three.js through refs only for what R3F does not cover. Do not wire a vanilla three.js scene by hand in an effect.
+React Three Fiber (`@react-three/fiber`, v9 for React 19) inside a `<Canvas>`, adding `@react-three/drei` helpers only when a Story needs one. Drop to raw three.js through refs only for what R3F does not cover. Do not wire a vanilla three.js scene by hand in an effect.
 
-Install when a Story first needs 3D: `npm install three @react-three/fiber @react-three/drei` and `npm install -D @types/three`.
+Already installed: `three`, `@react-three/fiber`, `@types/three` and `@react-three/test-renderer` (renders R3F scenes without a GPU in Vitest). Install drei with `npm install @react-three/drei` when first needed.
 
 ## Rules
 
