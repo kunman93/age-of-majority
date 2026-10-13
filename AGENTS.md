@@ -94,10 +94,8 @@ Runs on a `feature/<...>` branch. To create a Story, use the `write-story` skill
 
 - Before step 1, check that the user has provided the Story (an issue number or link). If not, ask the user for one and stop. Do not pick an issue yourself and do not start working. If the user has no Story yet, mention that the `write-story` skill can create one.
 - Before starting a step, check the main session model reported in your environment information against the model named in the step.
-- If it does not match, or if you cannot tell, tell the user which model to pick with `/model`.
-- Also check that the main session runs the default agent, not a custom agent. If it does not, or if you cannot tell, tell the user to switch with `/agent`.
-- After telling the user to switch, ask with the `ask_user` tool for confirmation once they have switched. Do not end your turn. When confirmed, re-check the model and agent, then continue the step directly without further prompting.
-- If the re-check still fails, ask again. If the user declines or `ask_user` is unavailable, stop.
+- If it does not match, or if you cannot tell, tell the user which model to pick with `/model` and stop.
+- Also check that the main session runs the default agent, not a custom agent. If it does not, or if you cannot tell, tell the user to switch with `/agent` and stop.
 - The check covers the main session only; subagent models are set by their agent file or the `model` argument.
 
 #### 1. Create feature branch
