@@ -23,6 +23,10 @@ so that [benefit/value].
 - [ ] First criterion
 - [ ] Second criterion
 
+### Priority
+
+High
+
 ### Depends on
 
 #12, #15
@@ -32,7 +36,7 @@ so that [benefit/value].
 Mockups, constraints, links to related issues, etc.
 ```
 
-- Fill the required fields of the form (currently `Story` and `Acceptance criteria`) always. If `story.yml` changed, follow it over the example above, including any `title` prefix.
+- Fill the required fields of the form (currently `Story`, `Acceptance criteria` and `Priority`, one of `High`, `Medium`, `Low`) always. If `story.yml` changed, follow it over the example above, including any `title` prefix.
 - For an empty optional field (`Depends on`, `Additional context`), keep the heading and write `_No response_`, as GitHub does for forms.
 - Keep acceptance criteria observable and testable, one checkbox each.
 - Prefer small, independently deliverable Stories. If the request is large, propose a split and set `Depends on` between the parts.
