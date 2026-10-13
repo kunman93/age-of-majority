@@ -2,8 +2,8 @@
 
 ## 1. Dependencies and test setup
 
-- [ ] 1.1 Install `three` and `@react-three/fiber` as dependencies and `@types/three` and `@react-three/test-renderer` as dev dependencies; verify `npm run build` and `npm test` still pass
-- [ ] 1.2 Add default stubs to `src/test-setup.ts` for `window.matchMedia` (no reduced motion) and `HTMLCanvasElement.prototype.getContext` (returns `null`), as in design.md; verify `npm test` passes without jsdom "not implemented" errors
+- [x] 1.1 Install `three` and `@react-three/fiber` as dependencies and `@types/three` and `@react-three/test-renderer` as dev dependencies; verify `npm run build` and `npm test` still pass
+- [x] 1.2 Add default stubs to `src/test-setup.ts` for `window.matchMedia` (no reduced motion) and `HTMLCanvasElement.prototype.getContext` (returns `null`), as in design.md; verify `npm test` passes without jsdom "not implemented" errors
 
 ## 2. Fallback decisions (shell)
 
@@ -12,7 +12,7 @@
 
 ## 3. Background shell and glow (red BDD first)
 
-- [ ] 3.1 Add `features/background-scene.feature` with every scenario from `specs/background-scene/spec.md` and steps in `features/steps/background-scene.steps.ts` as in design.md (reduced motion, no WebGL init script, request recording, draw-call counter, hidden-page override, CDP DPR override, layering checks, screenshot contrast check); verify `npm run test:bdd` runs them and they fail for the expected reasons
+- [x] 3.1 Add `features/background-scene.feature` with every scenario from `specs/background-scene/spec.md` and steps in `features/steps/background-scene.steps.ts` as in design.md (reduced motion, no WebGL init script, request recording, draw-call counter, hidden-page override, CDP DPR override, layering checks, screenshot contrast check); verify `npm run test:bdd` runs them and they fail for the expected reasons
 - [ ] 3.2 Add the `--color-glow` token to `src/index.css`; write failing `src/background/Background.test.tsx` (with `EmberCanvas` mocked) for: glow always shown; no canvas and no import with reduced motion or without WebGL; canvas stub rendered when supported; `paused` passed while the page is hidden; a throwing canvas leaves the glow and the card intact. Implement `Background.tsx` (glow, `BackgroundErrorBoundary`, `Suspense`, `React.lazy`) and a minimal `EmberCanvas.tsx`, and render `Background` before `<main>` in `src/App.tsx`; verify `npm test` passes, including the existing `App.test.tsx`, and the reduced-motion and no-WebGL BDD scenarios pass
 
 ## 4. Ember scene
