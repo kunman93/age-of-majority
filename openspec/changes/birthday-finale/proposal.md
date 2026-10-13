@@ -27,6 +27,6 @@ _None._
 ## Impact
 
 - `src/App.tsx`: finale markup after the family sections.
-- `src/App.test.tsx`, `features/families.feature` steps: family heading checks are narrowed to family headings, because the finale adds another level-2 heading.
+- `src/App.test.tsx`, `features/steps/families.steps.ts`: family heading checks are narrowed to family headings, because the finale adds another level-2 heading.
 - New tests: unit test in `src/App.test.tsx`, BDD feature `features/finale.feature` with steps.
 - No new dependencies.

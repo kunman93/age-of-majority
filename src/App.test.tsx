@@ -46,10 +46,11 @@ it('renders the family headings in order after the intro', () => {
 })
 
 it('renders the finale after the last family', () => {
-  render(<App />)
+  const { container } = render(<App />)
 
   const lastFamily = screen.getByRole('heading', { name: 'Family Dolor' })
   const finale = screen.getByRole('region', { name: "Here's to you, Sara!" })
+  const heading = within(finale).getByRole('heading')
   const message = within(finale).getByText(
     'Eighteen years of you, and the best is still ahead. Whatever you choose next, your family is cheering you on. Happy birthday!',
   )
@@ -57,6 +58,8 @@ it('renders the finale after the last family', () => {
   const follows = (a: Node, b: Node) =>
     a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING
   expect(follows(lastFamily, finale)).toBeTruthy()
+  expect(follows(heading, message)).toBeTruthy()
   expect(follows(message, signature)).toBeTruthy()
   expect(finale.nextElementSibling).toBeNull()
+  expect(container.lastElementChild).toBe(finale.parentElement)
 })

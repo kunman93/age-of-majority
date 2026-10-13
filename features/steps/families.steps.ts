@@ -8,15 +8,17 @@ const names = (list: string) => list.split(', ')
 Then(
   'I see the family headings {string} in order',
   async ({ page }, headings: string) => {
-    await expect(page.getByRole('heading', { level: 2 })).toHaveText(
-      names(headings),
-    )
+    await expect(
+      page.getByRole('heading', { level: 2, name: /^Family / }),
+    ).toHaveText(names(headings))
   },
 )
 
 Then('the family headings are below the intro', async ({ page }) => {
   const intro = await page.getByText(/^Today you come of age/).boundingBox()
-  const headings = await page.getByRole('heading', { level: 2 }).all()
+  const headings = await page
+    .getByRole('heading', { level: 2, name: /^Family / })
+    .all()
   for (const heading of headings) {
     const box = await heading.boundingBox()
     expect(box!.y).toBeGreaterThan(intro!.y + intro!.height - 1)
