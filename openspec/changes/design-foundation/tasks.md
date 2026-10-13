@@ -2,8 +2,8 @@
 
 ## 1. Color helper
 
-- [ ] 1.1 Add `features/support/**/*.test.ts` to the Vitest `include` in `vite.config.ts`, then write failing unit tests in `features/support/color.test.ts` for parsing `rgb()`/`rgba()` (and throwing on other formats), relative luminance, contrast ratio (black/white 21:1, equal colors 1:1, a known pair from design.md) and hue; verify `npm test` fails
-- [ ] 1.2 Implement the pure functions in `features/support/color.ts`; verify `npm test` passes
+- [x] 1.1 Add `features/support/**/*.test.ts` to the Vitest `include` in `vite.config.ts`, then write failing unit tests in `features/support/color.test.ts` for parsing `rgb()`/`rgba()` (and throwing on other formats), relative luminance, contrast ratio (black/white 21:1, equal colors 1:1, a known pair from design.md) and hue; verify `npm test` fails
+- [x] 1.2 Implement the pure functions in `features/support/color.ts`; verify `npm test` passes
 
 ## 2. Visual design scenarios (red)
 
