@@ -80,6 +80,25 @@ Then(
   },
 )
 
+Then('the display and body fonts are loaded', async ({ page }) => {
+  await page.evaluate(() => document.fonts.ready)
+  for (const family of ['Fraunces Variable', 'Nunito Variable']) {
+    await expect
+      .poll(() =>
+        page.evaluate(
+          (name) =>
+            [...document.fonts].some(
+              (face) =>
+                face.family.replace(/["']/g, '') === name &&
+                face.status === 'loaded',
+            ),
+          family,
+        ),
+      )
+      .toBe(true)
+  }
+})
+
 Then('all headings use the same typeface', async ({ page }) => {
   const families = new Set(
     (await readTextStyles(page, HEADINGS)).map((s) => s.fontFamily),
@@ -137,13 +156,17 @@ Then('the page does not scroll horizontally', async ({ page }) => {
 })
 
 Then('all content fits within the window width', async ({ page }) => {
-  const rights = await page
-    .locator('main, main *')
-    .evaluateAll((elements) =>
-      elements.map((element) => element.getBoundingClientRect().right),
-    )
+  const edges = await page.locator('main, main *').evaluateAll((elements) =>
+    elements.map((element) => {
+      const { left, right } = element.getBoundingClientRect()
+      return { left, right }
+    }),
+  )
   const width = page.viewportSize()!.width
-  for (const right of rights) expect(right).toBeLessThanOrEqual(width)
+  for (const { left, right } of edges) {
+    expect(left).toBeGreaterThanOrEqual(0)
+    expect(right).toBeLessThanOrEqual(width)
+  }
 })
 
 Then(
@@ -183,3 +206,20 @@ Then(
     }
   },
 )
+
+Then('no element animates or transitions', async ({ page }) => {
+  const moving = await page
+    .locator('html, body, body *')
+    .evaluateAll((elements) =>
+      elements
+        .filter((element) => {
+          const style = getComputedStyle(element)
+          const transitions = style.transitionDuration
+            .split(',')
+            .some((duration) => parseFloat(duration) > 0)
+          return style.animationName !== 'none' || transitions
+        })
+        .map((element) => element.tagName),
+    )
+  expect(moving).toEqual([])
+})

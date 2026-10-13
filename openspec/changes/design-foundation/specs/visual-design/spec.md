@@ -59,3 +59,10 @@ Every text on the card SHALL have a contrast ratio of at least 4.5:1 against the
 #### Scenario: Visitor reads every text comfortably
 - **WHEN** a visitor opens the home page
 - **THEN** the greeting, the intro, every family heading, message and author, and the finale heading, message and signature each have a contrast ratio of at least 4.5:1 against their background
+
+### Requirement: Styling adds no motion
+The card SHALL NOT animate or transition any of its content. All content SHALL be shown in its final style as soon as the page loads.
+
+#### Scenario: Visitor sees a static card
+- **WHEN** a visitor opens the home page
+- **THEN** no element on the card has an animation or a transition

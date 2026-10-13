@@ -2,7 +2,7 @@
 
 ## Context
 
-`src/index.css` only imports Tailwind. `App.tsx` and `FamilySection.tsx` render semantic markup (`main`, `section aria-labelledby`, `h1`/`h2`, `figure > blockquote + figcaption`) with a single utility class on the `h1`. Playwright runs Desktop Chrome only. The step "the heading is styled with Tailwind" pins the `h1` to 30px/700. Existing scroll scenarios assert that no element or ancestor has an animation or transition. Requirements: see `specs/visual-design/spec.md`.
+`src/index.css` only imports Tailwind. `App.tsx` and `FamilySection.tsx` render semantic markup (`main`, `section aria-labelledby`, `h1`/`h2`, `figure > blockquote + figcaption`) with a single utility class on the `h1`. Playwright runs Desktop Chrome only. The step "the heading is styled with Tailwind" pins the `h1` to 30px/700. The finale scenarios assert that the finale and its ancestors have no animation or transition; no other content is checked. Requirements: see `specs/visual-design/spec.md`.
 
 ## Goals / Non-Goals
 
@@ -57,10 +57,13 @@
 
 - `features/visual-design.feature` covers the spec scenarios. Width scenarios set the viewport per scenario (`page.setViewportSize`) instead of adding Playwright projects, so every other feature still runs once.
 - Steps read `getComputedStyle` in the page. The background behind a text is the first ancestor with a non-transparent `background-color`.
-- `features/support/color.ts` holds pure functions: parse `rgb()`, relative luminance and contrast ratio (WCAG 2.2), and hue. Unit tested with known values (black/white 21:1, equal colors 1:1). Vitest `include` adds `features/support/**/*.test.ts`.
-- "Dark warm background": luminance below 0.05 and a hue between 0° and 60°. "Light text": luminance above 0.5. "Red, orange or yellow": hue between 0° and 60° with high saturation.
-- Typeface checks compare the first family in computed `font-family`, not the whole stack.
+- `features/support/color.ts` holds pure functions: parse `rgb()`, relative luminance, contrast ratio (WCAG 2.2), hue and HSV saturation. Unit tested with known values (black/white 21:1, equal colors 1:1). Vitest `include` adds `features/support/**/*.test.ts`.
+- "Dark warm background": luminance below 0.05 and a warm hue (340° to 60°, which includes the maroon `night`). "Light text": luminance above 0.5. "Red, orange or yellow": a warm hue with HSV saturation above 0.5, which excludes the cream body text.
+- Typeface checks compare the first family in computed `font-family`, not the whole stack, and a separate step asserts that a `FontFace` for each family is `loaded`, so a missing font import cannot pass silently.
+- A scenario asserts that no element on the page (`html`, `body`, the React root and everything below) has an animation or transition.
+- The width check asserts both the left and right edge of every element are inside the window.
 - Third-party check: record every request on page load and assert all share the page's origin.
+- The step "a short browser window" grows from 160px to 640px tall: styled sections are taller than 160px, so they could no longer be scrolled fully into view. The page is still far taller than 640px, so the "not in view" checks keep their meaning.
 - The step "the heading is styled with Tailwind" and its line in `home.feature` are removed. It tested a utility class, not behavior, and the new scenarios cover styling.
 - Over a contrast library such as axe-core: one more dependency for a check that is a few lines of math.
 

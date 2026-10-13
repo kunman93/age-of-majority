@@ -8,7 +8,8 @@ Feature: Visual design
 
   Scenario: Visitor sees consistent typefaces
     When I open the home page
-    Then all headings use the same typeface
+    Then the display and body fonts are loaded
+    And all headings use the same typeface
     And all other text uses one typeface that differs from the headings
 
   Scenario: Visitor opens the card without third-party requests
@@ -34,3 +35,7 @@ Feature: Visual design
   Scenario: Visitor reads every text comfortably
     When I open the home page
     Then every text has a contrast ratio of at least 4.5 against its background
+
+  Scenario: Visitor sees a static card
+    When I open the home page
+    Then no element animates or transitions
