@@ -7,11 +7,7 @@ Read the [README.md](README.md) to understand what the repo is about.
 ## Working Style
 
 - Address the user as "Wannabe Unicorn".
-- Prefer the simplest solution that meets the acceptance criteria. Apply YAGNI. Prefer deletion over addition.
 - Be direct, concise, and honest. Call out bad ideas plainly.
-- Choose boring over clever.
-- Follow the conventions already present in the code over introducing new ones.
-- Prove behavior with executable validation before declaring work done.
 - If something's unclear, ask the user instead of guessing. Never assume.
 - Prefix every message that needs the user's action or decision with 🙋, and use 🙋 for nothing else.
 - Ask for permission before modifying anything outside the repository.
@@ -40,12 +36,40 @@ All work happens on feature branches. `main` is read-only: inspect it, but never
 
 ---
 
-## Coding Style
+## Engineering Principles
 
-- Do not add comments to config/source files that merely restate what's already
-  obvious from the element or identifier name. Only comment when it conveys
-  non-obvious rationale or context.
-- Never introduce secrets, tokens, or credentials into the repository.
+Apply to everyone who writes code or config here: the main session and every custom agent.
+
+**Priority rule:** KISS and YAGNI win ties. Prefer the simplest solution that meets the acceptance criteria, prefer deletion over addition, and choose boring over clever. Apply a principle below only when it makes the code simpler to change, test or read, and you can say how in one sentence. Otherwise leave it out: no speculative abstraction, no pattern for its own sake.
+
+### Code level
+
+- Follow the conventions already present in the code over introducing new ones.
+- Clean Code: intention-revealing names, small focused functions, no dead code. Do not add comments to config/source files that merely restate what is already obvious from the element or identifier name. Only comment when it conveys non-obvious rationale or context.
+- DRY with the rule of three: tolerate duplication until the third occurrence. The wrong abstraction costs more than duplication.
+- Prefer immutability and pure functions.
+- Fail fast: validate at the boundaries and never swallow errors.
+
+### Design level
+
+- SOLID, pragmatically. Single responsibility and dependency inversion pay off most. Apply the others when they fit.
+- Composition over inheritance.
+- Law of Demeter: do not reach through objects.
+- Use a design pattern only for a recurring problem you already have, never pre-emptively.
+
+### Architecture level
+
+- Separation of concerns: functional core, imperative shell. Keep domain logic pure and free of UI, I/O and framework code. Dependencies point inward.
+- Full Onion or Hexagonal layering (ports and adapters) only once there is a real backend or several adapters to justify it.
+
+### Quality level
+
+- TDD, and prove behavior with executable validation before declaring work done. Test behavior, not implementation, and keep the test pyramid: many unit tests, few end-to-end tests.
+- Boy Scout rule, limited to code you are already touching.
+- Minimal dependencies: justify every new package.
+- Secure by default: never introduce secrets, tokens, or credentials into the repository, sanitize input, use least privilege.
+
+Language- and framework-specific readings of these principles live in skills, for example `.agents/skills/react-ui`.
 
 ---
 
@@ -114,7 +138,8 @@ Runs on Sonnet 5.5.
 
 Runs on Sonnet 5.5 in the main session.
 
-- Implement the tasks from the change with the `openspec-apply-change` skill (`/opsx-apply`), applying TDD, and make atomic commits with the `.agents/skills/git-commit` skill.
+- Implement the tasks from the change with the `openspec-apply-change` skill (`/opsx-apply`), applying TDD, and make atomic commits with the `.agents/skills/git-commit` skill, following [Engineering Principles](#engineering-principles).
+- For UI, animation or 3D work, load the `react-ui` skill, the relevant `gsap-*` skills and the `threejs` skill (`.agents/skills/`). The `react-developer` agent ([.github/agents/react-developer.agent.md](.github/agents/react-developer.agent.md)) is not started automatically. Use it as a subagent only when the user asks for it.
 - When done, verify the work with the commands from [2. Verify clean state](#2-verify-clean-state).
 - Then continue directly with [7. Review](#7-review) without asking the user.
 

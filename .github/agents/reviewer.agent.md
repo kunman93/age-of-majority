@@ -38,7 +38,7 @@ Check, in this order:
 3. **Correctness.** Read every changed function fully and trace at least one concrete failing scenario per nontrivial change: null/empty handling, boundary and off-by-one errors, error paths, resource leaks, race conditions.
 4. **Test quality, not just presence.** For each new or changed test, ask what it would actually catch. Would it still pass if the implementation were wrong? A test file existing is not coverage.
 5. **Performance and resource use.** Blocking work on the wrong thread, N+1 queries, unbounded loops or collections, repeated remote calls per user action, obvious hot-path waste.
-6. **Conventions.** Does the change follow the project's existing patterns, layering, naming, and dependency-management rules? Flag deviations, not personal style preferences.
+6. **Conventions.** Does the change follow the project's existing patterns, layering, naming, and dependency-management rules? Flag deviations, not personal style preferences. Also flag a violation of the Engineering Principles in `AGENTS.md#engineering-principles`, such as an abstraction, pattern or dependency that does not make the code simpler to change, test or read.
 7. **Verification.** Run the tests and linter yourself; do not trust a reported result. These commands must not modify tracked files (ignored build artifacts like `target/` or coverage output are fine).
    ```bash
    npm test
