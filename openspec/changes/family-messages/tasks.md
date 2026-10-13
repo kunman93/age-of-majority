@@ -18,7 +18,7 @@
 
 - [x] 4.1 Add a test in `src/App.test.tsx` that the family headings "Family Lorem", "Family Ipsum", "Family Dolor" are rendered in order after the intro; verify it fails with `npm test`
 - [x] 4.2 Render `families` with `FamilySection` after the intro in `src/App.tsx`; verify `npm test` passes
-- [ ] 4.3 Add `features/families.feature` with scenarios for the family order below the intro, the authors in each family section, and scrolling to "Family Dolor" showing its heading and messages, plus the steps in `features/steps/families.steps.ts`; verify `npm run test:bdd` passes
+- [x] 4.3 Add `features/families.feature` with scenarios for the family order below the intro, the authors in each family section, and scrolling to "Family Dolor" showing its heading and messages, plus the steps in `features/steps/families.steps.ts`; verify `npm run test:bdd` passes
 
 ## 5. Verification
 
