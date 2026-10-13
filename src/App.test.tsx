@@ -6,7 +6,7 @@ it('renders the birthday heading', () => {
   render(<App />)
 
   expect(
-    screen.getByRole('heading', { name: 'Happy Age of Majority!' }),
+    screen.getByRole('heading', { name: 'Happy 18th Birthday, Sara!' }),
   ).toBeInTheDocument()
-  expect(screen.queryByText('Happy 18th Birthday!')).toBeNull()
+  expect(screen.queryByText('Happy Age of Majority!')).toBeNull()
 })

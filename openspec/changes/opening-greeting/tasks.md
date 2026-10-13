@@ -2,9 +2,9 @@
 
 ## 1. Greeting heading
 
-- [ ] 1.1 Update `src/App.test.tsx` to expect the heading "Happy 18th Birthday, Sara!" and no "Happy Age of Majority!"; verify it fails with `npm test`
-- [ ] 1.2 Change the heading in `src/App.tsx`, keeping its Tailwind classes; verify `npm test` passes
-- [ ] 1.3 Update `features/home.feature` to the new heading text; verify `npm run test:bdd` passes
+- [x] 1.1 Update `src/App.test.tsx` to expect the heading "Happy 18th Birthday, Sara!" and no "Happy Age of Majority!"; verify it fails with `npm test`
+- [x] 1.2 Change the heading in `src/App.tsx`, keeping its Tailwind classes; verify `npm test` passes
+- [x] 1.3 Update `features/home.feature` to the new heading text; verify `npm run test:bdd` passes
 
 ## 2. Intro paragraph
 
