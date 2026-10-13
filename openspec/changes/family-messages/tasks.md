@@ -6,8 +6,8 @@
 
 ## 2. Family data
 
-- [ ] 2.1 Add `src/families.test.ts` asserting the families are "Family Lorem", "Family Ipsum", "Family Dolor" in order, the authors per family match the spec (Lorem: Family Lorem; Ipsum: Anna Ipsum, Ben Ipsum; Dolor: Family Dolor, Clara Dolor), and every text starts with "Lorem ipsum"; verify it fails with `npm test`
-- [ ] 2.2 Create `src/families.ts` with the `Message` and `Family` types and the `families` data as in design.md; verify `npm test` passes
+- [x] 2.1 Add `src/families.test.ts` asserting the families are "Family Lorem", "Family Ipsum", "Family Dolor" in order, the authors per family match the spec (Lorem: Family Lorem; Ipsum: Anna Ipsum, Ben Ipsum; Dolor: Family Dolor, Clara Dolor), and every text starts with "Lorem ipsum"; verify it fails with `npm test`
+- [x] 2.2 Create `src/families.ts` with the `Message` and `Family` types and the `families` data as in design.md; verify `npm test` passes
 
 ## 3. Family section
 
