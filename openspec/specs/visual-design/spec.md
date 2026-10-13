@@ -60,7 +60,7 @@ Every text on the card SHALL have a contrast ratio of at least 4.5:1 against the
 - **THEN** the greeting, the intro, every family heading, message and author, and the finale heading, message and signature each have a contrast ratio of at least 4.5:1 against their background
 
 ### Requirement: Styling adds no motion
-The card SHALL NOT animate or transition any of its content. All content SHALL be shown in its final style as soon as the page loads.
+The card SHALL NOT animate or transition any of its content: the greeting, the intro, the family sections and the finale. All content SHALL be shown in its final style as soon as the page loads. The decorative background behind the content is not content; its motion is governed by the `background-scene` capability.
 
 #### Scenario: Visitor sees a static card
 - **WHEN** a visitor opens the home page
