@@ -5,7 +5,7 @@ description: 'Finish a Story, bug fix or chore in the AGENTS.md implementation w
 
 # Finish a Story, Bug Fix or Chore
 
-Procedures for steps 8 (Create PR), 9 (Archive) and 10 (Merge) of the Story Workflow in `AGENTS.md`. The Bug Fix and Chore Workflows use Create PR and Merge, and run Finalize history without its archive sub-step before Merge. The approval gates stay in `AGENTS.md`. Every step runs on Sonnet 5.5, so run the model check from step 0 first.
+Procedures for steps 8 (Create PR), 9 (Archive) and 10 (Merge) of the Story Workflow in `AGENTS.md`. The Bug Fix and Chore Workflows use Create PR and Merge, and run Finalize history without its archive sub-step before Merge. The approval gates stay in `AGENTS.md`. Every step runs on Sonnet 5.5, so run the model and agent check from step 0 first.
 
 ## Create PR (step 8)
 
@@ -19,6 +19,8 @@ Before creating the PR, clean up the history into atomic commits:
 
 Then push the feature branch and create a PR targeting `main`. If the branch was already pushed, push with
 `git push --force-with-lease --force-if-includes`.
+
+Whenever you create a PR, always give the user its URL in this form: `🔀 PR: <url>`.
 
 After the first push, do not rewrite the history during review. Fix CI failures and review findings with
 `git commit --fixup=<sha>` commits targeting the commit they belong to, and push them normally, so the user can
