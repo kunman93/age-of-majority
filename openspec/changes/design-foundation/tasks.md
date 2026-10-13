@@ -11,8 +11,8 @@
 
 ## 3. Tokens and fonts
 
-- [ ] 3.1 Install `@fontsource-variable/fraunces` and `@fontsource-variable/nunito` as dependencies and import them in `src/main.tsx`; verify `npm run build` succeeds and the built `dist/assets` contains woff2 files
-- [ ] 3.2 Define the color and font tokens in `@theme` and the base styles (`color-scheme: dark`, page background, body text and font, heading font) in `src/index.css` as in design.md; verify the warm look, typeface and third-party scenarios pass with `npm run test:bdd`
+- [x] 3.1 Install `@fontsource-variable/fraunces` and `@fontsource-variable/nunito` as dependencies and import them in `src/main.tsx`; verify `npm run build` succeeds and the built `dist/assets` contains woff2 files
+- [x] 3.2 Define the color and font tokens in `@theme` and the base styles (`color-scheme: dark`, page background, body text and font, heading font) in `src/index.css` as in design.md; verify the warm look, typeface and third-party scenarios pass with `npm run test:bdd`
 
 ## 4. Layout and component styling
 
