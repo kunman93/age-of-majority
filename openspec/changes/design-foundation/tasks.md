@@ -16,9 +16,9 @@
 
 ## 4. Layout and component styling
 
-- [ ] 4.1 Style `src/App.tsx` (main column, greeting, intro, finale) and `src/FamilySection.tsx` (family heading, message cards, author) mobile first with the token utilities as in design.md, without any transition or animation; verify all scenarios in `features/visual-design.feature` and the existing features pass with `npm run test:bdd`, and `npm test` still passes
+- [x] 4.1 Style `src/App.tsx` (main column, greeting, intro, finale) and `src/FamilySection.tsx` (family heading, message cards, author) mobile first with the token utilities as in design.md, without any transition or animation; verify all scenarios in `features/visual-design.feature` and the existing features pass with `npm run test:bdd`, and `npm test` still passes
 
 ## 5. Verification
 
-- [ ] 5.1 Run `npm run build`, `npm test`, `npm run test:bdd`, `npm run lint` and `npm run format:check`; verify all pass
-- [ ] 5.2 Check the card by eye in a browser at 375px, 768px and 1280px and confirm it looks warm and polished; record any visual issue as a follow-up task before finishing
+- [x] 5.1 Run `npm run build`, `npm test`, `npm run test:bdd`, `npm run lint` and `npm run format:check`; verify all pass
+- [x] 5.2 Check the card by eye in a browser at 375px, 768px and 1280px and confirm it looks warm and polished; record any visual issue as a follow-up task before finishing

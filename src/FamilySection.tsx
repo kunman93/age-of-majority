@@ -5,14 +5,26 @@ function FamilySection({ family }: { family: Family }) {
   const headingId = useId()
 
   return (
-    <section aria-labelledby={headingId}>
-      <h2 id={headingId}>{family.name}</h2>
+    <section aria-labelledby={headingId} className="space-y-6">
+      <h2
+        id={headingId}
+        className="text-tangerine text-2xl font-bold break-words sm:text-3xl"
+      >
+        {family.name}
+      </h2>
       {family.messages.map((message, index) => (
-        <figure key={index}>
+        <figure
+          key={index}
+          className="bg-plum border-ember space-y-3 rounded-lg border-l-4 p-5 sm:p-6"
+        >
           <blockquote>
-            <p>{message.text}</p>
+            <p className="text-base leading-relaxed break-words sm:text-lg">
+              {message.text}
+            </p>
           </blockquote>
-          <figcaption>{message.author}</figcaption>
+          <figcaption className="text-blush text-base font-semibold break-words">
+            {message.author}
+          </figcaption>
         </figure>
       ))}
     </section>
