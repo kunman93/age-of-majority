@@ -20,6 +20,8 @@ Before creating the PR, clean up the history into atomic commits:
 Then push the feature branch and create a PR targeting `main`. If the branch was already pushed, push with
 `git push --force-with-lease --force-if-includes`.
 
+Whenever you create a PR, always give the user its URL in this form: `🔀 PR: <url>`.
+
 After the first push, do not rewrite the history during review. Fix CI failures and review findings with
 `git commit --fixup=<sha>` commits targeting the commit they belong to, and push them normally, so the user can
 review incremental changes. They are squashed in [Finalize history](#finalize-history). Never reword `fixup!` subjects
