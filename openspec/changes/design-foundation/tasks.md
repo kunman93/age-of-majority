@@ -7,7 +7,7 @@
 
 ## 2. Visual design scenarios (red)
 
-- [ ] 2.1 Add `features/visual-design.feature` with the spec scenarios (warm look, consistent typefaces, no third-party requests, phone, tablet and desktop widths, legible body text, readable contrast) and steps in `features/steps/visual-design.steps.ts` as in design.md; remove the step "the heading is styled with Tailwind" from `features/home.feature` and `features/steps/home.steps.ts`; verify `npm run test:bdd` runs and the new scenarios fail for the expected reasons
+- [x] 2.1 Add `features/visual-design.feature` with the spec scenarios (warm look, consistent typefaces, no third-party requests, phone, tablet and desktop widths, legible body text, readable contrast) and steps in `features/steps/visual-design.steps.ts` as in design.md; remove the step "the heading is styled with Tailwind" from `features/home.feature` and `features/steps/home.steps.ts`; verify `npm run test:bdd` runs and the new scenarios fail for the expected reasons
 
 ## 3. Tokens and fonts
 

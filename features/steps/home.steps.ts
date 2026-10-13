@@ -11,12 +11,6 @@ Then('I see the heading {string}', async ({ page }, name: string) => {
   await expect(page.getByRole('heading', { name, exact: true })).toBeVisible()
 })
 
-Then('the heading is styled with Tailwind', async ({ page }) => {
-  const heading = page.getByRole('heading', { level: 1 })
-  await expect(heading).toHaveCSS('font-size', '30px')
-  await expect(heading).toHaveCSS('font-weight', '700')
-})
-
 Then('I see the intro {string}', async ({ page }, text: string) => {
   await expect(page.getByText(text, { exact: true })).toBeVisible()
 })
