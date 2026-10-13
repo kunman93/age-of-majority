@@ -56,4 +56,12 @@ it('keeps families with the same name as separate regions', () => {
   expect(within(regions[0]).getByText('First text')).toBeInTheDocument()
   expect(within(regions[0]).queryByText('Other text')).toBeNull()
   expect(within(regions[1]).getByText('Other text')).toBeInTheDocument()
+
+  const headings = regions.map((region) =>
+    within(region).getByRole('heading', { level: 2 }),
+  )
+  regions.forEach((region, index) =>
+    expect(region.getAttribute('aria-labelledby')).toBe(headings[index].id),
+  )
+  expect(headings[0].id).not.toBe(headings[1].id)
 })

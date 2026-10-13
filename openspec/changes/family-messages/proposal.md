@@ -26,7 +26,8 @@ _None._
 
 ## Impact
 
-- New `src/families.ts`: family and message types plus the placeholder data.
+- New `src/families.ts`: family and message types plus the placeholder data, with `src/families.test.ts`.
+- New `src/FamilySection.tsx` (one family's section) with `src/FamilySection.test.tsx`.
 - `src/App.tsx`: renders the family sections below the intro.
 - `src/App.test.tsx`, `features/`: new unit and BDD tests. Existing BDD steps that locate "the" heading or "the" paragraph without a name must become specific, because the page will then have several headings and paragraphs.
 - No new dependencies.

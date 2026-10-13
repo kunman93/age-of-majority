@@ -34,7 +34,7 @@ Each family section SHALL show all messages of that family. Each message SHALL s
 - **THEN** the visitor sees exactly two messages, signed by "Family Dolor" and "Clara Dolor"
 
 ### Requirement: Messages are Lorem ipsum placeholders stored in the repo
-Every message text SHALL be Lorem ipsum placeholder text, and all families and messages SHALL be stored in the repository and shown without any network request.
+Every message text SHALL be Lorem ipsum placeholder text, and all families and messages SHALL be stored in the repository.
 
 #### Scenario: Message texts are placeholders
 - **WHEN** a visitor reads any message

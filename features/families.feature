@@ -12,6 +12,9 @@ Feature: Families
     And the family "Family Dolor" has messages signed by "Family Dolor, Clara Dolor"
 
   Scenario: Visitor scrolls to the last family
+    Given a short browser window
     When I open the home page
-    And I scroll to the family "Family Dolor"
+    Then the family "Family Dolor" is not in view
+    When I scroll to the family "Family Dolor"
     Then the family "Family Dolor" and its messages are visible
+    And the page scrolls without animation

@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test'
 import { createBdd } from 'playwright-bdd'
 
-const { When, Then } = createBdd()
+const { Given, When, Then } = createBdd()
 
 const names = (list: string) => list.split(', ')
 
@@ -31,6 +31,16 @@ Then(
   },
 )
 
+Given('a short browser window', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 160 })
+})
+
+Then('the family {string} is not in view', async ({ page }, family: string) => {
+  await expect(
+    page.getByRole('region', { name: family }).getByRole('heading'),
+  ).not.toBeInViewport()
+})
+
 When('I scroll to the family {string}', async ({ page }, family: string) => {
   await page.getByRole('region', { name: family }).scrollIntoViewIfNeeded()
 })
@@ -42,6 +52,13 @@ Then(
     await expect(region.getByRole('heading', { name: family })).toBeInViewport()
     for (const message of await region.getByRole('figure').all()) {
       await expect(message).toBeInViewport()
+      await expect(message).toHaveCSS('opacity', '1')
     }
   },
 )
+
+Then('the page scrolls without animation', async ({ page }) => {
+  const root = page.locator('html')
+  await expect(root).toHaveCSS('scroll-behavior', 'auto')
+  await expect(root).toHaveCSS('scroll-snap-type', 'none')
+})
