@@ -23,7 +23,10 @@ class BackgroundErrorBoundary extends Component<
 function Background() {
   const prefersReducedMotion = usePrefersReducedMotion()
   const pageVisible = usePageVisible()
-  const [webGLSupported] = useState(supportsWebGL)
+  const [webGLSupported, setWebGLSupported] = useState<boolean>()
+  if (!prefersReducedMotion && webGLSupported === undefined) {
+    setWebGLSupported(supportsWebGL())
+  }
 
   return (
     <>
