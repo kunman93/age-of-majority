@@ -6,12 +6,12 @@
 
 ## 2. Family data
 
-- [ ] 2.1 Add `src/families.test.ts` asserting the families are "Family Lorem", "Family Ipsum", "Family Dolor" in order, the names are unique, the authors per family match the spec (Lorem: Family Lorem; Ipsum: Anna Ipsum, Ben Ipsum; Dolor: Family Dolor, Clara Dolor), and every text starts with "Lorem ipsum"; verify it fails with `npm test`
+- [ ] 2.1 Add `src/families.test.ts` asserting the families are "Family Lorem", "Family Ipsum", "Family Dolor" in order, the authors per family match the spec (Lorem: Family Lorem; Ipsum: Anna Ipsum, Ben Ipsum; Dolor: Family Dolor, Clara Dolor), and every text starts with "Lorem ipsum"; verify it fails with `npm test`
 - [ ] 2.2 Create `src/families.ts` with the `Message` and `Family` types and the `families` data as in design.md; verify `npm test` passes
 
 ## 3. Family section
 
-- [ ] 3.1 Add `src/FamilySection.test.tsx` rendering a test family with two messages, asserting a region named by the family, an `h2` with the name, and each text followed by its author; verify it fails with `npm test`
+- [ ] 3.1 Add `src/FamilySection.test.tsx` rendering a test family with two messages, asserting a region named by the family, an `h2` with the name, and each text followed by its author; also render two families with the same name and assert each region has its own label and messages; verify it fails with `npm test`
 - [ ] 3.2 Create `src/FamilySection.tsx` with the `section` / `h2` / `figure` markup from design.md; verify `npm test` passes
 
 ## 4. Families on the card
