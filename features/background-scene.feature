@@ -6,7 +6,7 @@ Feature: Background scene
     Then exactly one canvas covers the whole viewport behind the content
     And the canvas is hidden from assistive technology
     And the canvas does not catch pointer input
-    And the 3D scene was downloaded separately
+    And the 3D scene was downloaded
 
   Scenario: Background stays in place while scrolling
     Given a short browser window
@@ -44,7 +44,8 @@ Feature: Background scene
   Scenario: Visitor on a high-density screen
     Given the screen has a device pixel ratio of 3
     When I open the home page
-    Then exactly one canvas covers the whole viewport behind the content
+    Then the page has a device pixel ratio of 3
+    And exactly one canvas covers the whole viewport behind the content
     And the canvas has at most 2 device pixels per CSS pixel
 
   Scenario: Visitor switches to another tab
@@ -61,6 +62,16 @@ Feature: Background scene
     When I open the home page
     Then the 3D scene is rendering
     And every text has a contrast ratio of at least 4.5 against the brightest pixel of the background
+    And the embers are visible on the background
+
+  Scenario: Visitor turns on reduced motion while the card is open
+    When I open the home page
+    Then exactly one canvas covers the whole viewport behind the content
+    And I keep a handle to the canvas rendering context
+    When the visitor turns on reduced motion
+    Then no canvas is shown
+    And the held rendering context is released
+    And the static glow covers the whole viewport behind the content
 
   Scenario: Visitor reads text over the static glow
     Given the visitor prefers reduced motion

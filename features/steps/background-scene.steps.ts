@@ -125,7 +125,7 @@ Then('the greeting is shown', async ({ page }) => {
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
 })
 
-Then('the 3D scene was downloaded separately', async ({ page }) => {
+Then('the 3D scene was downloaded', async ({ page }) => {
   await expect
     .poll(() => requestUrls.get(page)!.some((url) => SCENE_CHUNK.test(url)))
     .toBe(true)
@@ -162,17 +162,27 @@ const expectToCoverViewport = async (page: Page, selector: string) => {
   expect(box.top).toBe(0)
   expect(box.width).toBe(box.viewportWidth)
   expect(box.height).toBe(box.viewportHeight)
+  // pointer-events: none hides the background from hit testing, so make it
+  // hit-testable to prove it is painted below the content
   const contentIsOnTop = await page.evaluate(() => {
-    const visibleText = [...document.querySelectorAll('h1, h2, main p')].find(
-      (element) => {
-        const { top, bottom } = element.getBoundingClientRect()
-        return top >= 0 && bottom <= window.innerHeight
-      },
-    )
-    if (!visibleText) return false
-    const { left, top, width, height } = visibleText.getBoundingClientRect()
-    const hit = document.elementFromPoint(left + width / 2, top + height / 2)
-    return hit !== null && visibleText.contains(hit)
+    const style = document.createElement('style')
+    style.textContent =
+      '[aria-hidden="true"], [aria-hidden="true"] * { pointer-events: auto !important }'
+    document.head.append(style)
+    try {
+      const visibleText = [...document.querySelectorAll('h1, h2, main p')].find(
+        (element) => {
+          const { top, bottom } = element.getBoundingClientRect()
+          return top >= 0 && bottom <= window.innerHeight
+        },
+      )
+      if (!visibleText) return false
+      const { left, top, width, height } = visibleText.getBoundingClientRect()
+      const hit = document.elementFromPoint(left + width / 2, top + height / 2)
+      return hit !== null && visibleText.contains(hit)
+    } finally {
+      style.remove()
+    }
   })
   expect(contentIsOnTop).toBe(true)
 }
@@ -274,3 +284,80 @@ Then(
     }
   },
 )
+
+Then(
+  'the page has a device pixel ratio of {int}',
+  async ({ page }, ratio: number) => {
+    expect(await page.evaluate(() => window.devicePixelRatio)).toBe(ratio)
+  },
+)
+
+Then('I keep a handle to the canvas rendering context', async ({ page }) => {
+  // The renderer is set up once the canvas leaves its 300px default width
+  await expect
+    .poll(() =>
+      page.locator('canvas').evaluate((c) => (c as HTMLCanvasElement).width),
+    )
+    .not.toBe(300)
+  await page.locator('canvas').evaluate((canvas) => {
+    const context =
+      (canvas as HTMLCanvasElement).getContext('webgl2') ??
+      (canvas as HTMLCanvasElement).getContext('webgl')
+    ;(window as unknown as { heldContext: unknown }).heldContext = context
+  })
+})
+
+When('the visitor turns on reduced motion', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+})
+
+Then('the held rendering context is released', async ({ page }) => {
+  await expect
+    .poll(() =>
+      page.evaluate(() =>
+        (
+          window as unknown as { heldContext: WebGLRenderingContext }
+        ).heldContext.isContextLost(),
+      ),
+    )
+    .toBe(true)
+})
+
+const countDifferingPixels = (page: Page, first: Buffer, second: Buffer) =>
+  page.evaluate(
+    async ([a, b]) => {
+      const read = async (base64: string) => {
+        const image = new Image()
+        image.src = `data:image/png;base64,${base64}`
+        await image.decode()
+        const canvas = document.createElement('canvas')
+        canvas.width = image.width
+        canvas.height = image.height
+        const context = canvas.getContext('2d')!
+        context.drawImage(image, 0, 0)
+        return context.getImageData(0, 0, canvas.width, canvas.height).data
+      }
+      const [left, right] = [await read(a), await read(b)]
+      let differing = 0
+      for (let i = 0; i < left.length; i += 4) {
+        if (
+          left[i] !== right[i] ||
+          left[i + 1] !== right[i + 1] ||
+          left[i + 2] !== right[i + 2]
+        )
+          differing += 1
+      }
+      return differing
+    },
+    [first.toString('base64'), second.toString('base64')],
+  )
+
+Then('the embers are visible on the background', async ({ page }) => {
+  await page.addStyleTag({ content: 'main { visibility: hidden }' })
+  const withEmbers = await page.screenshot()
+  await page.addStyleTag({ content: 'canvas { visibility: hidden }' })
+  const withoutEmbers = await page.screenshot()
+  expect(
+    await countDifferingPixels(page, withEmbers, withoutEmbers),
+  ).toBeGreaterThan(0)
+})
