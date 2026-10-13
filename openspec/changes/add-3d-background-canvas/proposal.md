@@ -30,7 +30,7 @@ Out of scope: the morphing 3D object (#35), scroll reveals and the background co
 
 - New `src/background/` module: the background shell (fallback, reduced-motion and WebGL checks, page visibility), the lazy-loaded R3F canvas and the ember scene, plus pure ember math.
 - `src/App.tsx`: renders the background next to `<main>`.
-- `src/index.css`: a glow token and the static glow.
+- `src/index.css`: the `--color-glow` token. The static glow itself is Tailwind classes in the background shell.
 - New BDD feature `features/background-scene.feature` with steps; `features/steps/visual-design.steps.ts` unchanged.
 - New dependencies: `three` and `@react-three/fiber` (runtime), `@types/three` and `@react-three/test-renderer` (dev, to test the scene and its disposal without a GPU). No drei, because nothing needs it yet.
 - Bundle: three.js adds roughly 240 KB gzip in a separate, lazily loaded chunk; the initial chunk grows only by the small shell.
