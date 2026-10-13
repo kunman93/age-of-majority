@@ -93,6 +93,6 @@ App
 - [SwiftShader in CI could be missing or slow] → It works locally in headless Chromium; if CI lacks it, launch Chromium with `--enable-unsafe-swiftshader` in `playwright.config.ts`. Draw-count checks use growth over time, not an FPS number.
 - [Vite dev re-optimizing deps on first visit reloads the page mid-test] → Vite crawls dynamic imports at startup; if a reload still shows up, add `three` and `@react-three/fiber` to `optimizeDeps.include`.
 - [Additive embers overlapping could exceed the luminance limit] → Opacity is capped well below the limit and the screenshot check catches regressions. Message cards sit on opaque `plum`, so the check is conservative.
-- [three.js is about 150 KB gzip] → In its own lazy chunk, after the text is on screen, and never for fallback visitors. #38 owns the performance budget.
+- [three.js is about 240 KB gzip] → In its own lazy chunk, after the text is on screen, and never for fallback visitors. #38 owns the performance budget.
 - [The screenshot contrast check samples one moment] → Embers are uniform in brightness, so any frame shows the same peak; the glow is static.
 - [Manual verification on iOS/Android Safari, Chrome and Firefox is out of reach of CI] → Covered by #38; this change keeps to features supported everywhere (WebGL 1 fallback, no float textures, no post-processing).

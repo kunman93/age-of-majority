@@ -33,4 +33,4 @@ Out of scope: the morphing 3D object (#35), scroll reveals and the background co
 - `src/index.css`: a glow token and the static glow.
 - New BDD feature `features/background-scene.feature` with steps; `features/steps/visual-design.steps.ts` unchanged.
 - New dependencies: `three` and `@react-three/fiber` (runtime), `@types/three` and `@react-three/test-renderer` (dev, to test the scene and its disposal without a GPU). No drei, because nothing needs it yet.
-- Bundle: three.js adds roughly 150 KB gzip in a separate, lazily loaded chunk; the initial chunk grows only by the small shell.
+- Bundle: three.js adds roughly 240 KB gzip in a separate, lazily loaded chunk; the initial chunk grows only by the small shell.
