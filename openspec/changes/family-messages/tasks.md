@@ -2,7 +2,7 @@
 
 ## 1. Make existing BDD steps robust to more headings and paragraphs
 
-- [ ] 1.1 In `features/steps/home.steps.ts`, locate the `h1` by name in "the heading is styled with Tailwind" and the intro by its text in "the intro is below the heading"; verify `npm run test:bdd` still passes
+- [x] 1.1 In `features/steps/home.steps.ts`, locate the `h1` by name in "the heading is styled with Tailwind" and the intro by its text in "the intro is below the heading"; verify `npm run test:bdd` still passes
 
 ## 2. Family data
 
