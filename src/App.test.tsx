@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { expect, it } from 'vitest'
 import App from './App'
 
@@ -29,7 +29,10 @@ it('renders the family headings in order after the intro', () => {
   render(<App />)
 
   const intro = screen.getByText(/^Today you come of age/)
-  const headings = screen.getAllByRole('heading', { level: 2 })
+  const headings = screen.getAllByRole('heading', {
+    level: 2,
+    name: /^Family /,
+  })
   expect(headings.map((heading) => heading.textContent)).toEqual([
     'Family Lorem',
     'Family Ipsum',
@@ -40,4 +43,23 @@ it('renders the family headings in order after the intro', () => {
       intro.compareDocumentPosition(heading) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy(),
   )
+})
+
+it('renders the finale after the last family', () => {
+  const { container } = render(<App />)
+
+  const lastFamily = screen.getByRole('heading', { name: 'Family Dolor' })
+  const finale = screen.getByRole('region', { name: "Here's to you, Sara!" })
+  const heading = within(finale).getByRole('heading')
+  const message = within(finale).getByText(
+    'Eighteen years of you, and the best is still ahead. Whatever you choose next, your family is cheering you on. Happy birthday!',
+  )
+  const signature = within(finale).getByText('With love, your family')
+  const follows = (a: Node, b: Node) =>
+    a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING
+  expect(follows(lastFamily, finale)).toBeTruthy()
+  expect(follows(heading, message)).toBeTruthy()
+  expect(follows(message, signature)).toBeTruthy()
+  expect(finale.nextElementSibling).toBeNull()
+  expect(container.lastElementChild).toBe(finale.parentElement)
 })
