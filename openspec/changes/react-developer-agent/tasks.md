@@ -2,8 +2,8 @@
 
 ## 1. Vendored GSAP skills
 
-- [ ] 1.1 Copy `skills/<name>/SKILL.md` and the root `LICENSE` from `greensock/gsap-skills` at commit `aed9cfd3277740755f6bfc1155c7aa645403b760` into `.agents/skills/<name>/SKILL.md` and `.agents/skills/<name>/LICENSE` for `gsap-core`, `gsap-react`, `gsap-timeline`, `gsap-scrolltrigger`, `gsap-plugins`, `gsap-performance`, `gsap-utils`. Verify byte equality for all 14 files against `gh api "repos/greensock/gsap-skills/contents/<path>?ref=<commit>" --jq .content | base64 -d`, and that `.agents/skills/gsap-frameworks` does not exist.
-- [ ] 1.2 Add `.agents/skills/VENDORED.md` with the source repository, the pinned commit, the 7 vendored skills, the skipped `gsap-frameworks` and why, and the update procedure (re-copy at a new commit, re-run the byte comparison from 1.1). Verify by reading it and checking that the commit in it matches the one used in 1.1.
+- [x] 1.1 Copy `skills/<name>/SKILL.md` and the root `LICENSE` from `greensock/gsap-skills` at commit `aed9cfd3277740755f6bfc1155c7aa645403b760` into `.agents/skills/<name>/SKILL.md` and `.agents/skills/<name>/LICENSE` for `gsap-core`, `gsap-react`, `gsap-timeline`, `gsap-scrolltrigger`, `gsap-plugins`, `gsap-performance`, `gsap-utils`. Verify byte equality for all 14 files against `gh api "repos/greensock/gsap-skills/contents/<path>?ref=<commit>" --jq .content | base64 -d`, and that `.agents/skills/gsap-frameworks` does not exist.
+- [x] 1.2 Add `.agents/skills/VENDORED.md` with the source repository, the pinned commit, the 7 vendored skills, the skipped `gsap-frameworks` and why, and the update procedure (re-copy at a new commit, re-run the byte comparison from 1.1). Verify by reading it and checking that the commit in it matches the one used in 1.1.
 
 ## 2. Own skills
 
