@@ -14,7 +14,7 @@
 
 ## 3. Verification
 
-- [ ] 3.1 Run `npm run build`, `npm test`, `npm run test:bdd`, `npm run lint` and `npm run format:check`; verify all pass
+- [x] 3.1 Run `npm run build`, `npm test`, `npm run test:bdd`, `npm run lint` and `npm run format:check`; verify all pass
 
 ## Workflow follow-up
 
