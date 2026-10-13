@@ -24,3 +24,20 @@ it('renders the intro below the heading', () => {
     heading.compareDocumentPosition(intro) & Node.DOCUMENT_POSITION_FOLLOWING,
   ).toBeTruthy()
 })
+
+it('renders the family headings in order after the intro', () => {
+  render(<App />)
+
+  const intro = screen.getByText(/^Today you come of age/)
+  const headings = screen.getAllByRole('heading', { level: 2 })
+  expect(headings.map((heading) => heading.textContent)).toEqual([
+    'Family Lorem',
+    'Family Ipsum',
+    'Family Dolor',
+  ])
+  headings.forEach((heading) =>
+    expect(
+      intro.compareDocumentPosition(heading) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy(),
+  )
+})

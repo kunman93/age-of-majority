@@ -1,3 +1,6 @@
+import FamilySection from './FamilySection'
+import { families } from './families'
+
 function App() {
   return (
     <main>
@@ -7,6 +10,9 @@ function App() {
         and far, to celebrate you and everything ahead of you. Scroll on and
         read what they have to say.
       </p>
+      {families.map((family, index) => (
+        <FamilySection key={index} family={family} />
+      ))}
     </main>
   )
 }

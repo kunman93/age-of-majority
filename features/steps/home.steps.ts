@@ -12,7 +12,7 @@ Then('I see the heading {string}', async ({ page }, name: string) => {
 })
 
 Then('the heading is styled with Tailwind', async ({ page }) => {
-  const heading = page.getByRole('heading')
+  const heading = page.getByRole('heading', { level: 1 })
   await expect(heading).toHaveCSS('font-size', '30px')
   await expect(heading).toHaveCSS('font-weight', '700')
 })
@@ -22,7 +22,7 @@ Then('I see the intro {string}', async ({ page }, text: string) => {
 })
 
 Then('the intro is below the heading', async ({ page }) => {
-  const heading = await page.getByRole('heading').boundingBox()
-  const intro = await page.getByRole('paragraph').boundingBox()
+  const heading = await page.getByRole('heading', { level: 1 }).boundingBox()
+  const intro = await page.getByText(/^Today you come of age/).boundingBox()
   expect(intro!.y).toBeGreaterThan(heading!.y + heading!.height - 1)
 })
