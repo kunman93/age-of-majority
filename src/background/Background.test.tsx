@@ -43,7 +43,7 @@ it('always shows the static glow', async () => {
   expect(screen.getByTestId('background-glow')).toBeInTheDocument()
 })
 
-it('shows only the glow, and loads no scene, with reduced motion', () => {
+it('renders only the glow with reduced motion', () => {
   stubReducedMotion(true)
   stubWebGL(true)
 
@@ -62,7 +62,7 @@ it('does not probe WebGL with reduced motion', () => {
   expect(HTMLCanvasElement.prototype.getContext).not.toHaveBeenCalled()
 })
 
-it('shows only the glow, and loads no scene, without WebGL', () => {
+it('renders only the glow without WebGL', () => {
   stubWebGL(false)
 
   render(<Background />)

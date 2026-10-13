@@ -40,7 +40,7 @@ App
 ### Fallback decisions in the shell
 
 - `usePrefersReducedMotion()` subscribes to `matchMedia('(prefers-reduced-motion: reduce)')` with `useSyncExternalStore`, so toggling the OS setting live switches to the glow and unmounts (and disposes) the scene.
-- `supportsWebGL()` creates a throwaway canvas, asks for `webgl2` then `webgl`, and releases the probe context with `WEBGL_lose_context` (mobile Safari caps live contexts). Evaluated once per mount in a `useState` initializer.
+- `supportsWebGL()` creates a throwaway canvas, asks for `webgl2` then `webgl`, and releases the probe context with `WEBGL_lose_context` (mobile Safari caps live contexts). Evaluated lazily during render, only when motion is allowed (never for reduced-motion visitors), and cached in state once it has run.
 - `BackgroundErrorBoundary` (a small class component, React has no hook for it) renders nothing if the chunk fails to load or the renderer throws, leaving the glow. React still reports the error to the console, so nothing is swallowed silently, but a broken decoration never takes the card down.
 
 ### Canvas configuration (`EmberCanvas`)
@@ -74,7 +74,7 @@ App
 - `src/test-setup.ts` gains a default `matchMedia` stub (no reduced motion) and a `HTMLCanvasElement.prototype.getContext` stub returning `null`, because jsdom has neither. Tests override them per case.
 - `embers.test.ts`: count, bounds, determinism with a seeded `random`.
 - `usePrefersReducedMotion` / `usePageVisible`: react to `change` / `visibilitychange`.
-- `Background.test.tsx` with `EmberCanvas` mocked to a stub that renders its `paused` prop: reduced motion or no WebGL means the glow and no stub, and the module is never imported; supported means the stub is rendered; hiding the page passes `paused`; a throwing stub leaves the glow and the rest of `App` intact.
+- `Background.test.tsx` with `EmberCanvas` mocked to a stub that renders its `paused` prop: reduced motion or no WebGL means the glow and no stub (the BDD "did not download" scenarios prove the module is never requested); supported means the stub is rendered; hiding the page passes `paused`; a throwing stub leaves the glow and the rest of `App` intact.
 - `Embers.test.tsx` with `@react-three/test-renderer` (renders R3F without a GPU): one `Points` with the expected vertex count; advancing frames increases `uTime`; after `unmount()` the geometry's and material's `dispose` spies were called.
 
 **BDD (`features/background-scene.feature`, Playwright):**

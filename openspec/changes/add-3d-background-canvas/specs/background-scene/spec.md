@@ -63,12 +63,18 @@ When the 3D background is removed from the page, it SHALL release the GPU resour
 - **WHEN** the 3D background is removed from the page
 - **THEN** every geometry and material of the ember scene is disposed
 
+#### Scenario: Visitor turns on reduced motion while the card is open
+- **WHEN** a visitor with the 3D background turns on reduced motion
+- **THEN** the canvas is removed and its rendering context is released
+- **AND** the static glow is shown behind the content
+
 ### Requirement: Background keeps text readable
 Every text on the card SHALL keep a contrast ratio of at least 4.5:1, as defined by WCAG 2.2 level AA, against the brightest point of the background, whether the 3D scene or the static glow is shown.
 
 #### Scenario: Visitor reads text over the 3D background
 - **WHEN** a visitor opens the home page and the 3D background is rendering
 - **THEN** every text color on the card has a contrast ratio of at least 4.5:1 against the brightest pixel of the background
+- **AND** the embers are visible on the background
 
 #### Scenario: Visitor reads text over the static glow
 - **WHEN** a visitor who prefers reduced motion opens the home page
