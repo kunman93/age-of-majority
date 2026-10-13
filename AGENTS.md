@@ -84,17 +84,20 @@ main session. Step 7 runs the `reviewer` subagent, which is pinned to Opus 5.5 i
 
 Rules that apply to all three workflows:
 
-- Run the model check from [step 0](#0-check-story-and-model) before starting a step.
+- Run the model and agent check from [step 0](#0-check-workflow-setup) before starting a step.
 
 ### Story Workflow
 
 Runs on a `feature/<...>` branch. To create a Story, use the `write-story` skill (`.agents/skills/write-story`); never create one as a free-form issue.
 
-#### 0. Check Story and model
+#### 0. Check workflow setup
 
 - Before step 1, check that the user has provided the Story (an issue number or link). If not, ask the user for one and stop. Do not pick an issue yourself and do not start working. If the user has no Story yet, mention that the `write-story` skill can create one.
 - Before starting a step, check the main session model reported in your environment information against the model named in the step.
-- If it does not match, or if you cannot tell, tell the user which model to pick with `/model` and stop.
+- If it does not match, or if you cannot tell, tell the user which model to pick with `/model`.
+- Also check that the main session runs the default agent, not a custom agent. If it does not, or if you cannot tell, tell the user to switch with `/agent`.
+- After telling the user to switch, ask with the `ask_user` tool for confirmation once they have switched. Do not end your turn. When confirmed, re-check the model and agent, then continue the step directly without further prompting.
+- If the re-check still fails, ask again. If the user declines or `ask_user` is unavailable, stop.
 - The check covers the main session only; subagent models are set by their agent file or the `model` argument.
 
 #### 1. Create feature branch
@@ -183,7 +186,7 @@ Runs on a `fix/<...>` branch and uses the Story step numbers. It needs a bug rep
 one and stop if missing, and do not pick an issue yourself. If the user has none, mention that the `write-bug-report`
 skill (`.agents/skills/write-bug-report`) can create one; never create a bug report as a free-form issue.
 
-- Step 0: the model check only; the bug report check above replaces the Story check. Steps 1 and 2: as in the Story
+- Step 0: the model and agent check only; the bug report check above replaces the Story check. Steps 1 and 2: as in the Story
   Workflow, with a `fix/` branch.
 - Steps 3–5 (research, plan, approve plan): skipped. Reproduce and find the root cause directly. If the fix requires
   changing an OpenSpec spec (`openspec/specs/`), stop and tell the user: it is a change, not a bug, and belongs in the

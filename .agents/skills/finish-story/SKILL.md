@@ -5,7 +5,7 @@ description: 'Finish a Story, bug fix or chore in the AGENTS.md implementation w
 
 # Finish a Story, Bug Fix or Chore
 
-Procedures for steps 8 (Create PR), 9 (Archive) and 10 (Merge) of the Story Workflow in `AGENTS.md`. The Bug Fix and Chore Workflows use Create PR and Merge, and run Finalize history without its archive sub-step before Merge. The approval gates stay in `AGENTS.md`. Every step runs on Sonnet 5.5, so run the model check from step 0 first.
+Procedures for steps 8 (Create PR), 9 (Archive) and 10 (Merge) of the Story Workflow in `AGENTS.md`. The Bug Fix and Chore Workflows use Create PR and Merge, and run Finalize history without its archive sub-step before Merge. The approval gates stay in `AGENTS.md`. Every step runs on Sonnet 5.5, so run the model and agent check from step 0 first.
 
 ## Create PR (step 8)
 
