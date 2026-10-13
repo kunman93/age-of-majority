@@ -13,7 +13,7 @@
 ## 3. React Developer agent
 
 - [x] 3.1 Create `.github/agents/react-developer.agent.md` with frontmatter `name: react-developer`, a `description`, `model: Claude Sonnet 5.5`, `tools: ["read", "edit", "search", "execute", "web"]`, and the body from design.md "`react-developer` agent" (persona, follows `AGENTS.md` incl. Engineering Principles, loads `react-ui`/`gsap-*`/`threejs`, quality bar with every reference site from #25 as inspiration only, verifies with the step 2 commands). Verify the frontmatter mirrors the field names of `.github/agents/reviewer.agent.md`, every reference URL from #25 is listed, and the body does not restate skill content.
-- [ ] 3.2 Smoke-test the agent: start it as a `react-developer` subagent with a read-only prompt asking it to name the skills it would load for "add a scroll-triggered 3D intro" and the model it runs on. Verify it names `react-ui`, `gsap-scrolltrigger` (or another `gsap-*`) and `threejs`, and can read `.agents/skills/threejs/SKILL.md`. If the `tools` list blocks skill loading, adjust `tools` and repeat.
+- [x] 3.2 Smoke-test the agent: start it as a `react-developer` subagent with a read-only prompt asking it to name the skills it would load for "add a scroll-triggered 3D intro" and the model it runs on. Verify it names `react-ui`, `gsap-scrolltrigger` (or another `gsap-*`) and `threejs`, and can read `.agents/skills/threejs/SKILL.md`. If the `tools` list blocks skill loading, adjust `tools` and repeat.
 
 ## 4. AGENTS.md
 
@@ -22,7 +22,7 @@
 
 ## 5. Integration check
 
-- [ ] 5.1 Run `npm run build`, `npm test`, `npm run test:bdd`, `npm run lint` and `npm run format:check`; all must pass. Verify `git diff --stat origin/main...HEAD` touches only `.agents/skills/`, `.github/agents/react-developer.agent.md`, `AGENTS.md` and `openspec/changes/react-developer-agent/`.
+- [x] 5.1 Run `npm run build`, `npm test`, `npm run test:bdd`, `npm run lint` and `npm run format:check`; all must pass. Verify `git diff --stat origin/main...HEAD` touches only `.agents/skills/`, `.github/agents/react-developer.agent.md`, `AGENTS.md` and `openspec/changes/react-developer-agent/`.
 
 ## Workflow follow-up
 
