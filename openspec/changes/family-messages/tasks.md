@@ -11,7 +11,7 @@
 
 ## 3. Family section
 
-- [ ] 3.1 Add `src/FamilySection.test.tsx` rendering a test family with two messages, asserting a region named by the family, an `h2` with the name, and each text followed by its author; also render two families with the same name and assert each region has its own label and messages; verify it fails with `npm test`
+- [x] 3.1 Add `src/FamilySection.test.tsx` rendering a test family with two messages, asserting a region named by the family, an `h2` with the name, and each text followed by its author; also render two families with the same name and assert each region has its own label and messages; verify it fails with `npm test`
 - [ ] 3.2 Create `src/FamilySection.tsx` with the `section` / `h2` / `figure` markup from design.md; verify `npm test` passes
 
 ## 4. Families on the card
