@@ -16,3 +16,13 @@ Then('the heading is styled with Tailwind', async ({ page }) => {
   await expect(heading).toHaveCSS('font-size', '30px')
   await expect(heading).toHaveCSS('font-weight', '700')
 })
+
+Then('I see the intro {string}', async ({ page }, text: string) => {
+  await expect(page.getByText(text, { exact: true })).toBeVisible()
+})
+
+Then('the intro is below the heading', async ({ page }) => {
+  const heading = await page.getByRole('heading').boundingBox()
+  const intro = await page.getByRole('paragraph').boundingBox()
+  expect(intro!.y).toBeGreaterThan(heading!.y + heading!.height - 1)
+})

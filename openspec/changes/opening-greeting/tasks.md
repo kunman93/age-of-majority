@@ -8,9 +8,9 @@
 
 ## 2. Intro paragraph
 
-- [ ] 2.1 Add a unit test in `src/App.test.tsx` for the intro paragraph text; verify it fails with `npm test`
-- [ ] 2.2 Add the intro paragraph below the heading in `src/App.tsx`; verify `npm test` passes
-- [ ] 2.3 Add a BDD step and scenario line in `features/home.feature` / `features/steps/home.steps.ts` checking the intro is visible below the heading; verify `npm run test:bdd` passes
+- [x] 2.1 Add a unit test in `src/App.test.tsx` for the intro paragraph text; verify it fails with `npm test`
+- [x] 2.2 Add the intro paragraph below the heading in `src/App.tsx`; verify `npm test` passes
+- [x] 2.3 Add a BDD step and scenario line in `features/home.feature` / `features/steps/home.steps.ts` checking the intro is visible below the heading; verify `npm run test:bdd` passes
 
 ## 3. Verification
 
