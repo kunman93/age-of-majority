@@ -140,7 +140,7 @@ Runs on Sonnet 5.5.
 Runs on Sonnet 5.5 in the main session.
 
 - Implement the tasks from the change with the `openspec-apply-change` skill (`/opsx-apply`), applying TDD, and make atomic commits with the `.agents/skills/git-commit` skill, following [Engineering Principles](#engineering-principles).
-- For UI, animation or 3D work, load the `react-ui` skill, the relevant `gsap-*` skills and the `threejs` skill (`.agents/skills/`). The `react-developer` agent ([.github/agents/react-developer.agent.md](.github/agents/react-developer.agent.md)) is not started automatically. Use it as a subagent only when the user asks for it.
+- Frontend work (UI, styling, animation, 3D) is always done by the `react-developer` agent ([.github/agents/react-developer.agent.md](.github/agents/react-developer.agent.md)), run as a custom subagent. It loads the `react-ui` skill, the relevant `gsap-*` skills and the `threejs` skill (`.agents/skills/`) itself. The main session does all other work, such as tests that do not touch UI code, tooling and docs, and reviews and commits the agent's result.
 - When done, verify the work with the commands from [2. Verify clean state](#2-verify-clean-state).
 - Then continue directly with [7. Review](#7-review) without asking the user.
 

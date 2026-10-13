@@ -34,7 +34,7 @@ Then(
 )
 
 Given('a short browser window', async ({ page }) => {
-  await page.setViewportSize({ width: 1280, height: 160 })
+  await page.setViewportSize({ width: 1280, height: 640 })
 })
 
 Then('the family {string} is not in view', async ({ page }, family: string) => {
