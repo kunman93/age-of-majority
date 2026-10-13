@@ -28,7 +28,7 @@
 ## 6. Verification
 
 - [x] 6.1 Run `npm run build`, `npm test`, `npm run test:bdd`, `npm run lint` and `npm run format:check`; verify all pass and `dist/assets` has a separate chunk containing three.js that the entry chunk does not include statically
-- [ ] 6.2 Check the card by eye in a browser at 375px, 768px and 1280px, with and without reduced motion, and confirm the embers are subtle, smooth and the text stays easy to read; record any visual issue as a follow-up task before finishing
+- [x] 6.2 Check the card by eye in a browser at 375px, 768px and 1280px, with and without reduced motion, and confirm the embers are subtle, smooth and the text stays easy to read; record any visual issue as a follow-up task before finishing
 
 ## Workflow follow-up
 
