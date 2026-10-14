@@ -53,6 +53,20 @@ Feature: Visual design
     And consecutive message cards are tilted in opposite directions by at most 2 degrees
     And no message card contains an image
 
+  Scenario: Visitor reads the wishes on a wide screen
+    Given the visitor prefers reduced motion
+    And a 1280px wide window
+    When I open the home page
+    Then the two "Family Ipsum" message cards are side by side, with their tops at the same height
+    And the page does not scroll horizontally
+
+  Scenario: Visitor reads the wishes on a phone
+    Given the visitor prefers reduced motion
+    And a 375px wide window
+    When I open the home page
+    Then the two "Family Ipsum" message cards are stacked vertically
+    And every message card fits within the window width
+
   Scenario: Visitor reads a scrapbook card on a phone
     Given the visitor prefers reduced motion
     And a 375px wide window

@@ -16,7 +16,7 @@ it('renders a region named by the family with its heading', () => {
 
   const region = screen.getByRole('region', { name: 'Family Test' })
   expect(
-    within(region).getByRole('heading', { level: 2, name: 'Family Test' }),
+    within(region).getByRole('heading', { level: 3, name: 'Family Test' }),
   ).toBeInTheDocument()
 })
 
@@ -58,7 +58,7 @@ it('keeps families with the same name as separate regions', () => {
   expect(within(regions[1]).getByText('Other text')).toBeInTheDocument()
 
   const headings = regions.map((region) =>
-    within(region).getByRole('heading', { level: 2 }),
+    within(region).getByRole('heading', { level: 3 }),
   )
   regions.forEach((region, index) =>
     expect(region.getAttribute('aria-labelledby')).toBe(headings[index].id),

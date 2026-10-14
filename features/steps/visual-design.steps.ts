@@ -12,7 +12,7 @@ import {
 
 const { Given, Then } = createBdd()
 
-const HEADINGS = 'h1, h2'
+const HEADINGS = 'h1, h2, h3'
 const BODY_TEXT = 'main p, main figcaption'
 const MESSAGE_AND_INTRO = 'main p'
 
@@ -172,19 +172,24 @@ Then('all content fits within the window width', async ({ page }) => {
 Then(
   'the content column is centered and no wider than 720px',
   async ({ page }) => {
-    const { left, right, width, viewport } = await page
-      .locator('main')
-      .evaluate((main) => {
-        const box = main.getBoundingClientRect()
-        return {
-          left: box.left,
-          right: box.right,
-          width: box.width,
-          viewport: document.documentElement.clientWidth,
-        }
-      })
-    expect(width).toBeLessThanOrEqual(720)
-    expect(Math.abs(left - (viewport - right))).toBeLessThanOrEqual(1)
+    const columns = await page
+      .locator('main > header, main > [data-showcase], main > [data-reveal]')
+      .evaluateAll((elements) =>
+        elements.map((column) => {
+          const box = column.getBoundingClientRect()
+          return {
+            left: box.left,
+            right: box.right,
+            width: box.width,
+            viewport: document.documentElement.clientWidth,
+          }
+        }),
+      )
+    expect(columns).toHaveLength(3)
+    for (const { left, right, width, viewport } of columns) {
+      expect(width).toBeLessThanOrEqual(720)
+      expect(Math.abs(left - (viewport - right))).toBeLessThanOrEqual(1)
+    }
   },
 )
 
@@ -285,6 +290,40 @@ Then('no message card contains an image', async ({ page }) => {
     )
   expect(images).toBe(0)
 })
+
+// The cards' wrappers are measured because the tilt moves the cards' own corners
+const familyCardSlots = async (page: Page, family: string) => {
+  const slots = await page
+    .getByRole('region', { name: family })
+    .getByRole('figure')
+    .evaluateAll((cards) =>
+      cards.map((card) => {
+        const { left, top, right, bottom } =
+          card.parentElement!.getBoundingClientRect()
+        return { left, top, right, bottom }
+      }),
+    )
+  expect(slots).toHaveLength(2)
+  return slots
+}
+
+Then(
+  'the two {string} message cards are side by side, with their tops at the same height',
+  async ({ page }, family: string) => {
+    const [first, second] = await familyCardSlots(page, family)
+    expect(second.left).toBeGreaterThanOrEqual(first.right)
+    expect(Math.abs(second.top - first.top)).toBeLessThanOrEqual(1)
+  },
+)
+
+Then(
+  'the two {string} message cards are stacked vertically',
+  async ({ page }, family: string) => {
+    const [first, second] = await familyCardSlots(page, family)
+    expect(second.top).toBeGreaterThanOrEqual(first.bottom)
+    expect(Math.abs(second.left - first.left)).toBeLessThanOrEqual(1)
+  },
+)
 
 Then('every message card fits within the window width', async ({ page }) => {
   const width = page.viewportSize()!.width

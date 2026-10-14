@@ -1,10 +1,17 @@
 Feature: Families
 
+  Scenario: Visitor sees the birthday wishes heading
+    Given the visitor prefers reduced motion
+    When I open the home page
+    Then I see the heading "Birthday wishes" below the intro
+    And I see the overline "From your family" directly above it
+
   Scenario: Visitor sees all families in order below the intro
     Given the visitor prefers reduced motion
     When I open the home page
     Then I see the family headings "Family Lorem, Family Ipsum, Family Dolor" in order
     And the family headings are below the intro
+    And every family heading is below the heading "Birthday wishes"
 
   Scenario: Visitor reads the authors of each family
     Given the visitor prefers reduced motion

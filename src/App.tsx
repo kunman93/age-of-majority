@@ -17,6 +17,7 @@ const firstCardIndexes = families.map((_, index) =>
 )
 
 function App() {
+  const wishesHeadingId = useId()
   const finaleHeadingId = useId()
   const { mode, fallBackToStatic } = useSceneMode()
   const main = useRef<HTMLElement>(null)
@@ -27,11 +28,11 @@ function App() {
       <Background mode={mode} onSceneError={fallBackToStatic} />
       <main
         ref={main}
-        className="mx-auto max-w-[720px] space-y-12 px-5 pb-12 sm:space-y-16 sm:px-8 sm:pb-16 lg:pb-24"
+        className="space-y-12 px-5 pb-12 sm:space-y-16 sm:px-8 sm:pb-16 lg:pb-24"
       >
         <header
           data-opening
-          className="flex min-h-svh flex-col justify-center space-y-12 py-12 text-center sm:space-y-16 sm:py-16 lg:py-24 short:space-y-4 short:py-4"
+          className="mx-auto flex min-h-svh max-w-[720px] flex-col justify-center space-y-12 py-12 text-center sm:space-y-16 sm:py-16 lg:py-24 short:space-y-4 short:py-4"
         >
           <h1 className="text-sun text-4xl leading-tight font-bold break-words sm:text-5xl lg:text-6xl">
             Happy 18th Birthday, Sara!
@@ -39,17 +40,33 @@ function App() {
           <TypedIntro text={INTRO} />
         </header>
         <Showcase mode={mode} onSceneError={fallBackToStatic} />
-        {families.map((family, index) => (
-          <FamilySection
-            key={index}
-            family={family}
-            firstCardIndex={firstCardIndexes[index]}
-          />
-        ))}
+        <section
+          aria-labelledby={wishesHeadingId}
+          className="mx-auto max-w-6xl space-y-12 sm:space-y-16"
+        >
+          <div className="space-y-3 text-center">
+            <p className="text-blush text-base font-semibold tracking-[0.2em] uppercase">
+              From your family
+            </p>
+            <h2
+              id={wishesHeadingId}
+              className="text-sun text-3xl font-bold break-words sm:text-4xl"
+            >
+              Birthday wishes
+            </h2>
+          </div>
+          {families.map((family, index) => (
+            <FamilySection
+              key={index}
+              family={family}
+              firstCardIndex={firstCardIndexes[index]}
+            />
+          ))}
+        </section>
         <section
           data-reveal
           aria-labelledby={finaleHeadingId}
-          className="space-y-4"
+          className="mx-auto max-w-[720px] space-y-4"
         >
           <h2
             id={finaleHeadingId}

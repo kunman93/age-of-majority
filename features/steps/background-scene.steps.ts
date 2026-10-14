@@ -15,7 +15,7 @@ const { Given, When, Then } = createBdd()
 
 const SCENE_CHUNK = /EmberCanvas|StoryCanvas|\/three|react-three/
 const GLOW = '[data-testid="background-glow"]'
-const TEXT = 'h1, h2, main p, main figcaption'
+const TEXT = 'h1, h2, h3, main p, main figcaption'
 
 const requestUrls = new WeakMap<Page, string[]>()
 
@@ -173,12 +173,12 @@ const expectToCoverViewport = async (page: Page, selector: string) => {
       '[aria-hidden="true"], [aria-hidden="true"] * { pointer-events: auto !important }'
     document.head.append(style)
     try {
-      const visibleText = [...document.querySelectorAll('h1, h2, main p')].find(
-        (element) => {
-          const { top, bottom } = element.getBoundingClientRect()
-          return top >= 0 && bottom <= window.innerHeight
-        },
-      )
+      const visibleText = [
+        ...document.querySelectorAll('h1, h2, h3, main p'),
+      ].find((element) => {
+        const { top, bottom } = element.getBoundingClientRect()
+        return top >= 0 && bottom <= window.innerHeight
+      })
       if (!visibleText) return false
       const { left, top, width, height } = visibleText.getBoundingClientRect()
       const hit = document.elementFromPoint(left + width / 2, top + height / 2)

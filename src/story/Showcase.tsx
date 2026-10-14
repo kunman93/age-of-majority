@@ -16,7 +16,11 @@ function Showcase({
 }) {
   if (mode === 'scene') {
     return (
-      <div data-showcase aria-hidden="true" className="h-[300svh]">
+      <div
+        data-showcase
+        aria-hidden="true"
+        className="mx-auto h-[300svh] max-w-[720px]"
+      >
         <div className="sticky top-0 h-svh">
           <SceneErrorBoundary onError={onSceneError}>
             <Suspense fallback={null}>
@@ -32,7 +36,7 @@ function Showcase({
     <div
       data-showcase
       aria-hidden="true"
-      className="grid grid-cols-3 place-items-center gap-4 [&_svg]:h-auto [&_svg]:max-w-full"
+      className="mx-auto grid max-w-[720px] grid-cols-3 place-items-center gap-4 [&_svg]:h-auto [&_svg]:max-w-full"
     >
       {STAGES.map((stage) => (
         <StageIllustration key={stage} stage={stage} />

@@ -68,7 +68,7 @@ pure logic, BDD steps and setup. Every task is test-first.
   sees scrapbook cards" and "Visitor reads a scrapbook card on a phone". The existing contrast, size and
   no-horizontal-scroll scenarios must still pass. Check the look in `npm run dev`
 
-- [ ] 5.2 Add the "Birthday wishes" section with the overline "From your family" and the `h2`, make the family
+- [x] 5.2 Add the "Birthday wishes" section with the overline "From your family" and the `h2`, make the family
   headings `h3`, move the 720px column from `<main>` to the opening, showcase and finale, and lay out each family's
   cards in wrapping flex rows in a `max-w-6xl` section (design.md decision 10). Verify with `App.test.tsx`: the
   heading levels, and the overline directly above the heading. Add the family-messages scenario "Visitor sees the
