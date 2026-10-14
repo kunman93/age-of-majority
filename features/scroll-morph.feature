@@ -20,6 +20,41 @@ Feature: Scroll morph
     When I scroll past the showcase
     Then the first family is in the viewport
 
+  Scenario: Visitor scrolls the showcase into view
+    When I open the home page
+    Then the story object has not entered
+    When I scroll so the showcase has entered 50 percent
+    Then the story object has entered about 50 percent
+    When I scroll 0 percent through the showcase
+    Then the story object has fully entered
+
+  Scenario: Visitor scrolls the showcase out of view
+    When I open the home page
+    And I scroll 100 percent through the showcase
+    Then the story object has not exited
+    When I scroll so the showcase has left 50 percent
+    Then the story object has exited about 50 percent
+    When I scroll past the showcase
+    Then the story object has fully exited
+
+  Scenario: Visitor scrolls back into the showcase from below
+    When I open the home page
+    And I scroll past the showcase
+    Then the story object has fully exited
+    When I scroll so the showcase has left 50 percent
+    Then the story object has exited about 50 percent
+    When I scroll 100 percent through the showcase
+    Then the story object has not exited
+
+  Scenario: Visitor scrolls back above the showcase
+    When I open the home page
+    And I scroll 0 percent through the showcase
+    Then the story object has fully entered
+    When I scroll so the showcase has entered 50 percent
+    Then the story object has entered about 50 percent
+    When I scroll back to the top
+    Then the story object has not entered
+
   Scenario: Each stage holds
     When I open the home page
     And I scroll 45 percent through the showcase

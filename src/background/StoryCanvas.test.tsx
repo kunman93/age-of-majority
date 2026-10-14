@@ -3,7 +3,11 @@ import type { ReactNode } from 'react'
 import { expect, it, vi } from 'vitest'
 import StoryCanvas from './StoryCanvas'
 
-const progress = vi.hoisted(() => ({ current: 0 }))
+const refs = vi.hoisted(() => ({
+  progress: { current: 0 },
+  entry: { current: 0 },
+  exit: { current: 0 },
+}))
 const canvasProps = vi.hoisted(() => vi.fn())
 const storyObject = vi.hoisted(() => vi.fn())
 
@@ -19,7 +23,7 @@ vi.mock('./StoryObject', () => ({
     return null
   },
 }))
-vi.mock('./useStoryScroll', () => ({ useStoryScroll: () => progress }))
+vi.mock('./useStoryScroll', () => ({ useStoryScroll: () => refs }))
 
 it('is a decorative wrapper that fills its parent and reports the progress', () => {
   const { container } = render(<StoryCanvas />)
@@ -27,6 +31,8 @@ it('is a decorative wrapper that fills its parent and reports the progress', () 
   const wrapper = container.firstElementChild!
   expect(wrapper).toHaveAttribute('aria-hidden', 'true')
   expect(wrapper).toHaveAttribute('data-story-progress', '0.00')
+  expect(wrapper).toHaveAttribute('data-story-entry', '0.00')
+  expect(wrapper).toHaveAttribute('data-story-exit', '0.00')
   expect(wrapper.className).toContain('absolute')
   expect(wrapper.className).toContain('inset-0')
   expect(wrapper.className).toContain('pointer-events-none')
@@ -41,8 +47,8 @@ it('renders on demand, at most 2 pixels per CSS pixel, without pointer input', (
   expect(props.style).toEqual({ pointerEvents: 'none' })
 })
 
-it('hands the scroll progress ref to the story object', () => {
+it('hands the scroll progress, entry and exit refs to the story object', () => {
   render(<StoryCanvas />)
 
-  expect(storyObject.mock.calls[0][0]).toEqual({ progress })
+  expect(storyObject.mock.calls[0][0]).toEqual(refs)
 })

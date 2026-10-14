@@ -1,15 +1,12 @@
-import { useGSAP } from '@gsap/react'
 import { invalidate } from '@react-three/fiber'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useRef, type RefObject } from 'react'
+import { gsap, useGSAP } from '../gsap'
 import { showcaseStage } from '../story/showcaseStage'
-
-gsap.registerPlugin(useGSAP, ScrollTrigger)
-ScrollTrigger.config({ ignoreMobileResize: true })
 
 export function useStoryScroll(wrapper: RefObject<HTMLElement | null>) {
   const progress = useRef(0)
+  const entry = useRef(0)
+  const exit = useRef(0)
 
   useGSAP(
     () => {
@@ -37,18 +34,37 @@ export function useStoryScroll(wrapper: RefObject<HTMLElement | null>) {
         },
       })
 
-      // Web fonts reflow the text after the first measurement and
-      // ScrollTrigger only refreshes on window load and resize.
-      let active = true
-      void document.fonts?.ready.then(() => {
-        if (active) ScrollTrigger.refresh()
-      })
-      return () => {
-        active = false
+      const edge = (
+        name: 'entry' | 'exit',
+        value: { current: number },
+        start: string,
+        end: string,
+      ) => {
+        const state = { value: 0 }
+        gsap.to(state, {
+          value: 1,
+          ease: 'none',
+          onUpdate: () => {
+            value.current = state.value
+            wrapper.current?.setAttribute(
+              `data-story-${name}`,
+              state.value.toFixed(2),
+            )
+            invalidate()
+          },
+          scrollTrigger: {
+            trigger: showcase,
+            start,
+            end,
+            scrub: 0.5,
+          },
+        })
       }
+      edge('entry', entry, 'top bottom', 'top top')
+      edge('exit', exit, 'bottom bottom', 'bottom top')
     },
     { scope: wrapper },
   )
 
-  return progress
+  return { progress, entry, exit }
 }

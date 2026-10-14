@@ -11,6 +11,8 @@
   --color-tangerine: #ffb663;
   --color-ember: #ff6b5b;
   --color-glow: #4a1c18;
+  --color-cork: #4b2e1a;
+  --color-cork-frame: #6b4423;
 
   --font-display: 'Fraunces Variable', Georgia, serif;
   --font-body: 'Nunito Variable', system-ui, sans-serif;
@@ -25,7 +27,8 @@
   }
 
   h1,
-  h2 {
+  h2,
+  h3 {
     font-family: var(--font-display);
   }
 }

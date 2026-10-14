@@ -2,6 +2,13 @@ import '@testing-library/jest-dom/vitest'
 import { cleanup } from '@testing-library/react'
 import { afterEach, beforeEach, vi } from 'vitest'
 
+// ScrollTrigger reads matchMedia while a module registers it on import
+window.matchMedia = (() => ({
+  matches: false,
+  addEventListener: () => {},
+  removeEventListener: () => {},
+})) as never
+
 // jsdom implements neither matchMedia nor WebGL contexts.
 beforeEach(() => {
   vi.stubGlobal(

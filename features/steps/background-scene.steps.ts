@@ -3,6 +3,7 @@ import { expect, type Page } from '@playwright/test'
 import { createBdd } from 'playwright-bdd'
 import {
   contrastRatio,
+  hue,
   parseRgb,
   relativeLuminance,
   type Rgba,
@@ -12,9 +13,9 @@ import { countDifferingPixels } from '../support/screenshot.ts'
 
 const { Given, When, Then } = createBdd()
 
-const SCENE_CHUNK = /EmberCanvas|StoryCanvas|\/three|react-three|gsap/
+const SCENE_CHUNK = /EmberCanvas|StoryCanvas|\/three|react-three/
 const GLOW = '[data-testid="background-glow"]'
-const TEXT = 'h1, h2, main p, main figcaption'
+const TEXT = 'h1, h2, h3, main p, main figcaption'
 
 const requestUrls = new WeakMap<Page, string[]>()
 
@@ -172,12 +173,12 @@ const expectToCoverViewport = async (page: Page, selector: string) => {
       '[aria-hidden="true"], [aria-hidden="true"] * { pointer-events: auto !important }'
     document.head.append(style)
     try {
-      const visibleText = [...document.querySelectorAll('h1, h2, main p')].find(
-        (element) => {
-          const { top, bottom } = element.getBoundingClientRect()
-          return top >= 0 && bottom <= window.innerHeight
-        },
-      )
+      const visibleText = [
+        ...document.querySelectorAll('h1, h2, h3, main p'),
+      ].find((element) => {
+        const { top, bottom } = element.getBoundingClientRect()
+        return top >= 0 && bottom <= window.innerHeight
+      })
       if (!visibleText) return false
       const { left, top, width, height } = visibleText.getBoundingClientRect()
       const hit = document.elementFromPoint(left + width / 2, top + height / 2)
@@ -322,4 +323,58 @@ Then('the embers are visible on the background', async ({ page }) => {
   expect(
     await countDifferingPixels(page, withEmbers, withoutEmbers),
   ).toBeGreaterThan(0)
+})
+
+const glowTintOf = (page: Page) =>
+  page
+    .locator(GLOW)
+    .evaluate((glow) =>
+      getComputedStyle(glow).getPropertyValue('--glow-tint').trim(),
+    )
+
+const TINT_HUES = { yellow: [38, 60], orange: [15, 35], red: [0, 12] } as const
+const MAX_DARK_CHANNEL = 100
+
+Then(
+  "the glow's tint is a dark {word}",
+  async ({ page }, name: keyof typeof TINT_HUES) => {
+    const [min, max] = TINT_HUES[name]
+    await expect
+      .poll(async () => {
+        const tint = parseRgb(await glowTintOf(page))
+        const dark = Math.max(tint.r, tint.g, tint.b) < MAX_DARK_CHANNEL
+        return dark && hue(tint) >= min && hue(tint) <= max
+      })
+      .toBe(true)
+  },
+)
+
+const rememberedTints = new WeakMap<Page, string>()
+
+When("I remember the glow's tint", async ({ page }) => {
+  await expect.poll(() => glowTintOf(page)).not.toBe('')
+  rememberedTints.set(page, await glowTintOf(page))
+})
+
+Then("the glow's tint is the remembered tint", async ({ page }) => {
+  await expect.poll(() => glowTintOf(page)).toBe(rememberedTints.get(page))
+})
+
+When('I scroll halfway down the page', async ({ page }) => {
+  await page.evaluate(() =>
+    window.scrollTo(
+      0,
+      (document.documentElement.scrollHeight - window.innerHeight) / 2,
+    ),
+  )
+})
+
+When('I scroll to the end of the page', async ({ page }) => {
+  await page.evaluate(() =>
+    window.scrollTo(0, document.documentElement.scrollHeight),
+  )
+})
+
+When('I scroll back to the top', async ({ page }) => {
+  await page.evaluate(() => window.scrollTo(0, 0))
 })

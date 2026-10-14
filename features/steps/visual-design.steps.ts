@@ -12,7 +12,7 @@ import {
 
 const { Given, Then } = createBdd()
 
-const HEADINGS = 'h1, h2'
+const HEADINGS = 'h1, h2, h3'
 const BODY_TEXT = 'main p, main figcaption'
 const MESSAGE_AND_INTRO = 'main p'
 
@@ -172,19 +172,24 @@ Then('all content fits within the window width', async ({ page }) => {
 Then(
   'the content column is centered and no wider than 720px',
   async ({ page }) => {
-    const { left, right, width, viewport } = await page
-      .locator('main')
-      .evaluate((main) => {
-        const box = main.getBoundingClientRect()
-        return {
-          left: box.left,
-          right: box.right,
-          width: box.width,
-          viewport: document.documentElement.clientWidth,
-        }
-      })
-    expect(width).toBeLessThanOrEqual(720)
-    expect(Math.abs(left - (viewport - right))).toBeLessThanOrEqual(1)
+    const columns = await page
+      .locator('main > header, main > [data-showcase], main > [data-reveal]')
+      .evaluateAll((elements) =>
+        elements.map((column) => {
+          const box = column.getBoundingClientRect()
+          return {
+            left: box.left,
+            right: box.right,
+            width: box.width,
+            viewport: document.documentElement.clientWidth,
+          }
+        }),
+      )
+    expect(columns).toHaveLength(3)
+    for (const { left, right, width, viewport } of columns) {
+      expect(width).toBeLessThanOrEqual(720)
+      expect(Math.abs(left - (viewport - right))).toBeLessThanOrEqual(1)
+    }
   },
 )
 
@@ -222,4 +227,209 @@ Then('no element animates or transitions', async ({ page }) => {
         .map((element) => element.tagName),
     )
   expect(moving).toEqual([])
+})
+
+const MAX_TILT_DEGREES = 2
+
+const CENTER_TOLERANCE_PX = 1
+
+Then(
+  'every message card has a tape strip at the middle of its top edge, with a pin through its middle',
+  async ({ page }) => {
+    const decorations = await page.getByRole('figure').evaluateAll((cards) =>
+      cards.map((card) => {
+        const read = (pseudo: '::before' | '::after') => {
+          const { content, position, top, left, width, height, ...style } =
+            getComputedStyle(card, pseudo)
+          return {
+            content,
+            position,
+            top: parseFloat(top),
+            height: parseFloat(height),
+            centerX: parseFloat(left) + parseFloat(width) / 2,
+            centerY: parseFloat(top) + parseFloat(height) / 2,
+            backgroundColor: style.backgroundColor,
+            backgroundImage: style.backgroundImage,
+          }
+        }
+        return {
+          cardCenterX: (card as HTMLElement).offsetWidth / 2,
+          tape: read('::before'),
+          pin: read('::after'),
+        }
+      }),
+    )
+    expect(decorations.length).toBeGreaterThan(0)
+    for (const { cardCenterX, tape, pin } of decorations) {
+      for (const part of [tape, pin]) {
+        expect(part.content).not.toBe('none')
+        expect(part.position).toBe('absolute')
+        expect(part.top).toBeLessThanOrEqual(0)
+        expect(part.top + part.height).toBeGreaterThan(0)
+        expect(Math.abs(part.centerX - cardCenterX)).toBeLessThanOrEqual(
+          CENTER_TOLERANCE_PX,
+        )
+      }
+      expect(parseRgb(tape.backgroundColor).a).toBeGreaterThan(0)
+      expect(pin.backgroundImage).not.toBe('none')
+      expect(Math.abs(pin.centerY - tape.centerY)).toBeLessThanOrEqual(
+        tape.height / 2,
+      )
+    }
+  },
+)
+
+Then('every message card is tilted around its pin', async ({ page }) => {
+  const pivots = await page.getByRole('figure').evaluateAll((cards) =>
+    cards.map((card) => {
+      const [x, y] = getComputedStyle(card)
+        .transformOrigin.split(' ')
+        .map(parseFloat)
+      return { x, y, centerX: (card as HTMLElement).offsetWidth / 2 }
+    }),
+  )
+  expect(pivots.length).toBeGreaterThan(0)
+  for (const { x, y, centerX } of pivots) {
+    expect(Math.abs(x - centerX)).toBeLessThanOrEqual(CENTER_TOLERANCE_PX)
+    expect(y).toBe(0)
+  }
+})
+
+Then('every message card is at least 400px wide', async ({ page }) => {
+  const widths = await page
+    .getByRole('figure')
+    .evaluateAll((cards) => cards.map((card) => card.clientWidth))
+  expect(widths.length).toBeGreaterThan(0)
+  for (const width of widths) expect(width).toBeGreaterThanOrEqual(400)
+})
+
+const BOARD = '[data-board]'
+
+Then(
+  'every family heading and every message card is inside one board',
+  async ({ page }) => {
+    await expect(page.locator(BOARD)).toHaveCount(1)
+    const outside = await page
+      .locator(BOARD)
+      .evaluate(
+        (board) =>
+          [...document.querySelectorAll('main h3, main figure')].filter(
+            (element) => !board.contains(element),
+          ).length,
+      )
+    expect(outside).toBe(0)
+    await expect(page.locator(`${BOARD} figure`)).not.toHaveCount(0)
+    await expect(page.locator(`${BOARD} h3`)).not.toHaveCount(0)
+  },
+)
+
+Then(
+  'the heading {string} is above the board',
+  async ({ page }, name: string) => {
+    const heading = await page
+      .getByRole('heading', { level: 2, name, exact: true })
+      .boundingBox()
+    const board = await page.locator(BOARD).boundingBox()
+    expect(heading!.y + heading!.height).toBeLessThanOrEqual(board!.y)
+  },
+)
+
+Then('the board contains no image', async ({ page }) => {
+  const images = await page.locator(BOARD).evaluate((board) => ({
+    elements: board.querySelectorAll('img, picture, svg, canvas, video').length,
+    files: [board, ...board.querySelectorAll('*')].filter((element) =>
+      getComputedStyle(element).backgroundImage.includes('url('),
+    ).length,
+  }))
+  expect(images).toEqual({ elements: 0, files: 0 })
+})
+
+Then('the board fits within the window width', async ({ page }) => {
+  const { left, right } = await page
+    .locator(BOARD)
+    .evaluate((board) => board.getBoundingClientRect())
+  expect(left).toBeGreaterThanOrEqual(0)
+  expect(right).toBeLessThanOrEqual(page.viewportSize()!.width)
+})
+
+Then(
+  'consecutive message cards are tilted in opposite directions by at most 2 degrees',
+  async ({ page }) => {
+    const tilts = await page
+      .getByRole('figure')
+      .evaluateAll((cards) =>
+        cards.map((card) => parseFloat(getComputedStyle(card).rotate)),
+      )
+    expect(tilts.length).toBeGreaterThan(1)
+    for (const tilt of tilts) {
+      expect(Math.abs(tilt)).toBeGreaterThan(0)
+      expect(Math.abs(tilt)).toBeLessThanOrEqual(MAX_TILT_DEGREES)
+    }
+    tilts
+      .slice(1)
+      .forEach((tilt, i) => expect(Math.sign(tilt)).toBe(-Math.sign(tilts[i])))
+  },
+)
+
+Then('no message card contains an image', async ({ page }) => {
+  const images = await page
+    .getByRole('figure')
+    .evaluateAll(
+      (cards) =>
+        cards.filter(
+          (card) =>
+            card.querySelector('img, picture, svg, canvas, video') !== null ||
+            getComputedStyle(card).backgroundImage !== 'none',
+        ).length,
+    )
+  expect(images).toBe(0)
+})
+
+// The cards' wrappers are measured because the tilt moves the cards' own corners
+const familyCardSlots = async (page: Page, family: string) => {
+  const slots = await page
+    .getByRole('region', { name: family })
+    .getByRole('figure')
+    .evaluateAll((cards) =>
+      cards.map((card) => {
+        const { left, top, right, bottom } =
+          card.parentElement!.getBoundingClientRect()
+        return { left, top, right, bottom }
+      }),
+    )
+  expect(slots).toHaveLength(2)
+  return slots
+}
+
+Then(
+  'the two {string} message cards are side by side, with their tops at the same height',
+  async ({ page }, family: string) => {
+    const [first, second] = await familyCardSlots(page, family)
+    expect(second.left).toBeGreaterThanOrEqual(first.right)
+    expect(Math.abs(second.top - first.top)).toBeLessThanOrEqual(1)
+  },
+)
+
+Then(
+  'the two {string} message cards are stacked vertically',
+  async ({ page }, family: string) => {
+    const [first, second] = await familyCardSlots(page, family)
+    expect(second.top).toBeGreaterThanOrEqual(first.bottom)
+    expect(Math.abs(second.left - first.left)).toBeLessThanOrEqual(1)
+  },
+)
+
+Then('every message card fits within the window width', async ({ page }) => {
+  const width = page.viewportSize()!.width
+  const edges = await page.getByRole('figure').evaluateAll((cards) =>
+    cards.map((card) => {
+      const { left, right } = card.getBoundingClientRect()
+      return { left, right }
+    }),
+  )
+  expect(edges.length).toBeGreaterThan(0)
+  for (const { left, right } of edges) {
+    expect(left).toBeGreaterThanOrEqual(0)
+    expect(right).toBeLessThanOrEqual(width)
+  }
 })

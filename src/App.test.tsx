@@ -31,6 +31,7 @@ it('renders the intro below the heading', () => {
   })
   const intro = screen.getByText(
     'Today you come of age. This card gathers wishes from your family, near and far, to celebrate you and everything ahead of you. Scroll on and read what they have to say.',
+    { selector: '.sr-only' },
   )
   expect(
     heading.compareDocumentPosition(intro) & Node.DOCUMENT_POSITION_FOLLOWING,
@@ -40,9 +41,11 @@ it('renders the intro below the heading', () => {
 it('renders the family headings in order after the intro', () => {
   render(<App />)
 
-  const intro = screen.getByText(/^Today you come of age/)
+  const intro = screen.getByText(/^Today you come of age/, {
+    selector: '.sr-only',
+  })
   const headings = screen.getAllByRole('heading', {
-    level: 2,
+    level: 3,
     name: /^Family /,
   })
   expect(headings.map((heading) => heading.textContent)).toEqual([
@@ -54,6 +57,38 @@ it('renders the family headings in order after the intro', () => {
     expect(
       intro.compareDocumentPosition(heading) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy(),
+  )
+})
+
+it('renders the birthday wishes heading with its overline directly above', () => {
+  render(<App />)
+
+  const intro = screen.getByText(/^Today you come of age/, {
+    selector: '.sr-only',
+  })
+  const heading = screen.getByRole('heading', {
+    level: 2,
+    name: 'Birthday wishes',
+  })
+  const overline = screen.getByText('From your family')
+  expect(overline.nextElementSibling).toBe(heading)
+  expect(
+    intro.compareDocumentPosition(heading) & Node.DOCUMENT_POSITION_FOLLOWING,
+  ).toBeTruthy()
+})
+
+it('groups every family under the birthday wishes heading', () => {
+  render(<App />)
+
+  const wishes = screen.getByRole('region', { name: 'Birthday wishes' })
+  const families = screen.getAllByRole('heading', {
+    level: 3,
+    name: /^Family /,
+  })
+  expect(families).toHaveLength(3)
+  families.forEach((family) => expect(wishes).toContainElement(family))
+  expect(within(wishes).getByRole('heading', { level: 2 })).toHaveTextContent(
+    'Birthday wishes',
   )
 })
 
@@ -78,13 +113,13 @@ it('renders the finale after the last family', () => {
 
 const showcase = () => document.querySelector('[data-showcase]')
 
-it('renders the showcase between the opening and the first family', () => {
+it('renders the showcase between the opening and the birthday wishes', () => {
   render(<App />)
 
   const opening = screen.getByRole('banner')
-  const firstFamily = screen.getByRole('region', { name: 'Family Lorem' })
+  const wishes = screen.getByRole('region', { name: 'Birthday wishes' })
   expect(opening.nextElementSibling).toBe(showcase())
-  expect(showcase()!.nextElementSibling).toBe(firstFamily)
+  expect(showcase()!.nextElementSibling).toBe(wishes)
 })
 
 it('hides the showcase from assistive technology and gives it no text', () => {
@@ -116,4 +151,35 @@ it('shows no illustrations in scene mode', () => {
   render(<App />)
 
   expect(document.querySelectorAll('[data-stage-illustration]')).toHaveLength(0)
+})
+
+it('left-aligns the heading and the intro', () => {
+  render(<App />)
+
+  const intro = document.querySelector('[data-intro]')!
+  expect(intro).toHaveClass('text-left')
+  expect(intro).not.toHaveClass('text-center')
+  const greeting = screen.getByRole('heading', { level: 1 })
+  expect(greeting).toHaveClass('text-left')
+  expect(greeting).not.toHaveClass('text-center')
+})
+
+it('puts the heading and overline above one board holding every family', () => {
+  render(<App />)
+
+  const wishes = screen.getByRole('region', { name: 'Birthday wishes' })
+  const board = wishes.querySelector('[data-board]')!
+  expect(wishes.querySelectorAll('[data-board]')).toHaveLength(1)
+  expect(board).toHaveClass('overflow-x-clip')
+  expect(board).not.toContainElement(
+    screen.getByRole('heading', { level: 2, name: 'Birthday wishes' }),
+  )
+  expect(board).not.toContainElement(screen.getByText('From your family'))
+  screen
+    .getAllByRole('heading', { level: 3, name: /^Family / })
+    .forEach((heading) => expect(board).toContainElement(heading))
+  screen
+    .getAllByRole('figure')
+    .forEach((card) => expect(board).toContainElement(card))
+  expect(board.querySelector('img, svg, picture')).toBeNull()
 })

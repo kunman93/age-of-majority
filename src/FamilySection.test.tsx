@@ -12,16 +12,16 @@ const family: Family = {
 }
 
 it('renders a region named by the family with its heading', () => {
-  render(<FamilySection family={family} />)
+  render(<FamilySection family={family} firstCardIndex={0} />)
 
   const region = screen.getByRole('region', { name: 'Family Test' })
   expect(
-    within(region).getByRole('heading', { level: 2, name: 'Family Test' }),
+    within(region).getByRole('heading', { level: 3, name: 'Family Test' }),
   ).toBeInTheDocument()
 })
 
 it('renders each message text followed by its author', () => {
-  render(<FamilySection family={family} />)
+  render(<FamilySection family={family} firstCardIndex={0} />)
 
   const messages = screen.getAllByRole('figure')
   expect(messages).toHaveLength(2)
@@ -46,8 +46,8 @@ it('keeps families with the same name as separate regions', () => {
   }
   render(
     <>
-      <FamilySection family={family} />
-      <FamilySection family={other} />
+      <FamilySection family={family} firstCardIndex={0} />
+      <FamilySection family={other} firstCardIndex={1} />
     </>,
   )
 
@@ -58,10 +58,69 @@ it('keeps families with the same name as separate regions', () => {
   expect(within(regions[1]).getByText('Other text')).toBeInTheDocument()
 
   const headings = regions.map((region) =>
-    within(region).getByRole('heading', { level: 2 }),
+    within(region).getByRole('heading', { level: 3 }),
   )
   regions.forEach((region, index) =>
     expect(region.getAttribute('aria-labelledby')).toBe(headings[index].id),
   )
   expect(headings[0].id).not.toBe(headings[1].id)
+})
+
+it('tilts consecutive cards in opposite directions, continuing from the previous family', () => {
+  render(<FamilySection family={family} firstCardIndex={1} />)
+
+  const [first, second] = screen.getAllByRole('figure')
+  expect(first).toHaveClass('rotate-[1.2deg]')
+  expect(second).toHaveClass('rotate-[-1.2deg]')
+})
+
+it('keeps the cards text only', () => {
+  render(<FamilySection family={family} firstCardIndex={0} />)
+
+  screen
+    .getAllByRole('figure')
+    .forEach((card) =>
+      expect(card.querySelector('img, svg, picture')).toBeNull(),
+    )
+})
+
+it('pivots each card on its pin and swings it to the opposite tilt on hover', () => {
+  render(<FamilySection family={family} firstCardIndex={0} />)
+
+  const [first, second] = screen.getAllByRole('figure')
+  expect(first).toHaveClass('origin-[50%_0]', 'rotate-[-1.2deg]')
+  expect(first).toHaveClass(
+    'motion-safe:hover:rotate-[1.2deg]',
+    'motion-safe:hover:shadow-2xl',
+    'motion-safe:transition-[rotate,box-shadow]',
+  )
+  expect(second).toHaveClass('motion-safe:hover:rotate-[-1.2deg]')
+})
+
+it('lifts no card on hover', () => {
+  render(<FamilySection family={family} firstCardIndex={0} />)
+
+  screen
+    .getAllByRole('figure')
+    .forEach((card) => expect(card.className).not.toMatch(/translate/))
+})
+
+it('draws the tape and the pin as decorative pseudo-elements', () => {
+  render(<FamilySection family={family} firstCardIndex={0} />)
+
+  screen.getAllByRole('figure').forEach((card) => {
+    expect(card.className).toMatch(/before:/)
+    expect(card.className).toMatch(/after:/)
+    expect(card.querySelector('img, svg, picture')).toBeNull()
+  })
+})
+
+it('makes the card wrappers wide enough for two per row', () => {
+  render(<FamilySection family={family} firstCardIndex={0} />)
+
+  screen
+    .getAllByRole('figure')
+    .forEach((card) =>
+      expect(card.parentElement).toHaveClass('w-full', 'sm:w-[28rem]'),
+    )
 })

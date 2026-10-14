@@ -26,3 +26,16 @@ export function createStoryParticles(count: number, random: () => number) {
 
   return { positions, offsets }
 }
+
+// x, y pairs on the border of the -1..1 square
+export function createEdgePoints(count: number, random: () => number) {
+  const points = new Float32Array(count * 2)
+  for (let i = 0; i < count; i++) {
+    const side = Math.floor(random() * 4)
+    const along = random() * 2 - 1
+    const fixed = side % 2 === 0 ? -1 : 1
+    points[i * 2] = side < 2 ? along : fixed
+    points[i * 2 + 1] = side < 2 ? fixed : along
+  }
+  return points
+}
