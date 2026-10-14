@@ -15,11 +15,12 @@ out. Visitors who prefer reduced motion keep a fully readable, still card.
 - Opening: on load, the greeting fades in and the intro's three sentences are typed like a typewriter, one at a time
   in an endless loop (about 30 ms per character, a 2 s hold, then erased, with a red blinking cursor). The loop pauses
   while the opening is scrolled away. The full intro is available to assistive technology at all times and the space
-  of the longest sentence is reserved, so the opening does not move. The intro's text is left-aligned, and the
-  heading stays centered. When the visitor scrolls away, the opening
+  of the longest sentence is reserved, so the opening does not move. The heading's and the intro's text is left-aligned,
+  while the opening block stays centered. When the visitor scrolls away, the opening
   fades out, and it fades back in when the visitor scrolls back.
-- Families and finale: each family heading and the finale reveal (fade and rise) as they scroll into view. Each family
-  card fades in and slides in from alternating sides with a bounce, as in the portfolio. All reveals are driven by GSAP
+- Families and finale: each family heading and the finale reveal (fade and rise) as they scroll into view. All family
+  cards on the board fade in and slide in together, staggered, from alternating sides with a bounce, as in the
+  portfolio, so they are in place when the visitor reaches the board. All reveals are driven by GSAP
   ScrollTrigger with `scrub`. Scrolling up plays them in reverse. Each reveal is finished
   before the element reaches the middle of the viewport, so text is read at full contrast.
 - The families are grouped under a "Birthday wishes" heading with the overline "From your family", in the style of
@@ -54,7 +55,7 @@ out. Visitors who prefer reduced motion keep a fully readable, still card.
   wrapping rows on a cork board.
 - `birthday-greeting`: the greeting and the intro are no longer shown in their final state without animation on
   load. With motion, the intro's sentences are typed one at a time in a loop. With reduced motion, the full text shows instantly.
-  The intro's text is left-aligned, while the opening stays centered in the first screen.
+  The heading's and the intro's text is left-aligned, while the opening stays centered in the first screen.
 - `family-messages`: the families are grouped under a "Birthday wishes" heading with an overline. They are still in
   the normal page flow without scroll snapping or smooth scrolling. With
   motion, a message is fully visible once it is in the upper half of the viewport rather than as soon as it enters.

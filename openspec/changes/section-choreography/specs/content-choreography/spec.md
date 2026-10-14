@@ -83,26 +83,16 @@ in, in reverse, when the visitor scrolls back up. Its fade SHALL depend only on 
 - **WHEN** the visitor scrolls back to the top
 - **THEN** the greeting and the intro are fully opaque
 
-### Requirement: Families and finale reveal while scrolling
+### Requirement: Family headings and finale reveal while scrolling
 When the content moves, each family heading and the finale SHALL fade in and rise into place while they scroll into
-the viewport. Each message card SHALL fade in and slide in sideways, overshooting its place and settling back like a
-bounce. Consecutive cards SHALL slide in from opposite sides. Each reveal SHALL depend only on the scroll position and
-SHALL be complete before the element's top reaches the middle of the viewport. Scrolling back up SHALL play each
-reveal in reverse.
+the viewport. Each reveal SHALL depend only on the scroll position, SHALL be complete before the element's top reaches
+the middle of the viewport, and SHALL play in reverse when the visitor scrolls back up.
 
 #### Scenario: Visitor scrolls a family into view
 - **WHEN** a visitor who does not prefer reduced motion scrolls until the top of the "Family Ipsum" section just enters the viewport from below
 - **THEN** the "Family Ipsum" heading is not yet fully visible
 - **WHEN** the visitor scrolls until the "Family Ipsum" heading is in the upper half of the viewport
 - **THEN** the heading is fully visible and in its final position
-
-#### Scenario: Visitor scrolls the wishes into view
-- **WHEN** a visitor who does not prefer reduced motion scrolls until the top of the first "Family Ipsum" message card just enters the viewport from below
-- **THEN** the two "Family Ipsum" message cards are shifted sideways from their places, in opposite directions
-- **AND** neither card is fully visible
-- **WHEN** the visitor scrolls until both cards are in the upper half of the viewport
-- **THEN** both cards are fully visible and in their final positions
-- **AND** the page does not scroll horizontally
 
 #### Scenario: Visitor scrolls back up past a family
 - **WHEN** a visitor who does not prefer reduced motion has revealed the "Family Ipsum" section
@@ -112,6 +102,25 @@ reveal in reverse.
 #### Scenario: Visitor scrolls to the finale
 - **WHEN** a visitor who does not prefer reduced motion scrolls to the end of the page
 - **THEN** the finale heading, message and signature are fully visible and in their final position
+
+### Requirement: Message cards slide in together when the board is reached
+When the content moves, all message cards on the board SHALL fade in and slide in sideways, one shortly after the
+other and from alternating sides, with a bounce, while the board scrolls into view. All cards SHALL be fully revealed
+once the top of the board is in the upper half of the viewport. The reveal SHALL depend only on the scroll position
+and SHALL play in reverse on scroll-up.
+
+#### Scenario: Visitor scrolls the wishes into view
+- **WHEN** a visitor who does not prefer reduced motion scrolls until the top of the board just enters the viewport from below
+- **THEN** consecutive message cards are shifted sideways from their places, in opposite directions
+- **AND** no message card is fully visible
+- **WHEN** the visitor scrolls until the top of the board is in the upper half of the viewport
+- **THEN** every message card is fully visible and in its final position, including the last one
+- **AND** the page does not scroll horizontally
+
+#### Scenario: Visitor scrolls back above the board
+- **WHEN** a visitor who does not prefer reduced motion has revealed the message cards
+- **AND** scrolls back up until the top of the board is just above the bottom of the viewport
+- **THEN** no message card is fully visible again
 
 ### Requirement: Message cards tilt on hover
 When the content moves and the visitor's device can hover, a message card SHALL swing on its pin to the opposite tilt

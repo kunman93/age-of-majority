@@ -61,13 +61,19 @@ for `scrub` lag.
   which the spec forbids.
 - The scrapbook tilt uses the CSS `rotate` property (Tailwind v4 `rotate-*`). GSAP tweens `transform`, so the two
   compose instead of overwriting each other.
-Message cards differ, as in the portfolio. Each card gets a scrubbed timeline on the same trigger with two parallel
-`from` tweens: `opacity: 0` with `ease: 'none'`, and `x: ±100` with `ease: 'back.inOut(3)'`. Keeping opacity linear
-stops the overshoot from flickering the text. The side alternates by the global card index, as the tilt does. The
+Message cards differ, as in the portfolio. One scrubbed timeline on the board (`[data-board]`, `start: 'top bottom'`,
+`end: 'clamp(top 40%)'`, `scrub: 0.5`) reveals all cards. Each card adds two parallel `from` tweens at a staggered
+position (`index × 0.15`): `opacity: 0` with `ease: 'none'`, and `x: ±100` with `ease: 'back.inOut(3)'`. Keeping
+opacity linear stops the overshoot from flickering the text. The side alternates by the global card index, as the tilt
+does. Because the board is the trigger, the last cards are already in place when the visitor reaches them, instead of
+waiting for each card's own top to pass the middle of the viewport. Family headings on the board keep their own
+fade-and-rise. The
 portfolio's `scrub: 4` is not used, because that lag would leave cards moving past the middle of the viewport. The
 board clips horizontal overflow (`overflow-x: clip`, which does not create a scroll container), so the overshoot
 never scrolls the page sideways on phones.
 
+- *Alternative:* one trigger per card. Rejected after review in `npm run dev`. On the tall board, the lower cards were
+  still hidden while the visitor looked at the board.
 - *Alternative:* `toggleActions: 'play none none reverse'` (time-based). Rejected because it is not tied to the scroll
   position and can leave text half-faded while the visitor reads it.
 
@@ -97,8 +103,8 @@ about twice the typing speed. A `yoyo` tween makes the cursor blink for the whol
 For BDD, the `<p>` carries `data-typed` (`typing`, `shown`, `erasing`, or `done` for the static full text) and
 `data-sentence` (the active index). Steps that do not test the typewriter run with reduced motion.
 
-The intro is `text-left`, while the heading stays `text-center`. Left-aligned text no longer jumps sideways as its
-line fills.
+The heading and the intro are `text-left`, and the opening block stays centered in the window. Left-aligned text no
+longer jumps sideways as its line fills.
 
 - *Alternative:* GSAP `TextPlugin`, as in the portfolio. Rejected because it replaces the element's text, so the
   untyped rest leaves the layout. The lines would then re-wrap and the cell would shrink while typing, which breaks

@@ -89,6 +89,14 @@ pure logic, BDD steps and setup. Every task is test-first.
   inline `opacity` or `transform` is set on the cards. Add the scenario "Visitor scrolls the wishes into view", and
   verify that it and "Visitor reads revealed text" pass
 
+- [ ] 5.5 Left-align the heading's text (design.md decision 5). Update "Visitor opens the card on a phone, landscape
+  phone, tablet, laptop or desktop" so it checks that the heading and intro text are left-aligned, and verify that it
+  passes
+- [ ] 5.6 Replace the per-card triggers with one staggered timeline on the board (design.md decision 3). Verify with a
+  unit test that with reduced motion no inline `opacity` or `transform` is set on the cards. Update "Visitor scrolls
+  the wishes into view" (last card revealed), add "Visitor scrolls back above the board", and verify that they and
+  "Visitor reads revealed text" pass
+
 ## 6. Story object edge entry and exit
 
 - [x] 6.1 Add a pure `createEdgePoints(count, random)` to `storyParticles.ts` that puts points on the border of the
@@ -105,9 +113,9 @@ pure logic, BDD steps and setup. Every task is test-first.
 
 ## 7. Integration
 
-- [x] 7.1 Run `npm run build`, `npm test`, `npm run test:bdd`, `npm run lint` and `npm run format:check`, and verify
+- [ ] 7.1 Run `npm run build`, `npm test`, `npm run test:bdd`, `npm run lint` and `npm run format:check`, and verify
   that all pass
-- [x] 7.2 Validate the change with `openspec validate section-choreography --strict` and verify that it reports it
+- [ ] 7.2 Validate the change with `openspec validate section-choreography --strict` and verify that it reports it
   as valid
 
 ## Workflow follow-up
