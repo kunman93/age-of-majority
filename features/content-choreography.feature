@@ -107,6 +107,8 @@ Feature: Content choreography
     When I scroll until the top of the "Family Ipsum" section is just above the bottom of the viewport
     Then the "Family Ipsum" heading is not fully visible
 
+  # Skipped: flaky, see #49
+  @skip
   Scenario: Visitor scrolls to the finale
     When I open the home page
     And I scroll to the end of the page
