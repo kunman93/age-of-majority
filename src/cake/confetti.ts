@@ -2,9 +2,9 @@ export const CONFETTI_DURATION = 3.5
 export const FLAME_OUT_DURATION = 0.4
 
 const MAX_DELAY = 0.3
-const SPREAD = 1.2
-const MIN_LIFT = 2
-const LIFT_RANGE = 2.5
+const SPREAD = 1.5
+const MIN_LIFT = 1.6
+const LIFT_RANGE = 1.5
 
 // the card's sun, tangerine, ember, blush and cream as linear 0..1 rgb
 export const CONFETTI_PALETTE: [number, number, number][] = [

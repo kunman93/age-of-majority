@@ -29,7 +29,7 @@ function App() {
       <Background mode={mode} onSceneError={fallBackToStatic} />
       <main
         ref={main}
-        className="space-y-12 px-5 pb-12 sm:space-y-16 sm:px-8 sm:pb-16 lg:pb-24"
+        className="space-y-12 overflow-x-clip px-5 pb-12 sm:space-y-16 sm:px-8 sm:pb-16 lg:pb-24"
       >
         <header
           data-opening
