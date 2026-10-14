@@ -55,13 +55,18 @@ function App() {
               Birthday wishes
             </h2>
           </div>
-          {families.map((family, index) => (
-            <FamilySection
-              key={index}
-              family={family}
-              firstCardIndex={firstCardIndexes[index]}
-            />
-          ))}
+          <div
+            data-board
+            className="bg-cork border-cork-frame space-y-12 overflow-x-clip rounded-2xl border-4 bg-[radial-gradient(rgb(255_214_170/0.1)_1.5px,transparent_2px),radial-gradient(rgb(0_0_0/0.25)_1px,transparent_1.5px)] bg-[length:14px_14px,9px_9px] bg-[position:0_0,5px_4px] p-4 shadow-[inset_0_2px_14px_rgb(0_0_0/0.6)] sm:space-y-16 sm:border-8 sm:p-8"
+          >
+            {families.map((family, index) => (
+              <FamilySection
+                key={index}
+                family={family}
+                firstCardIndex={firstCardIndexes[index]}
+              />
+            ))}
+          </div>
         </section>
         <section
           data-reveal

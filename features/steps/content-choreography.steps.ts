@@ -394,3 +394,93 @@ Then(
 Then('the finale heading is fully visible without moving', async ({ page }) => {
   await expectStillAndVisible(finale(page).getByRole('heading'))
 })
+
+type HoverState = { tilt: number; pin: { x: number; y: number } }
+const beforeHover = new WeakMap<Page, HoverState>()
+
+const firstCard = (page: Page, family: string) =>
+  section(page, family).getByRole('figure').first()
+
+const tiltOf = (card: Locator) =>
+  card.evaluate((element) => parseFloat(getComputedStyle(element).rotate))
+
+// The pin is the one point a card tilts around, so it is derived from the
+// rotated box: the box's center sits half the card's height below the pin
+const pinOf = (card: Locator) =>
+  card.evaluate((element) => {
+    const { rotate } = getComputedStyle(element)
+    const radians = (parseFloat(rotate) * Math.PI) / 180
+    const box = element.getBoundingClientRect()
+    const half = (element as HTMLElement).offsetHeight / 2
+    return {
+      x: box.left + box.width / 2 + Math.sin(radians) * half,
+      y: box.top + box.height / 2 - Math.cos(radians) * half,
+    }
+  })
+
+When(
+  'I scroll the first {string} message card into place and remember its tilt and pin',
+  async ({ page }, family: string) => {
+    const card = firstCard(page, family)
+    await scrollTopTo(card, 0.3)
+    const slot = card.locator('..')
+    await expect
+      .poll(() => opacityOf(slot), { timeout: SETTLE_TIMEOUT_MS })
+      .toBe(1)
+    await expect
+      .poll(
+        () =>
+          slot.evaluate((element) => {
+            const { transform } = getComputedStyle(element)
+            const { m41, m42 } = new DOMMatrix(
+              transform === 'none' ? undefined : transform,
+            )
+            return Math.abs(m41) + Math.abs(m42)
+          }),
+        { timeout: SETTLE_TIMEOUT_MS },
+      )
+      .toBe(0)
+    beforeHover.set(page, { tilt: await tiltOf(card), pin: await pinOf(card) })
+  },
+)
+
+When('I move the pointer over the card', async ({ page }) => {
+  await firstCard(page, 'Family Ipsum').hover()
+})
+
+When('I move the pointer away from the card', async ({ page }) => {
+  await page.mouse.move(0, 0)
+})
+
+const MAX_TILT_DEGREES = 2
+const PIN_TOLERANCE_PX = 1
+
+Then(
+  'the card is tilted in the opposite direction from before, by at most 2 degrees',
+  async ({ page }) => {
+    const { tilt } = beforeHover.get(page)!
+    const card = firstCard(page, 'Family Ipsum')
+    await expect.poll(() => tiltOf(card)).toBeCloseTo(-tilt, 1)
+    expect(Math.abs(await tiltOf(card))).toBeLessThanOrEqual(MAX_TILT_DEGREES)
+  },
+)
+
+Then('its pin is at the same position as before', async ({ page }) => {
+  const { pin } = beforeHover.get(page)!
+  const now = await pinOf(firstCard(page, 'Family Ipsum'))
+  expect(Math.abs(now.x - pin.x)).toBeLessThanOrEqual(PIN_TOLERANCE_PX)
+  expect(Math.abs(now.y - pin.y)).toBeLessThanOrEqual(PIN_TOLERANCE_PX)
+})
+
+Then('the card is back at its original tilt', async ({ page }) => {
+  const { tilt } = beforeHover.get(page)!
+  await expect
+    .poll(() => tiltOf(firstCard(page, 'Family Ipsum')))
+    .toBeCloseTo(tilt, 1)
+})
+
+Then('the card keeps its original tilt', async ({ page }) => {
+  const { tilt } = beforeHover.get(page)!
+  await page.waitForTimeout(500)
+  expect(await tiltOf(firstCard(page, 'Family Ipsum'))).toBeCloseTo(tilt, 1)
+})

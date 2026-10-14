@@ -70,6 +70,22 @@ Feature: Content choreography
     When I scroll until the "Family Ipsum" heading is in the upper half of the viewport
     Then the "Family Ipsum" heading is fully visible and in its final position
 
+  Scenario: Visitor hovers a message card
+    When I open the home page
+    And I scroll the first "Family Ipsum" message card into place and remember its tilt and pin
+    And I move the pointer over the card
+    Then the card is tilted in the opposite direction from before, by at most 2 degrees
+    And its pin is at the same position as before
+    When I move the pointer away from the card
+    Then the card is back at its original tilt
+
+  Scenario: Visitor who prefers reduced motion hovers a message card
+    Given the visitor prefers reduced motion
+    When I open the home page
+    And I scroll the first "Family Ipsum" message card into place and remember its tilt and pin
+    And I move the pointer over the card
+    Then the card keeps its original tilt
+
   Scenario: Visitor scrolls back up past a family
     When I open the home page
     And I scroll until the "Family Ipsum" heading is in the upper half of the viewport

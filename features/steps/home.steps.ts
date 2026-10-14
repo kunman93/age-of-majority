@@ -68,13 +68,15 @@ Then(
   },
 )
 
-Then('the text of the heading and the intro is centered', async ({ page }) => {
-  for (const locator of [
-    page.getByRole('heading', { level: 1 }),
-    intro(page),
-  ]) {
-    await expect(locator).toHaveCSS('text-align', 'center')
-  }
+Then('the text of the heading is centered', async ({ page }) => {
+  await expect(page.getByRole('heading', { level: 1 })).toHaveCSS(
+    'text-align',
+    'center',
+  )
+})
+
+Then('the text of the intro is left-aligned', async ({ page }) => {
+  await expect(intro(page)).toHaveCSS('text-align', /^(left|start)$/)
 })
 
 Then(

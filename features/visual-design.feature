@@ -49,8 +49,9 @@ Feature: Visual design
   Scenario: Visitor sees scrapbook cards
     Given the visitor prefers reduced motion
     When I open the home page
-    Then every message card has a tape strip at its top edge
+    Then every message card has a tape strip at the middle of its top edge, with a pin through its middle
     And consecutive message cards are tilted in opposite directions by at most 2 degrees
+    And every message card is tilted around its pin
     And no message card contains an image
 
   Scenario: Visitor reads the wishes on a wide screen
@@ -58,6 +59,21 @@ Feature: Visual design
     And a 1280px wide window
     When I open the home page
     Then the two "Family Ipsum" message cards are side by side, with their tops at the same height
+    And every message card is at least 400px wide
+    And the page does not scroll horizontally
+
+  Scenario: Visitor sees the board
+    Given the visitor prefers reduced motion
+    When I open the home page
+    Then every family heading and every message card is inside one board
+    And the heading "Birthday wishes" is above the board
+    And the board contains no image
+
+  Scenario: Visitor reads the board on a phone
+    Given the visitor prefers reduced motion
+    And a 375px wide window
+    When I open the home page
+    Then the board fits within the window width
     And the page does not scroll horizontally
 
   Scenario: Visitor reads the wishes on a phone

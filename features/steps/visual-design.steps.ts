@@ -231,32 +231,126 @@ Then('no element animates or transitions', async ({ page }) => {
 
 const MAX_TILT_DEGREES = 2
 
+const CENTER_TOLERANCE_PX = 1
+
 Then(
-  'every message card has a tape strip at its top edge',
+  'every message card has a tape strip at the middle of its top edge, with a pin through its middle',
   async ({ page }) => {
-    const tapes = await page.getByRole('figure').evaluateAll((cards) =>
+    const decorations = await page.getByRole('figure').evaluateAll((cards) =>
       cards.map((card) => {
-        const { content, position, top, height, backgroundColor } =
-          getComputedStyle(card, '::before')
+        const read = (pseudo: '::before' | '::after') => {
+          const { content, position, top, left, width, height, ...style } =
+            getComputedStyle(card, pseudo)
+          return {
+            content,
+            position,
+            top: parseFloat(top),
+            height: parseFloat(height),
+            centerX: parseFloat(left) + parseFloat(width) / 2,
+            centerY: parseFloat(top) + parseFloat(height) / 2,
+            backgroundColor: style.backgroundColor,
+            backgroundImage: style.backgroundImage,
+          }
+        }
         return {
-          content,
-          position,
-          top: parseFloat(top),
-          height: parseFloat(height),
-          backgroundColor,
+          cardCenterX: (card as HTMLElement).offsetWidth / 2,
+          tape: read('::before'),
+          pin: read('::after'),
         }
       }),
     )
-    expect(tapes.length).toBeGreaterThan(0)
-    for (const tape of tapes) {
-      expect(tape.content).not.toBe('none')
-      expect(tape.position).toBe('absolute')
+    expect(decorations.length).toBeGreaterThan(0)
+    for (const { cardCenterX, tape, pin } of decorations) {
+      for (const part of [tape, pin]) {
+        expect(part.content).not.toBe('none')
+        expect(part.position).toBe('absolute')
+        expect(part.top).toBeLessThanOrEqual(0)
+        expect(part.top + part.height).toBeGreaterThan(0)
+        expect(Math.abs(part.centerX - cardCenterX)).toBeLessThanOrEqual(
+          CENTER_TOLERANCE_PX,
+        )
+      }
       expect(parseRgb(tape.backgroundColor).a).toBeGreaterThan(0)
-      expect(tape.top).toBeLessThanOrEqual(0)
-      expect(tape.top + tape.height).toBeGreaterThan(0)
+      expect(pin.backgroundImage).not.toBe('none')
+      expect(Math.abs(pin.centerY - tape.centerY)).toBeLessThanOrEqual(
+        tape.height / 2,
+      )
     }
   },
 )
+
+Then('every message card is tilted around its pin', async ({ page }) => {
+  const pivots = await page.getByRole('figure').evaluateAll((cards) =>
+    cards.map((card) => {
+      const [x, y] = getComputedStyle(card)
+        .transformOrigin.split(' ')
+        .map(parseFloat)
+      return { x, y, centerX: (card as HTMLElement).offsetWidth / 2 }
+    }),
+  )
+  expect(pivots.length).toBeGreaterThan(0)
+  for (const { x, y, centerX } of pivots) {
+    expect(Math.abs(x - centerX)).toBeLessThanOrEqual(CENTER_TOLERANCE_PX)
+    expect(y).toBe(0)
+  }
+})
+
+Then('every message card is at least 400px wide', async ({ page }) => {
+  const widths = await page
+    .getByRole('figure')
+    .evaluateAll((cards) => cards.map((card) => card.clientWidth))
+  expect(widths.length).toBeGreaterThan(0)
+  for (const width of widths) expect(width).toBeGreaterThanOrEqual(400)
+})
+
+const BOARD = '[data-board]'
+
+Then(
+  'every family heading and every message card is inside one board',
+  async ({ page }) => {
+    await expect(page.locator(BOARD)).toHaveCount(1)
+    const outside = await page
+      .locator(BOARD)
+      .evaluate(
+        (board) =>
+          [...document.querySelectorAll('main h3, main figure')].filter(
+            (element) => !board.contains(element),
+          ).length,
+      )
+    expect(outside).toBe(0)
+    await expect(page.locator(`${BOARD} figure`)).not.toHaveCount(0)
+    await expect(page.locator(`${BOARD} h3`)).not.toHaveCount(0)
+  },
+)
+
+Then(
+  'the heading {string} is above the board',
+  async ({ page }, name: string) => {
+    const heading = await page
+      .getByRole('heading', { level: 2, name, exact: true })
+      .boundingBox()
+    const board = await page.locator(BOARD).boundingBox()
+    expect(heading!.y + heading!.height).toBeLessThanOrEqual(board!.y)
+  },
+)
+
+Then('the board contains no image', async ({ page }) => {
+  const images = await page.locator(BOARD).evaluate((board) => ({
+    elements: board.querySelectorAll('img, picture, svg, canvas, video').length,
+    files: [board, ...board.querySelectorAll('*')].filter((element) =>
+      getComputedStyle(element).backgroundImage.includes('url('),
+    ).length,
+  }))
+  expect(images).toEqual({ elements: 0, files: 0 })
+})
+
+Then('the board fits within the window width', async ({ page }) => {
+  const { left, right } = await page
+    .locator(BOARD)
+    .evaluate((board) => board.getBoundingClientRect())
+  expect(left).toBeGreaterThanOrEqual(0)
+  expect(right).toBeLessThanOrEqual(page.viewportSize()!.width)
+})
 
 Then(
   'consecutive message cards are tilted in opposite directions by at most 2 degrees',

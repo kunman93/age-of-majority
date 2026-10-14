@@ -9,7 +9,7 @@ function TypedIntro({ text }: { text: string }) {
     <p
       data-intro
       data-typed="done"
-      className="text-xl leading-relaxed sm:text-2xl"
+      className="text-left text-xl leading-relaxed sm:text-2xl"
     >
       <span className="sr-only">{text}</span>
       <span aria-hidden="true" className="grid">

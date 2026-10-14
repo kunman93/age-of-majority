@@ -152,3 +152,32 @@ it('shows no illustrations in scene mode', () => {
 
   expect(document.querySelectorAll('[data-stage-illustration]')).toHaveLength(0)
 })
+
+it('left-aligns the intro while the heading stays centered', () => {
+  render(<App />)
+
+  const intro = document.querySelector('[data-intro]')!
+  expect(intro).toHaveClass('text-left')
+  expect(intro).not.toHaveClass('text-center')
+  expect(screen.getByRole('banner')).toHaveClass('text-center')
+})
+
+it('puts the heading and overline above one board holding every family', () => {
+  render(<App />)
+
+  const wishes = screen.getByRole('region', { name: 'Birthday wishes' })
+  const board = wishes.querySelector('[data-board]')!
+  expect(wishes.querySelectorAll('[data-board]')).toHaveLength(1)
+  expect(board).toHaveClass('overflow-x-clip')
+  expect(board).not.toContainElement(
+    screen.getByRole('heading', { level: 2, name: 'Birthday wishes' }),
+  )
+  expect(board).not.toContainElement(screen.getByText('From your family'))
+  screen
+    .getAllByRole('heading', { level: 3, name: /^Family / })
+    .forEach((heading) => expect(board).toContainElement(heading))
+  screen
+    .getAllByRole('figure')
+    .forEach((card) => expect(board).toContainElement(card))
+  expect(board.querySelector('img, svg, picture')).toBeNull()
+})

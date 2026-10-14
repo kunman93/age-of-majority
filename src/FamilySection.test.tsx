@@ -83,3 +83,44 @@ it('keeps the cards text only', () => {
       expect(card.querySelector('img, svg, picture')).toBeNull(),
     )
 })
+
+it('pivots each card on its pin and swings it to the opposite tilt on hover', () => {
+  render(<FamilySection family={family} firstCardIndex={0} />)
+
+  const [first, second] = screen.getAllByRole('figure')
+  expect(first).toHaveClass('origin-[50%_0]', 'rotate-[-1.2deg]')
+  expect(first).toHaveClass(
+    'motion-safe:hover:rotate-[1.2deg]',
+    'motion-safe:hover:shadow-2xl',
+    'motion-safe:transition-[rotate,box-shadow]',
+  )
+  expect(second).toHaveClass('motion-safe:hover:rotate-[-1.2deg]')
+})
+
+it('lifts no card on hover', () => {
+  render(<FamilySection family={family} firstCardIndex={0} />)
+
+  screen
+    .getAllByRole('figure')
+    .forEach((card) => expect(card.className).not.toMatch(/translate/))
+})
+
+it('draws the tape and the pin as decorative pseudo-elements', () => {
+  render(<FamilySection family={family} firstCardIndex={0} />)
+
+  screen.getAllByRole('figure').forEach((card) => {
+    expect(card.className).toMatch(/before:/)
+    expect(card.className).toMatch(/after:/)
+    expect(card.querySelector('img, svg, picture')).toBeNull()
+  })
+})
+
+it('makes the card wrappers wide enough for two per row', () => {
+  render(<FamilySection family={family} firstCardIndex={0} />)
+
+  screen
+    .getAllByRole('figure')
+    .forEach((card) =>
+      expect(card.parentElement).toHaveClass('w-full', 'sm:w-[28rem]'),
+    )
+})
