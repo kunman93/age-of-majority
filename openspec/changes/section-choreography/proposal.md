@@ -38,7 +38,7 @@ out. Visitors who prefer reduced motion keep a fully readable, still card.
   scroll-driven and reverse on scroll-up. Plan B, only with the user's sign-off: if the particles do not look good,
   the 17 and the key fade in and out in place with soft, blurred edges.
 - GSAP moves from the lazily loaded 3D chunk into the main bundle, because the content reveals also run without
-  WebGL. GSAP's `TextPlugin` is part of the existing `gsap` package. No new dependency.
+  WebGL. GSAP's `ScrollTrigger` is part of the existing `gsap` package. No new dependency.
 
 ## Capabilities
 
@@ -76,6 +76,6 @@ out. Visitors who prefer reduced motion keep a fully readable, still card.
   larger. Visitors who prefer reduced motion still download no 3D scene.
 - **Tests:** unit tests for the pure tint mapping and the entry and exit mapping, and for the hooks under reduced
   motion. New BDD feature `content-choreography.feature`. In `visual-design.feature`, the "static card" scenario
-  becomes reduced-motion only. The `home`, `families` and `finale` steps wait for reveals to finish. `gsap` is removed
+  becomes reduced-motion only. The `home`, `families` and `finale` steps run with reduced motion, so they have no reveals to wait for. `gsap` is removed
   from the BDD `SCENE_CHUNK` pattern.
 - **Out of scope:** the finale cake and celebration effect (#37), and images on the family cards.
