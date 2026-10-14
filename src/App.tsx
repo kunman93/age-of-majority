@@ -10,6 +10,12 @@ import Showcase from './story/Showcase'
 const INTRO =
   'Today you come of age. This card gathers wishes from your family, near and far, to celebrate you and everything ahead of you. Scroll on and read what they have to say.'
 
+const firstCardIndexes = families.map((_, index) =>
+  families
+    .slice(0, index)
+    .reduce((count, family) => count + family.messages.length, 0),
+)
+
 function App() {
   const finaleHeadingId = useId()
   const { mode, fallBackToStatic } = useSceneMode()
@@ -34,7 +40,11 @@ function App() {
         </header>
         <Showcase mode={mode} onSceneError={fallBackToStatic} />
         {families.map((family, index) => (
-          <FamilySection key={index} family={family} />
+          <FamilySection
+            key={index}
+            family={family}
+            firstCardIndex={firstCardIndexes[index]}
+          />
         ))}
         <section
           data-reveal

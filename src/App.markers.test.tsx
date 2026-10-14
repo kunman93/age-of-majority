@@ -23,7 +23,7 @@ vi.mock('./families', () => ({
 
 const reveals = () => [...document.querySelectorAll('[data-reveal]')]
 
-it('marks each family heading, each message and the finale for reveal', () => {
+it('marks each family heading, each message card and the finale for reveal', () => {
   render(<App />)
 
   const headings = screen.getAllByRole('heading', { name: 'Family Twin' })
@@ -33,7 +33,7 @@ it('marks each family heading, each message and the finale for reveal', () => {
   expect(messages).toHaveLength(3)
   expect(reveals()).toHaveLength(headings.length + messages.length + 1)
   for (const target of [...headings, ...messages, finale]) {
-    expect(target).toHaveAttribute('data-reveal')
+    expect(target.closest('[data-reveal]')).not.toBeNull()
   }
 })
 

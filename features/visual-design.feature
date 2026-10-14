@@ -40,3 +40,15 @@ Feature: Visual design
     Given the visitor prefers reduced motion
     When I open the home page
     Then no element animates or transitions
+
+  Scenario: Visitor sees scrapbook cards
+    When I open the home page
+    Then every message card has a tape strip at its top edge
+    And consecutive message cards are tilted in opposite directions by at most 2 degrees
+    And no message card contains an image
+
+  Scenario: Visitor reads a scrapbook card on a phone
+    Given a 375px wide window
+    When I open the home page
+    Then the page does not scroll horizontally
+    And every message card fits within the window width

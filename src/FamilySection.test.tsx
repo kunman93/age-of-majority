@@ -12,7 +12,7 @@ const family: Family = {
 }
 
 it('renders a region named by the family with its heading', () => {
-  render(<FamilySection family={family} />)
+  render(<FamilySection family={family} firstCardIndex={0} />)
 
   const region = screen.getByRole('region', { name: 'Family Test' })
   expect(
@@ -21,7 +21,7 @@ it('renders a region named by the family with its heading', () => {
 })
 
 it('renders each message text followed by its author', () => {
-  render(<FamilySection family={family} />)
+  render(<FamilySection family={family} firstCardIndex={0} />)
 
   const messages = screen.getAllByRole('figure')
   expect(messages).toHaveLength(2)
@@ -46,8 +46,8 @@ it('keeps families with the same name as separate regions', () => {
   }
   render(
     <>
-      <FamilySection family={family} />
-      <FamilySection family={other} />
+      <FamilySection family={family} firstCardIndex={0} />
+      <FamilySection family={other} firstCardIndex={1} />
     </>,
   )
 
@@ -64,4 +64,22 @@ it('keeps families with the same name as separate regions', () => {
     expect(region.getAttribute('aria-labelledby')).toBe(headings[index].id),
   )
   expect(headings[0].id).not.toBe(headings[1].id)
+})
+
+it('tilts consecutive cards in opposite directions, continuing from the previous family', () => {
+  render(<FamilySection family={family} firstCardIndex={1} />)
+
+  const [first, second] = screen.getAllByRole('figure')
+  expect(first).toHaveClass('rotate-[1.2deg]')
+  expect(second).toHaveClass('rotate-[-1.2deg]')
+})
+
+it('keeps the cards text only', () => {
+  render(<FamilySection family={family} firstCardIndex={0} />)
+
+  screen
+    .getAllByRole('figure')
+    .forEach((card) =>
+      expect(card.querySelector('img, svg, picture')).toBeNull(),
+    )
 })

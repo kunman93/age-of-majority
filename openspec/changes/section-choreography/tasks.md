@@ -52,7 +52,7 @@ pure logic, BDD steps and setup. Every task is test-first.
 
 ## 5. Scrapbook cards
 
-- [ ] 5.1 Style each message `<figure>` as a paper-like card with a tape strip at its top edge, alternating tilt of
+- [x] 5.1 Style each message `<figure>` as a paper-like card with a tape strip at its top edge, alternating tilt of
   at most 2 degrees through the CSS `rotate` property, and text only. Verify with the visual-design scenarios "Visitor
   sees scrapbook cards" and "Visitor reads a scrapbook card on a phone". The existing contrast, size and
   no-horizontal-scroll scenarios must still pass. Check the look in `npm run dev`
