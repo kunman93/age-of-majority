@@ -1,5 +1,6 @@
 import ReactThreeTestRenderer from '@react-three/test-renderer'
 import { expect, it, vi } from 'vitest'
+import { CustomBlending, MaxEquation } from 'three'
 import type { Points, ShaderMaterial } from 'three'
 import Embers, { EMBER_COUNT } from './Embers'
 
@@ -15,6 +16,13 @@ it('draws every ember as one set of points', async () => {
   expect(renderer.scene.children).toHaveLength(1)
   expect(points.type).toBe('Points')
   expect(points.geometry.getAttribute('position').count).toBe(EMBER_COUNT)
+})
+
+it('never lets overlapping embers add up to a brighter pixel', async () => {
+  const { material } = await renderEmbers()
+
+  expect(material.blending).toBe(CustomBlending)
+  expect(material.blendEquation).toBe(MaxEquation)
 })
 
 it('advances the time uniform with every frame', async () => {
