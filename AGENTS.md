@@ -66,9 +66,9 @@ Apply to everyone who writes code or config here: the main session and every cus
 
 - TDD, and prove behavior with executable validation before declaring work done. Test behavior, not implementation, and keep the test pyramid: many unit tests, few end-to-end tests.
   Do not write tests that are fragile and bring no value: no assertions on the exact state of an animation at one
-  instant (for example a blink phase or an opacity of exactly 0 or 1 mid-loop) and no fixed `waitForTimeout`
-  guesses. Poll for the end state instead, or leave the animation detail to a unit test of its config or to manual
-  review.
+  instant (for example a blink phase or an opacity of exactly 0 or 1 mid-loop) and no fixed waits to reach a state:
+  poll for it instead. A fixed window is allowed only to prove that something does not change, and must be a named
+  constant. Leave the animation detail to a unit test of its config or to manual review.
 - Boy Scout rule, limited to code you are already touching.
 - Minimal dependencies: justify every new package.
 - Secure by default: never introduce secrets, tokens, or credentials into the repository, sanitize input, use least privilege.
