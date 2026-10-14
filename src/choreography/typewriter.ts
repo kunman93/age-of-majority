@@ -89,13 +89,21 @@ export function addTypewriter(
     loop.paused(!running)
     blink.paused(!running)
   }
-  load.add(() => run(true))
+  // the load timeline may end after the visitor has scrolled out of the opening
+  let inView = true
+  load.add(() => run(inView))
   ScrollTrigger.create({
     trigger: opening,
     start: 'top top',
     end: 'bottom top',
-    onLeave: () => run(false),
-    onEnterBack: () => run(true),
+    onLeave: () => {
+      inView = false
+      run(false)
+    },
+    onEnterBack: () => {
+      inView = true
+      run(true)
+    },
   })
 
   return {

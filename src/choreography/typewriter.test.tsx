@@ -34,7 +34,7 @@ const setup = () => {
   const untyped = (index: number) =>
     lines[index].querySelector<HTMLElement>('[data-untyped-text]')!
   const at = (seconds: number) => typewriter.loop.totalTime(seconds, false)
-  return { intro, lines, typed, untyped, at, typewriter, context }
+  return { intro, lines, typed, untyped, at, typewriter, context, timeline }
 }
 
 it('shows the full text, no cursor and the done marker by default', () => {
@@ -170,6 +170,19 @@ it('pauses while the opening is scrolled away and resumes where it stopped', () 
   trigger.vars.onEnterBack!(trigger)
   expect(typewriter.loop.paused()).toBe(false)
   expect(typewriter.loop.time()).toBeCloseTo(0.3)
+})
+
+it('stays paused when the load timeline ends after the opening was left', () => {
+  const { typewriter, timeline } = setup()
+  const trigger = ScrollTrigger.getAll()[0]
+
+  trigger.vars.onLeave!(trigger)
+  timeline.totalProgress(1)
+
+  expect(typewriter.loop.paused()).toBe(true)
+
+  trigger.vars.onEnterBack!(trigger)
+  expect(typewriter.loop.paused()).toBe(false)
 })
 
 it('restores the full text and hides every cursor on revert', () => {
