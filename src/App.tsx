@@ -3,6 +3,7 @@ import TypedIntro from './choreography/TypedIntro'
 import { useChoreography } from './choreography/useChoreography'
 import Background from './background/Background'
 import { useSceneMode } from './background/useSceneMode'
+import Cake from './cake/Cake'
 import FamilySection from './FamilySection'
 import { families } from './families'
 import Showcase from './story/Showcase'
@@ -86,6 +87,7 @@ function App() {
           <p className="text-blush text-lg sm:text-xl">
             With love, your family
           </p>
+          <Cake mode={mode} onSceneError={fallBackToStatic} />
         </section>
       </main>
     </>

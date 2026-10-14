@@ -15,10 +15,10 @@ BDD steps and test support are done by the main session. Every task is test-firs
 
 ## 2. Cake button, state and static cake
 
-- [ ] 2.1 Add `CakeIllustration` (inline `aria-hidden` SVG, two-layer cake, 18 candles from `candleLayout`, one flame
+- [x] 2.1 Add `CakeIllustration` (inline `aria-hidden` SVG, two-layer cake, 18 candles from `candleLayout`, one flame
   per candle only while lit, `data-cake-illustration`, no animation or transition), per design.md decision 5. Verify
   with unit tests: 18 candles, 18 flames when lit and none when blown, `aria-hidden`
-- [ ] 2.2 Add `Cake` (native button with the picture and the visible hint, `blown` state, `aria-disabled` and ignored
+- [x] 2.2 Add `Cake` (native button with the picture and the visible hint, `blown` state, `aria-disabled` and ignored
   clicks once blown, `data-cake-state`, `focus-visible` ring, the reset ScrollTrigger with `onLeaveBack` through
   `useGSAP`), rendering `CakeIllustration` in both modes for now, per design.md decisions 1 and 2. Place it after the
   signature in the finale in `App.tsx`, with `mode` and `fallBackToStatic`. Verify with unit tests: the hint is the
