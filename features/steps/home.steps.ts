@@ -12,10 +12,13 @@ Then('I see the heading {string}', async ({ page }, name: string) => {
   await expect(page.getByRole('heading', { name, exact: true })).toBeVisible()
 })
 
-Then('I see the intro {string}', async ({ page }, text: string) => {
-  await expect(intro(page)).toBeVisible()
-  await expect(page.locator('[data-intro] [data-typed-text]')).toHaveText(text)
-})
+Then(
+  'the accessible text of the intro is {string}',
+  async ({ page }, text: string) => {
+    await expect(intro(page).locator('.sr-only')).toHaveText(text)
+    expect(await intro(page).ariaSnapshot()).toContain(text)
+  },
+)
 
 Then('the intro is below the heading', async ({ page }) => {
   const heading = await page.getByRole('heading', { level: 1 }).boundingBox()

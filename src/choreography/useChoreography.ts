@@ -22,9 +22,8 @@ export function useChoreography(
         const load = gsap.timeline()
         load.from(targets(root, 'h1'), { opacity: 0, duration: 0.8 })
         const [intro] = targets(root, '[data-intro]')
-        const restoreIntro = addTypewriter(load, intro)
-
         const opening = targets(root, '[data-opening]')
+        const { restore: restoreIntro } = addTypewriter(load, intro, opening[0])
         gsap.to(opening, {
           opacity: 0,
           ease: 'none',

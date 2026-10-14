@@ -18,22 +18,35 @@ Feature: Content choreography
 
   Scenario: Visitor watches the intro being typed
     When I open the home page
-    Then shortly after load only the first part of the intro is visible
+    Then shortly after load only the first part of the first sentence is visible
     And a blinking cursor follows the last typed character
-    When I wait until the intro is fully typed
-    Then the full intro is visible
-    And a few seconds later no cursor is visible
+    When I wait until the first sentence is fully typed
+    Then the first sentence is visible and no other sentence is visible
+    When I wait a few seconds longer
+    Then the second sentence is being typed in place of the first
+
+  Scenario: Visitor sees the intro loop
+    When I open the home page
+    And I wait until the last sentence of the intro has been typed and erased
+    Then the first sentence is typed again
+
+  Scenario: Typewriter pauses while the opening is scrolled away
+    When I open the home page
+    And the second sentence is partly typed
+    And I scroll until the opening is out of the viewport
+    Then the visible intro text no longer changes
+    When I scroll back to the top
+    Then the intro is typed on
 
   Scenario: Assistive technology reads the full intro at once
     When I open the home page
-    Then the accessible text of the intro is the full intro, while it is still being typed
+    Then the accessible text of the intro is the full intro, while its sentences are typed
     And the cursor is hidden from assistive technology
 
   Scenario: Opening stays in place while the intro is typed
     When I open the home page
     And I remember where the greeting is
-    And I wait until the intro is fully typed
-    Then the greeting is where it was
+    Then the greeting is where it was while each sentence is fully typed
 
   Scenario: Visitor turns on reduced motion while the intro is typed
     When I open the home page
@@ -44,7 +57,7 @@ Feature: Content choreography
 
   Scenario: Visitor scrolls away from the opening and back
     When I open the home page
-    And I wait until the intro is fully typed
+    And I wait until the first sentence is fully typed
     And I scroll until the opening is half out of the viewport
     Then the opening is partly faded out
     When I scroll back to the top

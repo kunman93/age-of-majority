@@ -50,7 +50,7 @@ pure logic, BDD steps and setup. Every task is test-first.
   reduced-motion scenarios for the greeting, the last family and the finale. Verify that `npm run test:bdd` passes in
   full
 
-- [ ] 4.3 Loop the typewriter sentence by sentence (design.md decision 5). Add a pure `splitSentences(text)` and verify
+- [x] 4.3 Loop the typewriter sentence by sentence (design.md decision 5). Add a pure `splitSentences(text)` and verify
   it with unit tests (three sentences for the intro, each keeping its punctuation). Replace the one-shot typing with a
   `repeat: -1` timeline that types, holds and erases each sentence in a reserved grid cell, keeps the cursor blinking,
   writes `data-typed` and `data-sentence`, and pauses while the opening is scrolled away. Verify with unit tests that

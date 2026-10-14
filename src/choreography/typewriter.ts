@@ -1,30 +1,51 @@
-import { gsap } from '../gsap'
+import { gsap, ScrollTrigger } from '../gsap'
 
 const SECONDS_PER_CHARACTER = 0.03
+const SECONDS_PER_ERASED_CHARACTER = 0.015
+const HOLD_SECONDS = 2
 const BLINK_SECONDS = 0.5
-const CURSOR_LINGER_SECONDS = 2
-const CURSOR_FADE_SECONDS = 0.4
 
-// Types the intro out at the end of the timeline and returns what restores
-// the final state, which is the intro's markup: all text typed, no cursor.
+type Typewriter = {
+  loop: gsap.core.Timeline
+  restore: () => void
+}
+
+const part = (line: HTMLElement, name: string) =>
+  line.querySelector<HTMLElement>(`[data-${name}]`)!
+
+// Loops through the intro's sentences, typing, holding and erasing each one in
+// its stacked line, after the load timeline has run. `restore` brings back the
+// final state, which is the intro's markup: the full text, no cursor.
 export function addTypewriter(
-  timeline: gsap.core.Timeline,
+  load: gsap.core.Timeline,
   intro: HTMLElement,
-): () => void {
-  const typedText = intro.querySelector<HTMLElement>('[data-typed-text]')!
-  const untypedText = intro.querySelector<HTMLElement>('[data-untyped-text]')!
-  const cursor = intro.querySelector<HTMLElement>('[data-cursor]')!
-  const text = typedText.textContent ?? ''
+  opening: HTMLElement,
+): Typewriter {
+  const full = part(intro, 'full-text')
+  const lines = [...intro.querySelectorAll<HTMLElement>('[data-sentence-line]')]
+  const sentences = lines.map((line) => part(line, 'untyped-text').textContent!)
+  const cursors = lines.map((line) => part(line, 'cursor'))
 
-  const write = (count: number) => {
-    typedText.textContent = text.slice(0, count)
-    untypedText.textContent = text.slice(count)
+  const write = (index: number, count: number) => {
+    part(lines[index], 'typed-text').textContent = sentences[index].slice(
+      0,
+      count,
+    )
+    part(lines[index], 'untyped-text').textContent =
+      sentences[index].slice(count)
   }
-  write(0)
-  intro.dataset.typed = 'typing'
+  const mark = (phase: string) => () => {
+    intro.dataset.typed = phase
+  }
 
+  gsap.set(full, { display: 'none' })
+  gsap.set(lines, { display: 'block', opacity: 0 })
+  intro.dataset.typed = 'typing'
+  intro.dataset.sentence = '0'
+
+  const loop = gsap.timeline({ repeat: -1, paused: true })
   const blink = gsap.fromTo(
-    cursor,
+    cursors,
     { opacity: 1 },
     {
       opacity: 0,
@@ -37,27 +58,52 @@ export function addTypewriter(
   )
   const typed = { count: 0 }
 
-  timeline
-    .add(() => {
-      blink.play()
-    })
-    .to(typed, {
-      count: text.length,
-      duration: text.length * SECONDS_PER_CHARACTER,
-      ease: 'none',
-      onUpdate: () => write(Math.round(typed.count)),
-      onComplete: () => {
-        intro.dataset.typed = 'done'
-      },
-    })
-    .to(
-      cursor,
-      { opacity: 0, duration: CURSOR_FADE_SECONDS, overwrite: true },
-      `+=${CURSOR_LINGER_SECONDS}`,
-    )
+  sentences.forEach((sentence, index) => {
+    const count = (from: number, to: number, secondsPerCharacter: number) =>
+      loop.fromTo(
+        typed,
+        { count: from },
+        {
+          count: to,
+          duration: sentence.length * secondsPerCharacter,
+          ease: 'none',
+          immediateRender: false,
+          onUpdate: () => write(index, Math.round(typed.count)),
+        },
+      )
 
-  return () => {
-    write(text.length)
-    intro.dataset.typed = 'done'
+    loop
+      .add(() => {
+        intro.dataset.sentence = String(index)
+        intro.dataset.typed = 'typing'
+      })
+      .set(lines[index], { opacity: 1 })
+    count(0, sentence.length, SECONDS_PER_CHARACTER)
+    loop.add(mark('shown'))
+    loop.add(mark('erasing'), `+=${HOLD_SECONDS}`)
+    count(sentence.length, 0, SECONDS_PER_ERASED_CHARACTER)
+    loop.set(lines[index], { opacity: 0 })
+  })
+
+  const run = (running: boolean) => {
+    loop.paused(!running)
+    blink.paused(!running)
+  }
+  load.add(() => run(true))
+  ScrollTrigger.create({
+    trigger: opening,
+    start: 'top top',
+    end: 'bottom top',
+    onLeave: () => run(false),
+    onEnterBack: () => run(true),
+  })
+
+  return {
+    loop,
+    restore: () => {
+      lines.forEach((_, index) => write(index, 0))
+      intro.dataset.typed = 'done'
+      delete intro.dataset.sentence
+    },
   }
 }

@@ -1,25 +1,29 @@
 Feature: Visual design
 
   Scenario: Visitor sees the warm look
+    Given the visitor prefers reduced motion
     When I open the home page
     Then the page background is dark and warm
     And the intro, the messages and the finale message are light
     And the greeting, the family headings and the finale heading are red, orange or yellow
 
   Scenario: Visitor sees consistent typefaces
+    Given the visitor prefers reduced motion
     When I open the home page
     Then the display and body fonts are loaded
     And all headings use the same typeface
     And all other text uses one typeface that differs from the headings
 
   Scenario: Visitor opens the card without third-party requests
-    Given I record the requests the page makes
+    Given the visitor prefers reduced motion
+    And I record the requests the page makes
     When I open the home page
     Then the page loaded fonts
     And every request goes to the card's own origin
 
   Scenario Outline: Visitor reads the card on a <device>
-    Given a <width>px wide window
+    Given the visitor prefers reduced motion
+    And a <width>px wide window
     When I open the home page
     Then the page does not scroll horizontally
     And all content fits within the window width
@@ -33,6 +37,7 @@ Feature: Visual design
       | desktop | 1280  |
 
   Scenario: Visitor reads every text comfortably
+    Given the visitor prefers reduced motion
     When I open the home page
     Then every text has a contrast ratio of at least 4.5 against its background
 
@@ -42,13 +47,15 @@ Feature: Visual design
     Then no element animates or transitions
 
   Scenario: Visitor sees scrapbook cards
+    Given the visitor prefers reduced motion
     When I open the home page
     Then every message card has a tape strip at its top edge
     And consecutive message cards are tilted in opposite directions by at most 2 degrees
     And no message card contains an image
 
   Scenario: Visitor reads a scrapbook card on a phone
-    Given a 375px wide window
+    Given the visitor prefers reduced motion
+    And a 375px wide window
     When I open the home page
     Then the page does not scroll horizontally
     And every message card fits within the window width

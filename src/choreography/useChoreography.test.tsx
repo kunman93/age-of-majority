@@ -63,24 +63,31 @@ it('shows the full intro and no cursor with reduced motion', () => {
   render(<App />)
 
   const intro = document.querySelector('[data-intro]')!
+  const full = intro.querySelector<HTMLElement>('[data-full-text]')!
   expect(intro).toHaveAttribute('data-typed', 'done')
-  expect(intro.querySelector('[data-typed-text]')!.textContent).toMatch(
+  expect(full.textContent).toMatch(
     /^Today you come of age.*what they have to say\.$/,
   )
-  expect(intro.querySelector('[data-untyped-text]')).toBeEmptyDOMElement()
-  expect(intro.querySelector('[data-cursor]')).toHaveClass('opacity-0')
-  expect(
-    (intro.querySelector('[data-cursor]') as HTMLElement).style.opacity,
-  ).toBe('')
+  expect(full.style.display).toBe('')
+  expect(full).not.toHaveClass('hidden')
+  intro
+    .querySelectorAll<HTMLElement>('[data-sentence-line]')
+    .forEach((line) => expect(line).toHaveClass('hidden'))
+  intro.querySelectorAll<HTMLElement>('[data-cursor]').forEach((cursor) => {
+    expect(cursor).toHaveClass('opacity-0')
+    expect(cursor.style.opacity).toBe('')
+  })
 })
 
-it('types the intro out without reduced motion', () => {
+it('types the intro sentence by sentence without reduced motion', () => {
   stubReducedMotion(false)
 
   render(<App />)
 
   const intro = document.querySelector('[data-intro]')!
   expect(intro).toHaveAttribute('data-typed', 'typing')
+  expect(intro).toHaveAttribute('data-sentence', '0')
+  expect(intro.querySelectorAll('[data-sentence-line]')).toHaveLength(3)
   expect(intro.querySelector('[data-typed-text]')).toBeEmptyDOMElement()
 })
 
@@ -116,7 +123,7 @@ it('gives the opening a scrubbed fade-out over its scroll', () => {
 
   const opening = document.querySelector('[data-opening]')
   const fade = ScrollTrigger.getAll().find(
-    (trigger) => trigger.trigger === opening,
+    (trigger) => trigger.trigger === opening && trigger.vars.scrub,
   )!
   expect(fade.vars.start).toBe('top top')
   expect(fade.vars.end).toBe('bottom top')
