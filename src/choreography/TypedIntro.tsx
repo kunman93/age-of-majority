@@ -24,7 +24,7 @@ function TypedIntro({ text }: { text: string }) {
           >
             <span data-typed-text></span>
             <span data-cursor className="relative opacity-0">
-              <span className="bg-ember absolute bottom-[-0.2em] left-0 h-[1.1em] w-[0.1em]" />
+              <span className="bg-ember absolute bottom-[0.1em] left-0 h-[1em] w-[0.1em]" />
             </span>
             <span data-untyped-text className="opacity-0">
               {sentence}
