@@ -51,7 +51,7 @@ the direction for free.
 
 ### 3. Pure core in `src/cake/`
 
-- `candleLayout(count)`: 18 candle positions on two rings on the cake's top, so the candles stay apart on a phone.
+- `candleLayout()`: 18 candle positions on two rings on the cake's top, so the candles stay apart on a phone.
   Shared by the 3D cake and the SVG (the SVG uses the projected x and y).
 - `createConfetti(count, random)`: per-particle start position, velocity, color from the card's palette, spin and
   delay.
@@ -62,8 +62,8 @@ All are pure and unit-tested with a seeded `random`.
 ### 4. 3D cake (`CakeCanvas`, `CakeScene`)
 
 - **Canvas:** transparent, `aria-hidden`, `style={{ pointerEvents: 'none' }}` so the tap reaches the button,
-  `dpr={[1, 2]}`, `antialias: false`, `powerPreference: 'low-power'`. The aspect is fixed (about 4:3) with a maximum
-  height, and room above the cake for the confetti.
+  `dpr={[1, 2]}`, `antialias: false`, `powerPreference: 'low-power'`. The aspect is fixed (5:4) with a maximum
+  width, and room above the cake for the confetti.
 - **Cake body:** two stacked `CylinderGeometry` layers with `MeshStandardMaterial` in warm cream and berry tones, a
   frosting torus and a plate. Lit by a dim ambient light and a warm point light at the flames, which dims as they go
   out. A fixed camera looks slightly down from the front.
@@ -72,7 +72,8 @@ All are pure and unit-tested with a seeded `random`.
   per-candle phase. `uOut` (0..1) shrinks and fades all flames. After blowing, `useFrame` moves `uOut` to 1 over
   `FLAME_OUT_DURATION`.
 - **Confetti:** one `Points` object with square, colored points. Positions are computed in the vertex shader from
-  `uTime - uStart`, start, velocity and gravity, and points fade out before `CONFETTI_DURATION`. It is drawn only after
+  `uElapsed`, velocity and gravity, and points fade out before `CONFETTI_DURATION`. A piece also fades out just above
+  the cake's surface, so confetti is never drawn inside the cake. It is drawn only after
   the flames are out and until the burst ends. A reset sets `uOut` and the burst back at once.
 - **Rendering:** `frameloop` is `'always'` while the cake is in the viewport and the page is visible, otherwise
   `'never'`. Visibility comes from `usePageVisible` and an `IntersectionObserver` on the canvas wrapper
@@ -81,6 +82,16 @@ All are pure and unit-tested with a seeded `random`.
 
 *Alternative:* the confetti as DOM elements animated with GSAP. Rejected: it would add a second animation system to the
 cake and could escape the cake's area.
+
+### 4b. Invitation and rotation (added after review)
+
+- **Rotation:** pointer drag turns a group around the vertical axis (`dragRotation.ts`, pure). A press that moves under
+  6 px is a tap. A click that ends a drag is ignored, but keyboard clicks always count. `touch-action: pan-y` keeps
+  vertical swipes scrolling the page. Decorations (`decorations.ts`) break the cake's symmetry so the whole cake
+  visibly turns. No drei: plain pointer handling avoids a dependency.
+- **Invitation:** a pulsing halo behind the picture while lit, and a hint that fades in 2.5 s after the cake enters
+  view (set by the existing ScrollTrigger). With reduced motion the halo is static and the hint is visible at once.
+- **Overflow:** the halo extends past the picture, so `<main>` has `overflow-x-clip` and only the screen edge crops it.
 
 ### 5. Static cake (`CakeIllustration`)
 
@@ -96,18 +107,22 @@ follows it. `App` passes `mode` and `fallBackToStatic` to it.
 
 - **Unit:** `candleLayout`, `createConfetti`, `Cake` (hint, `aria-disabled`, state attribute, ignores a second click,
   reset on `onLeaveBack`, illustration vs. canvas by mode, falls back on error), `CakeIllustration` (18 candles, flames
-  by state, `aria-hidden`), `CakeScene` (instance and point counts, `uOut` moves to 1 after blowing, disposal).
+  by state, `aria-hidden`), `CakeScene` (instance and point counts, `uOut` moves to 1 after blowing, the turntable
+  follows `spin`, disposal), `dragRotation` (tap versus drag, inertia), `useInView`, and in `Cake` the drag-versus-tap
+  rule, keyboard clicks after a drag, the halo and the hint's invitation states.
 - **BDD:** `features/birthday-cake.feature` covers the spec scenarios through `data-cake-state`, the hint, the focus,
-  the flame count in the SVG, the canvas box and DPR, and the absence of chunk requests. "Stops rendering" is checked
-  by the draw-call count not changing during the named `SETTLE_MS` window, as in `background-scene.steps.ts`. The confetti look
-  and the flame flicker are left to manual review.
+  the flame count in the SVG, the canvas box and DPR, and the absence of chunk requests. Not covered by BDD, on
+  purpose: the render pause, the confetti look and the flame flicker (pixel diffs and draw-call counts proved
+  fragile), and dragging and the invitation animations (a BDD drag scenario passed even with the drag guard removed).
+  The pause is covered by the `useInView` and `CakeCanvas` unit tests, dragging and the invitation by the `Cake`,
+  `CakeScene` and `dragRotation` unit tests, and the look by manual review.
 - **BDD selectors:** `EMBER_CANVAS` in `features/support/canvases.ts` is `canvas:not([data-story-progress] canvas)`,
   which would now also match the cake canvas. Narrow it, add a `CAKE_CANVAS` selector, and add `CakeCanvas` to
   `SCENE_CHUNK`.
 
 ## Risks / Trade-offs
 
-- [18 candles get tiny on a phone] → Two rings from `candleLayout` and a minimum canvas height. Check at phone size in
+- [18 candles get tiny on a phone] → Two rings from `candleLayout` and a 5:4 canvas. Check at phone size in
   manual review.
 - [A third WebGL context] → It renders only in view, and browsers allow far more contexts. The story canvas is off-screen
   by then and renders on demand only.

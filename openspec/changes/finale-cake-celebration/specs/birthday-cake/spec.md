@@ -153,3 +153,28 @@ and rendering context.
 #### Scenario: Visitor turns on reduced motion at the cake
 - **WHEN** a visitor with the 3D background turns on reduced motion
 - **THEN** the cake's canvas is removed and its rendering context is released
+
+### Requirement: Visitor turns the 3D cake by dragging
+With the 3D background, dragging horizontally on the cake SHALL turn the cake around its vertical axis and SHALL keep
+turning it briefly after release. A press that moves less than 6 pixels SHALL still count as a tap, and a drag SHALL NOT
+blow out the candles. A vertical swipe on a touch screen SHALL still scroll the page.
+
+#### Scenario: Visitor drags the cake
+- **WHEN** a visitor with the 3D background drags horizontally across the lit cake
+- **THEN** the cake turns around its vertical axis
+- **AND** the candles stay lit
+
+### Requirement: Cake invites the visitor to blow out the candles
+While the cake is lit, a soft glow around the cake SHALL pulse and the hint SHALL fade in after a short delay. When the
+visitor has turned on reduced motion, the glow SHALL be static and the hint SHALL be visible at once. Once the cake is
+blown out the glow SHALL be gone.
+
+#### Scenario: Visitor waits at the lit cake
+- **WHEN** a visitor who allows motion looks at the lit cake
+- **THEN** a glow pulses around the cake
+- **AND** the hint fades in after a short delay
+
+#### Scenario: Visitor with reduced motion looks at the lit cake
+- **WHEN** a visitor with reduced motion looks at the lit cake
+- **THEN** the glow does not move
+- **AND** the hint is visible at once
