@@ -5,10 +5,10 @@ BDD steps and test support are done by the main session. Every task is test-firs
 
 ## 1. Pure core
 
-- [ ] 1.1 Add `src/cake/candleLayout.ts` with a pure `candleLayout(count)` that places the candles on two rings on the
+- [x] 1.1 Add `src/cake/candleLayout.ts` with a pure `candleLayout(count)` that places the candles on two rings on the
   cake's top, per design.md decision 3. Verify with unit tests: 18 positions, all inside the top's radius, no two
   closer than a minimum gap, and a deterministic result
-- [ ] 1.2 Add `src/cake/confetti.ts` with a pure `createConfetti(count, random)` (start positions, upward velocities,
+- [x] 1.2 Add `src/cake/confetti.ts` with a pure `createConfetti(count, random)` (start positions, upward velocities,
   palette colors, spin, delays) and the `CONFETTI_DURATION` and `FLAME_OUT_DURATION` constants. Verify with unit
   tests: buffer lengths match `count`, velocities point upward, colors come from the palette, and a seeded `random`
   gives a deterministic result
