@@ -24,7 +24,7 @@ pure logic, BDD steps and setup. Every task is test-first.
 
 ## 3. Content choreography (reveals and opening)
 
-- [ ] 3.1 Add the `data-opening`, `data-intro` and `data-reveal` markers to `App.tsx` and `FamilySection.tsx`
+- [x] 3.1 Add the `data-opening`, `data-intro` and `data-reveal` markers to `App.tsx` and `FamilySection.tsx`
   (design.md decision 2). Verify with `App.test.tsx`: one `data-reveal` per family heading, per message and on the
   finale. Run it with two families that share a name
 - [ ] 3.2 Add `useChoreography(scope, mode)` in `src/choreography/`, using `gsap.matchMedia` with

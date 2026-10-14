@@ -7,6 +7,7 @@ function FamilySection({ family }: { family: Family }) {
   return (
     <section aria-labelledby={headingId} className="space-y-6">
       <h2
+        data-reveal
         id={headingId}
         className="text-tangerine text-2xl font-bold break-words sm:text-3xl"
       >
@@ -14,6 +15,7 @@ function FamilySection({ family }: { family: Family }) {
       </h2>
       {family.messages.map((message, index) => (
         <figure
+          data-reveal
           key={index}
           className="bg-plum border-ember space-y-3 rounded-lg border-l-4 p-5 sm:p-6"
         >

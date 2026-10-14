@@ -13,11 +13,14 @@ function App() {
     <>
       <Background mode={mode} onSceneError={fallBackToStatic} />
       <main className="mx-auto max-w-[720px] space-y-12 px-5 pb-12 sm:space-y-16 sm:px-8 sm:pb-16 lg:pb-24">
-        <header className="flex min-h-svh flex-col justify-center space-y-12 py-12 text-center sm:space-y-16 sm:py-16 lg:py-24 short:space-y-4 short:py-4">
+        <header
+          data-opening
+          className="flex min-h-svh flex-col justify-center space-y-12 py-12 text-center sm:space-y-16 sm:py-16 lg:py-24 short:space-y-4 short:py-4"
+        >
           <h1 className="text-sun text-4xl leading-tight font-bold break-words sm:text-5xl lg:text-6xl">
             Happy 18th Birthday, Sara!
           </h1>
-          <p className="text-xl leading-relaxed sm:text-2xl">
+          <p data-intro className="text-xl leading-relaxed sm:text-2xl">
             Today you come of age. This card gathers wishes from your family,
             near and far, to celebrate you and everything ahead of you. Scroll
             on and read what they have to say.
@@ -27,7 +30,11 @@ function App() {
         {families.map((family, index) => (
           <FamilySection key={index} family={family} />
         ))}
-        <section aria-labelledby={finaleHeadingId} className="space-y-4">
+        <section
+          data-reveal
+          aria-labelledby={finaleHeadingId}
+          className="space-y-4"
+        >
           <h2
             id={finaleHeadingId}
             className="text-sun text-3xl font-bold break-words sm:text-4xl"
