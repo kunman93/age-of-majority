@@ -150,6 +150,62 @@ When(
   },
 )
 
+const edgeProgress = async (page: Page, name: 'entry' | 'exit') =>
+  Number(
+    await page
+      .locator(`[data-story-${name}]`)
+      .getAttribute(`data-story-${name}`),
+  )
+
+When(
+  'I scroll so the showcase has entered {int} percent',
+  async ({ page }, percent: number) => {
+    const start = await showcaseScroll(page, 0)
+    const { height } = page.viewportSize()!
+    await scrollTo(page, start - height * (1 - percent / 100))
+  },
+)
+
+When(
+  'I scroll so the showcase has left {int} percent',
+  async ({ page }, percent: number) => {
+    const end = await showcaseScroll(page, 100)
+    const { height } = page.viewportSize()!
+    await scrollTo(page, end + height * (percent / 100))
+  },
+)
+
+const expectEdge = async (
+  page: Page,
+  name: 'entry' | 'exit',
+  expected: number,
+) => {
+  await expect
+    .poll(async () => Math.abs((await edgeProgress(page, name)) - expected))
+    .toBeLessThan(TOLERANCE)
+}
+
+Then('the story object has not entered', ({ page }) =>
+  expectEdge(page, 'entry', 0),
+)
+Then('the story object has fully entered', ({ page }) =>
+  expectEdge(page, 'entry', 1),
+)
+Then(
+  'the story object has entered about {int} percent',
+  ({ page }, percent: number) => expectEdge(page, 'entry', percent / 100),
+)
+Then('the story object has not exited', ({ page }) =>
+  expectEdge(page, 'exit', 0),
+)
+Then('the story object has fully exited', ({ page }) =>
+  expectEdge(page, 'exit', 1),
+)
+Then(
+  'the story object has exited about {int} percent',
+  ({ page }, percent: number) => expectEdge(page, 'exit', percent / 100),
+)
+
 When('I scroll past the showcase', async ({ page }) => {
   const end = await showcaseScroll(page, 100)
   await scrollTo(page, end + page.viewportSize()!.height)
