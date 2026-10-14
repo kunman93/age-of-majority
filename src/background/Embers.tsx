@@ -1,11 +1,16 @@
 import { useFrame } from '@react-three/fiber'
 import { useMemo, useRef } from 'react'
 import type { ShaderMaterial } from 'three'
-import { AdditiveBlending } from 'three'
+import { CustomBlending, MaxEquation, OneFactor } from 'three'
 import { createEmbers, EMBER_BOX } from './embers'
 
 export const EMBER_COUNT = 120
 const MAX_OPACITY = 0.3
+
+// Max blending (not additive) keeps overlapping embers from adding up, so no
+// background pixel is brighter than a single ember at MAX_OPACITY and the text
+// contrast stays above 4.5:1 however the random embers overlap. The fragment
+// colour is premultiplied because max blending ignores the blend factors.
 
 const vertexShader = /* glsl */ `
   attribute float aSize;
@@ -35,7 +40,8 @@ const fragmentShader = /* glsl */ `
   void main() {
     float glow = 1.0 - smoothstep(0.0, 0.5, length(gl_PointCoord - 0.5));
     vec3 ember = vec3(1.0, 0.42, 0.36);
-    gl_FragColor = vec4(ember, glow * glow * vFade * uOpacity);
+    float alpha = glow * glow * vFade * uOpacity;
+    gl_FragColor = vec4(ember * alpha, alpha);
   }
 `
 
@@ -77,7 +83,10 @@ function Embers() {
         uniforms={uniforms}
         transparent
         depthWrite={false}
-        blending={AdditiveBlending}
+        blending={CustomBlending}
+        blendEquation={MaxEquation}
+        blendSrc={OneFactor}
+        blendDst={OneFactor}
       />
     </points>
   )

@@ -231,8 +231,12 @@ Then('the story object stops changing its stage', async ({ page }) => {
 
 const WINDOWS: Record<string, { width: number; height: number }> = {
   phone: { width: 390, height: 844 },
+  landscape: { width: 667, height: 375 },
+  tablet: { width: 768, height: 1024 },
   laptop: { width: 1536, height: 864 },
   tall: { width: 1920, height: 1080 },
+  shortwide: { width: 1280, height: 451 },
+  tiny: { width: 480, height: 320 },
 }
 
 Given('a {word} window', async ({ page }, device: string) => {
