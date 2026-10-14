@@ -108,7 +108,7 @@ pure logic, BDD steps and setup. Every task is test-first.
   uniforms follow the refs. Add the scroll-morph scenarios "Visitor scrolls the showcase into view", "Visitor scrolls
   the showcase out of view", "Visitor scrolls back into the showcase from below" and "Visitor scrolls back above the
   showcase", and verify that they and the existing scroll-morph scenarios pass
-- [ ] 6.3 Show the edge fade to the user in `npm run dev`. Switch to plan B (blurred edges in place) only if the user
+- [x] 6.3 Show the edge fade to the user in `npm run dev`. Switch to plan B (blurred edges in place) only if the user
   asks for it
 
 ## 7. Integration
