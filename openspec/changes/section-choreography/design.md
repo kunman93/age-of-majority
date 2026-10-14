@@ -61,6 +61,13 @@ for `scrub` lag.
   which the spec forbids.
 - The scrapbook tilt uses the CSS `rotate` property (Tailwind v4 `rotate-*`). GSAP tweens `transform`, so the two
   compose instead of overwriting each other.
+Message cards differ, as in the portfolio. Each card gets a scrubbed timeline on the same trigger with two parallel
+`from` tweens: `opacity: 0` with `ease: 'none'`, and `x: ±100` with `ease: 'back.inOut(3)'`. Keeping opacity linear
+stops the overshoot from flickering the text. The side alternates by the global card index, as the tilt does. The
+portfolio's `scrub: 4` is not used, because that lag would leave cards moving past the middle of the viewport. The
+board clips horizontal overflow (`overflow-x: clip`, which does not create a scroll container), so the overshoot
+never scrolls the page sideways on phones.
+
 - *Alternative:* `toggleActions: 'play none none reverse'` (time-based). Rejected because it is not tied to the scroll
   position and can leave text half-faded while the visitor reads it.
 
@@ -76,7 +83,7 @@ A pure `splitSentences(text)` splits the intro after each `.`, `!` or `?` follow
 
 - a `sr-only` span with the full text, which is what assistive technology reads, and
 - an `aria-hidden` grid whose single cell holds one span per sentence, stacked with `col-start-1 row-start-1`. The cell
-  is as tall as the longest sentence, so the centered opening never moves. Every sentence span is made of a typed
+  is as tall as the longest sentence, so the opening never moves. Every sentence span is made of a typed
   part, a zero-width cursor (`absolute`, accent color) and the untyped rest with `opacity: 0`, so the sentence keeps
   its line breaks while it is typed. Only the active sentence is shown. The others have `opacity: 0`.
 
@@ -90,8 +97,11 @@ about twice the typing speed. A `yoyo` tween makes the cursor blink for the whol
 For BDD, the `<p>` carries `data-typed` (`typing`, `shown`, `erasing`, or `done` for the static full text) and
 `data-sentence` (the active index). Steps that do not test the typewriter run with reduced motion.
 
+The intro is `text-left`, while the heading stays `text-center`. Left-aligned text no longer jumps sideways as its
+line fills.
+
 - *Alternative:* GSAP `TextPlugin`, as in the portfolio. Rejected because it replaces the element's text, so the
-  untyped rest leaves the layout. The lines of centered text would then re-wrap and shift while typing, which breaks
+  untyped rest leaves the layout. The lines would then re-wrap and the cell would shrink while typing, which breaks
   "Opening stays in place".
 - *Alternative:* React state per character. Rejected because a loop would re-render without end, for something GSAP
   can write directly.
@@ -145,13 +155,27 @@ takes `mode` as a `useGSAP` dependency and calls `ScrollTrigger.refresh()` when 
 your family" (uppercase, letter-spaced, `text-blush`) above it, as in the portfolio's skills section. The family
 headings become `h3`. `<main>` drops its `max-w-[720px]`, the opening, showcase and finale each keep that column, and
 the wishes section gets `max-w-6xl`. The cards of each family sit in `flex flex-col items-center gap-10 sm:flex-row
-sm:flex-wrap sm:justify-center`. Each card's reveal wrapper is `w-full sm:w-80`, so the cards in a row share one width
-and the lines stay short. The tilt and tape strip are unchanged, and each card keeps its own `data-reveal`.
+sm:flex-wrap sm:justify-center`. Each card's reveal wrapper is `w-full sm:w-[28rem]`, so the cards in a row share one
+width, two fit side by side, and lines stay at about 70 characters. Each card keeps its own `data-reveal`.
+
+The family sections sit on one board `div` below the overline and heading. The board is a dark cork color with a
+subtle CSS dot pattern (`radial-gradient`), a rounded wooden frame (`border`) and an inner shadow, so it needs no image.
+The color is dark enough that the `text-tangerine` family headings keep 4.5:1, checked by the existing contrast steps.
+
+Each note shows a pin and a tape strip as decorative pseudo-elements, so assistive technology does not read them. The
+pin (`before:`) is a small red radial-gradient dot at the middle of the top edge. The tape (`after:`) is the existing
+translucent strip, moved to the top-left corner and turned by about -40 degrees.
+
+Hover tilt: the tilt classes are CSS `rotate`, so hover swaps the sign with
+`motion-safe:hover:rotate-[±1.2deg]` and lifts with `motion-safe:hover:-translate-y-1`. The `motion-safe:transition-[rotate,translate]`
+eases both. Tailwind v4 limits `hover:` to `(hover: hover)` devices, and `motion-safe:` keeps the card still with
+reduced motion. The lift uses the CSS `translate` property on the `<figure>`, and GSAP tweens `transform` on the
+wrapper, so they never fight.
 
 - *Alternative:* all cards of all families in one row, without family headings. Rejected because it drops the
   "section per family" grouping, which helps readers find their own family.
-- *Alternative:* keep the 720px column. Rejected because only two cards of about 20rem fit next to each other, which
-  makes the row too cramped for long messages.
+- *Alternative:* keep the 720px column. Rejected because it leaves no room for two wide cards side by side.
+- *Alternative:* the portfolio's `skewX` on the slide-in. Rejected because skewed text is hard to read while it moves.
 
 ## Risks / Trade-offs
 

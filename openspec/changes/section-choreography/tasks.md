@@ -76,6 +76,19 @@ pure logic, BDD steps and setup. Every task is test-first.
   reads the wishes on a wide screen" and "Visitor reads the wishes on a phone". Verify that they and the existing
   contrast, reveal and no-horizontal-scroll scenarios pass. Check the look in `npm run dev`
 
+- [ ] 5.3 Put the family sections on one cork board (`overflow-x: clip`, CSS pattern, no image), widen the card
+  wrappers to `sm:w-[28rem]`, add the pin and move the tape to a top corner, and add the hover swing with
+  `motion-safe:hover:` and `motion-safe:transition-[rotate,translate]` (design.md decision 10). Make the intro
+  `text-left` (design.md decision 5). Update the scenarios "Visitor sees scrapbook cards", "Visitor reads the wishes on
+  a wide screen" and "Visitor sees the opening centered" (heading centered, intro left-aligned). Add "Visitor sees the
+  board", "Visitor reads the board on a phone", "Visitor hovers a message card" and "Visitor who prefers reduced motion
+  hovers a message card". Verify that they and the existing contrast, static card and no-horizontal-scroll scenarios
+  pass. Check the look in `npm run dev`
+- [ ] 5.4 Replace the cards' fade-and-rise with the scrubbed slide-in timeline (opacity `none`, `x: ±100` with
+  `back.inOut(3)`, side by global card index, design.md decision 3). Verify with a unit test that with reduced motion no
+  inline `opacity` or `transform` is set on the cards. Add the scenario "Visitor scrolls the wishes into view", and
+  verify that it and "Visitor reads revealed text" pass
+
 ## 6. Story object edge entry and exit
 
 - [x] 6.1 Add a pure `createEdgePoints(count, random)` to `storyParticles.ts` that puts points on the border of the
@@ -92,9 +105,9 @@ pure logic, BDD steps and setup. Every task is test-first.
 
 ## 7. Integration
 
-- [x] 7.1 Run `npm run build`, `npm test`, `npm run test:bdd`, `npm run lint` and `npm run format:check`, and verify
+- [ ] 7.1 Run `npm run build`, `npm test`, `npm run test:bdd`, `npm run lint` and `npm run format:check`, and verify
   that all pass
-- [x] 7.2 Validate the change with `openspec validate section-choreography --strict` and verify that it reports it
+- [ ] 7.2 Validate the change with `openspec validate section-choreography --strict` and verify that it reports it
   as valid
 
 ## Workflow follow-up
