@@ -151,7 +151,6 @@ When(
       await expect
         .poll(() => opacityOf(target), { timeout: SETTLE_TIMEOUT_MS })
         .toBe(1)
-        .catch(() => {})
       opacities.push(await opacityOf(target))
     }
     expect(opacities.length).toBeGreaterThan(0)
@@ -227,15 +226,13 @@ Then('a cursor follows the last typed character', async ({ page }) => {
             return {
               dx: Math.abs(left - last.right),
               dy: Math.abs(bottom - last.bottom),
+              fontSize: parseFloat(getComputedStyle(line).fontSize),
             }
           }
           return null
         })
-        return (
-          gap !== null &&
-          gap.dx <= 3 &&
-          gap.dy <= page.viewportSize()!.height / 10
-        )
+        // on the same line as the last typed character
+        return gap !== null && gap.dx <= 3 && gap.dy <= gap.fontSize * 0.6
       },
       { timeout: LOOP_TEST_TIMEOUT_MS },
     )
@@ -336,6 +333,11 @@ When('I scroll until the opening is out of the viewport', async ({ page }) => {
     .evaluate((opening) => window.scrollTo(0, opening.clientHeight + 1))
 })
 
+// Observation windows that prove nothing changes, not waits to reach a state:
+// the pause takes effect within the first, the text must stay put through the second.
+const PAUSE_TAKES_EFFECT_MS = 500
+const NO_CHANGE_WINDOW_MS = 1500
+
 const introSnapshots = new WeakMap<Page, string>()
 const snapshotOf = async (page: Page) => {
   const { sentence, typedText } = await introState(page)
@@ -343,9 +345,9 @@ const snapshotOf = async (page: Page) => {
 }
 
 Then('the visible intro text no longer changes', async ({ page }) => {
-  await page.waitForTimeout(500)
+  await page.waitForTimeout(PAUSE_TAKES_EFFECT_MS)
   const snapshot = await snapshotOf(page)
-  await page.waitForTimeout(1500)
+  await page.waitForTimeout(NO_CHANGE_WINDOW_MS)
   expect(await snapshotOf(page)).toBe(snapshot)
   introSnapshots.set(page, snapshot)
 })
@@ -544,8 +546,11 @@ Then('the card is back at its original tilt', async ({ page }) => {
     .toBeCloseTo(tilt, 1)
 })
 
+// Observation window to prove the tilt does not change under reduced motion.
+const NO_TILT_WINDOW_MS = 500
+
 Then('the card keeps its original tilt', async ({ page }) => {
   const { tilt } = beforeHover.get(page)!
-  await page.waitForTimeout(500)
+  await page.waitForTimeout(NO_TILT_WINDOW_MS)
   expect(await tiltOf(firstCard(page, 'Family Ipsum'))).toBeCloseTo(tilt, 1)
 })
