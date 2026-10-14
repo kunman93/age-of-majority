@@ -18,7 +18,7 @@ stays scroll-linked.
 
 | # | Screen / element | Today | Fix |
 |---|---|---|---|
-| 1 | Greeting h1 | fade only, 0.8 s on load | shared heading drop on load |
+| 1 | Greeting h1 | fade, 0.8 s on load, feels abrupt | slower fade, 2.5 s, no drop (deliberate exemption) |
 | 2 | "From your family" + "Birthday wishes" | no entrance at all | shared heading drop, both together |
 | 3 | Family headings | fade + rise 40 px from below, linear, scrub 0.5 | shared heading drop |
 | 4 | Finale | whole section rises as one block, heading has no own entrance | heading drops, body fades after it |
@@ -47,7 +47,7 @@ stays scroll-linked.
 ### 1. Shared motion config in `src/choreography/motion.ts`
 
 A plain module exporting frozen objects: `HEADING` (`{ y: -100, ease: 'power2.inOut' }`), `CARD`
-(`{ x: 100, ease: 'back.inOut(3)', stagger: 0.15 }`), `SCRUB = 4`, `LOAD_DURATION = 1.2`, `OPENING_FADE_SCRUB = 0.5`,
+(`{ x: 100, ease: 'back.inOut(3)', stagger: 0.15 }`), `SCRUB = 4`, `GREETING_FADE = 2.5`, `OPENING_FADE_SCRUB = 0.5`,
 `ORNAMENT_DRIFT` and the trigger factory `scrubbedReveal(trigger)`. `useChoreography` and the ornament drift read only
 from it. *Alternative*: Tailwind theme tokens. Rejected: the values feed GSAP, not CSS.
 
@@ -58,12 +58,13 @@ Headings, finale body and cards use `start: 'top bottom'`, `end: 'clamp(top 60%)
 follows the scroll and reverses on scroll-up. *Alternative*: the portfolio's `end: 'top 100%'`. Rejected: a zero-length
 range makes the "partly revealed" state impossible to observe and is effectively a toggle.
 
-The greeting cannot scroll in. It plays the same `HEADING` vars as a timed `from` tween over `LOAD_DURATION` (1.2 s,
-not the portfolio's 2 s, so the typewriter starts sooner) at the start of the existing load timeline.
+The greeting is exempt from the drop at the user's request: it keeps its opacity-only `from` tween at the start of the
+load timeline, now over `GREETING_FADE` (2.5 s) with `power2.inOut`, and the typewriter still follows it. A fade does
+not move the greeting, so the "Opening stays in place" check stays as it is.
 
 ### 3. Reveal markers
 
-- `data-reveal="heading"`: the h1 (load only), the overline + "Birthday wishes" wrapper, each family `h3` and the finale `h2`.
+- `data-reveal="heading"`: the overline + "Birthday wishes" wrapper, each family `h3` and the finale `h2`.
 - `data-reveal="fade"`: the finale's message, signature and cake button. Opacity only, triggered by the finale heading.
 - `data-reveal="card"`: unchanged on each card wrapper (GSAP must not touch the tilted `figure`).
 - `data-cards` on each family's card row: the trigger of that family's card timeline.
@@ -97,8 +98,8 @@ The ornaments sit in `main`, which already has `overflow-x-clip`, so they cannot
 
 - [Scrub 4 lags up to ~4 s behind the scroll] → BDD reveal steps poll; `SETTLE_TIMEOUT_MS` grows from 5000 to a named
   10000. No fixed waits.
-- [The greeting drop moves the h1 for 1.2 s] → "Opening stays in place" first polls until the h1 has no transform,
-  then remembers its position.
+- [The slower greeting fade delays the typewriter by ~1.7 s] → BDD typing steps already poll for the intro state;
+  check their timeouts still cover 2.5 s plus typing.
 - [Positioned ornaments paint above in-flow text] → they are placed only in free bands, and a BDD scenario checks for no
   overlap with the greeting and intro at phone and desktop sizes.
 - [Existing unit tests assert wiring and magic numbers (`0.15` stagger, "one board timeline")] → delete the ones for

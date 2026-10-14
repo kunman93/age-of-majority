@@ -31,8 +31,8 @@ nothing SHALL animate or transition.
 - **AND** no content element moves any longer
 
 ### Requirement: Intro is typed sentence by sentence in a loop
-When the content moves, the greeting SHALL drop in on load as described in "Every heading drops in the same way", then
-the intro's sentences SHALL be typed one at a time at about 30 ms per character. Each sentence SHALL stay fully shown
+When the content moves, the greeting SHALL fade in slowly on load, over about 2.5 s and without moving, then the
+intro's sentences SHALL be typed one at a time at about 30 ms per character. Each sentence SHALL stay fully shown
 for about 2 s and then be erased before the next sentence is typed in its place. After the last sentence, the loop
 SHALL start again with the first. A blinking accent-colored cursor SHALL follow the last typed character.
 
@@ -43,28 +43,20 @@ SHALL start again with the first. A blinking accent-colored cursor SHALL follow 
 - **WHEN** the visitor waits a few seconds longer
 - **THEN** the second sentence is being typed in place of the first
 
+#### Scenario: Visitor sees the greeting fade in slowly
+- **WHEN** a visitor who does not prefer reduced motion opens the home page
+- **THEN** about 1 s after load the greeting is still not fully opaque and is in its final position
+- **WHEN** the visitor waits a few seconds
+- **THEN** the greeting is fully opaque
+
 #### Scenario: Visitor sees the intro loop
 - **WHEN** a visitor who does not prefer reduced motion waits until the last sentence of the intro has been typed and erased
 - **THEN** the first sentence is typed again
 
-### Requirement: Typed intro stays accessible and in place
-While the intro is typed, the full intro SHALL be available to assistive technology at all times, and the space of
-the longest sentence SHALL be reserved so the opening does not move.
-
-#### Scenario: Assistive technology reads the full intro at once
-- **WHEN** a visitor who does not prefer reduced motion opens the home page
-- **THEN** the accessible text of the intro is the full intro, while its sentences are typed
-- **AND** the cursor is hidden from assistive technology
-
-#### Scenario: Opening stays in place while the intro is typed
-- **WHEN** a visitor who does not prefer reduced motion opens the home page
-- **AND** the greeting has dropped into its final position
-- **THEN** the greeting stays at that position while each sentence is fully typed
-
 ### Requirement: Text is readable once revealed
 Whenever a family or finale text is in the upper half of the viewport and the visitor has stopped scrolling for a few
 seconds, it SHALL be fully revealed and fully opaque and SHALL meet the card's contrast requirements. While the opening
-fills the first screen after the greeting has dropped in, its text SHALL be fully opaque. Motion SHALL NOT change any
+fills the first screen after the greeting has faded in, its text SHALL be fully opaque. Motion SHALL NOT change any
 text, its order or its availability to assistive technology.
 
 #### Scenario: Visitor reads revealed text
@@ -78,7 +70,7 @@ text, its order or its availability to assistive technology.
 
 ### Requirement: Headings and finale reveal while scrolling
 When the content moves, the "Birthday wishes" heading with its overline, each family heading and the finale heading
-SHALL drop in as described in "Every heading drops in the same way" while they scroll into the viewport. After the
+SHALL drop in as described in "Every heading below the opening drops in the same way" while they scroll into the viewport. After the
 finale heading, the finale's message, signature and cake SHALL fade in without moving. Each reveal SHALL follow the
 scroll position with a smooth catch-up, SHALL be complete once the element is in the upper half of the viewport and
 the scroll has come to rest, and SHALL play in reverse when the visitor scrolls back up.
@@ -106,17 +98,11 @@ the scroll has come to rest, and SHALL play in reverse when the visitor scrolls 
 
 ## ADDED Requirements
 
-### Requirement: Every heading drops in the same way
-When the content moves, every heading of the card (the greeting, the "Birthday wishes" heading with its overline, the
-family headings and the finale heading) SHALL enter the same way: it SHALL fade in while it drops down from above into
-its final position, over the same distance and with the same easing. No heading SHALL appear without this entrance,
-and the entrance SHALL NOT shift any other content.
-
-#### Scenario: Visitor sees the greeting drop in
-- **WHEN** a visitor who does not prefer reduced motion opens the home page
-- **THEN** shortly after load the greeting is above its final position and not fully opaque
-- **WHEN** the visitor waits a moment
-- **THEN** the greeting is fully opaque and in its final position
+### Requirement: Every heading below the opening drops in the same way
+When the content moves, every heading below the opening (the "Birthday wishes" heading with its overline, the family
+headings and the finale heading) SHALL enter the same way: it SHALL fade in while it drops down from above into its
+final position, over the same distance and with the same easing. None of them SHALL appear without it, and it
+SHALL NOT shift other content. The greeting is exempt and fades in instead.
 
 #### Scenario: Visitor sees every scrolled heading drop in from above
 - **WHEN** a visitor who does not prefer reduced motion scrolls until the "Birthday wishes" heading, a family heading or the finale heading just enters the viewport from below

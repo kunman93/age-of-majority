@@ -8,19 +8,19 @@ BDD steps and feature files, reviews and commits. Every task is test-first.
 - [ ] 1.1 Add `src/choreography/motion.ts` with the shared values and the `scrubbedReveal` trigger factory (design.md
   decision 1), and make `useChoreography` read every motion value from it. Verify there are no motion literals left in
   `useChoreography.ts` (`grep` for `y:`/`x:`/`ease:`/`scrub:` literals) and `npm test` passes
-- [ ] 1.2 Mark the headings with `data-reveal="heading"` (h1, the overline + "Birthday wishes" wrapper, family `h3`,
+- [ ] 1.2 Mark the headings with `data-reveal="heading"` (the overline + "Birthday wishes" wrapper, family `h3`,
   finale `h2`) and the finale body with `data-reveal="fade"`, and give the finale section `data-finale` (design.md
   decision 3). Update `App.markers.test.tsx` and the `main > [data-reveal]` selector in
   `features/steps/visual-design.steps.ts`. Verify the unit tests and the visual-design BDD scenarios pass
 - [ ] 1.3 Animate every scrolled heading with the shared drop (`from` `HEADING`, scrub 4, real range) and the finale
-  body with an opacity-only reveal. Make the h1 play the same `HEADING` vars over `LOAD_DURATION` at the start of the
-  load timeline. Replace the old fade-and-rise unit tests with behavior tests: at progress 0 a heading is above its
+  body with an opacity-only reveal. Slow the h1 fade to `GREETING_FADE` (opacity only, no drop).
+  Replace the old fade-and-rise unit tests with behavior tests: at progress 0 a heading is above its
   place and transparent, at progress 1 it is in place and opaque, and with reduced motion no target has inline styles.
   Verify `npm test` passes and each new test fails when the drop direction is flipped
-- [ ] 1.4 Update the BDD support for the catch-up: raise `SETTLE_TIMEOUT_MS` to a named 10000, make "I remember where
-  the greeting is" poll until the h1 has no transform first, and adjust step wording to the modified scenarios
+- [ ] 1.4 Update the BDD support for the catch-up: raise `SETTLE_TIMEOUT_MS` to a named 10000, check the typing
+  steps' timeouts cover the 2.5 s greeting fade, and adjust step wording to the modified scenarios
   ("becomes fully visible and settles", "becomes not fully visible again"). Add the scenarios "Visitor sees the
-  greeting drop in", "Visitor sees every scrolled heading drop in from above", "Visitor scrolls the birthday wishes
+  greeting fade in slowly", "Visitor sees every scrolled heading drop in from above", "Visitor scrolls the birthday wishes
   heading into view" and "Heading entrance does not shift the content" to `features/content-choreography.feature`.
   Verify they pass with `--repeat-each=10`
 
