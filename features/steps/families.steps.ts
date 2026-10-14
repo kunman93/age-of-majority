@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test'
 import { createBdd } from 'playwright-bdd'
+import { opacityOf, scrollTopTo } from '../support/scroll.ts'
 
 const { Given, When, Then } = createBdd()
 
@@ -44,7 +45,7 @@ Then('the family {string} is not in view', async ({ page }, family: string) => {
 })
 
 When('I scroll to the family {string}', async ({ page }, family: string) => {
-  await page.getByRole('region', { name: family }).scrollIntoViewIfNeeded()
+  await scrollTopTo(page.getByRole('region', { name: family }), 0)
 })
 
 Then(
@@ -54,7 +55,7 @@ Then(
     await expect(region.getByRole('heading', { name: family })).toBeInViewport()
     for (const message of await region.getByRole('figure').all()) {
       await expect(message).toBeInViewport()
-      await expect(message).toHaveCSS('opacity', '1')
+      await expect.poll(() => opacityOf(message)).toBe(1)
     }
   },
 )

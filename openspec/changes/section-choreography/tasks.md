@@ -27,7 +27,7 @@ pure logic, BDD steps and setup. Every task is test-first.
 - [x] 3.1 Add the `data-opening`, `data-intro` and `data-reveal` markers to `App.tsx` and `FamilySection.tsx`
   (design.md decision 2). Verify with `App.test.tsx`: one `data-reveal` per family heading, per message and on the
   finale. Run it with two families that share a name
-- [ ] 3.2 Add `useChoreography(scope, mode)` in `src/choreography/`, using `gsap.matchMedia` with
+- [x] 3.2 Add `useChoreography(scope, mode)` in `src/choreography/`, using `gsap.matchMedia` with
   `(prefers-reduced-motion: no-preference)`. Inside the condition, add the scrubbed `from` reveals on `opacity` and
   `y` (never `autoAlpha`), the h1 load fade, the header scroll fade-out, and `mode` as a refresh dependency (design.md
   decisions 1, 3, 4 and 9). Call it in `App`. Verify with unit tests: with reduced motion, no inline `opacity` is set

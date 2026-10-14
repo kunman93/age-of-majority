@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test'
 import { createBdd } from 'playwright-bdd'
+import { opacityOf } from '../support/scroll.ts'
 
 const { When, Then } = createBdd()
 
@@ -43,6 +44,7 @@ Then(
     for (const part of parts) {
       await expect(part).toBeInViewport({ ratio: 1 })
       await expect(part).toBeVisible()
+      await expect.poll(() => opacityOf(part)).toBe(1)
       const staticAtEveryLevel = await part.evaluate((element) => {
         for (
           let node: typeof element | null = element;

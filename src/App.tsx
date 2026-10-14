@@ -1,4 +1,5 @@
-import { useId } from 'react'
+import { useId, useRef } from 'react'
+import { useChoreography } from './choreography/useChoreography'
 import Background from './background/Background'
 import { useSceneMode } from './background/useSceneMode'
 import FamilySection from './FamilySection'
@@ -8,11 +9,16 @@ import Showcase from './story/Showcase'
 function App() {
   const finaleHeadingId = useId()
   const { mode, fallBackToStatic } = useSceneMode()
+  const main = useRef<HTMLElement>(null)
+  useChoreography(main, mode)
 
   return (
     <>
       <Background mode={mode} onSceneError={fallBackToStatic} />
-      <main className="mx-auto max-w-[720px] space-y-12 px-5 pb-12 sm:space-y-16 sm:px-8 sm:pb-16 lg:pb-24">
+      <main
+        ref={main}
+        className="mx-auto max-w-[720px] space-y-12 px-5 pb-12 sm:space-y-16 sm:px-8 sm:pb-16 lg:pb-24"
+      >
         <header
           data-opening
           className="flex min-h-svh flex-col justify-center space-y-12 py-12 text-center sm:space-y-16 sm:py-16 lg:py-24 short:space-y-4 short:py-4"
