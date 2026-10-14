@@ -59,7 +59,7 @@ pure logic, BDD steps and setup. Every task is test-first.
 
 ## 6. Story object edge entry and exit
 
-- [ ] 6.1 Add a pure `createEdgePoints(count, random)` to `storyParticles.ts` that puts points on the border of the
+- [x] 6.1 Add a pure `createEdgePoints(count, random)` to `storyParticles.ts` that puts points on the border of the
   -1..1 square (design.md decision 7). Verify with unit tests: `count` points, each with `|x|` or `|y|` equal to 1,
   and deterministic for a seeded `random`
 - [ ] 6.2 Add the `aEdge` attribute and the `uEntry`, `uExit` and `uExtent` uniforms to `StoryObject`. Add the entry
