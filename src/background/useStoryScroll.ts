@@ -1,12 +1,7 @@
-import { useGSAP } from '@gsap/react'
 import { invalidate } from '@react-three/fiber'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useRef, type RefObject } from 'react'
+import { gsap, useGSAP } from '../gsap'
 import { showcaseStage } from '../story/showcaseStage'
-
-gsap.registerPlugin(useGSAP, ScrollTrigger)
-ScrollTrigger.config({ ignoreMobileResize: true })
 
 export function useStoryScroll(wrapper: RefObject<HTMLElement | null>) {
   const progress = useRef(0)
@@ -36,16 +31,6 @@ export function useStoryScroll(wrapper: RefObject<HTMLElement | null>) {
           scrub: 0.5,
         },
       })
-
-      // Web fonts reflow the text after the first measurement and
-      // ScrollTrigger only refreshes on window load and resize.
-      let active = true
-      void document.fonts?.ready.then(() => {
-        if (active) ScrollTrigger.refresh()
-      })
-      return () => {
-        active = false
-      }
     },
     { scope: wrapper },
   )

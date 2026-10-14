@@ -12,7 +12,7 @@ import { countDifferingPixels } from '../support/screenshot.ts'
 
 const { Given, When, Then } = createBdd()
 
-const SCENE_CHUNK = /EmberCanvas|StoryCanvas|\/three|react-three|gsap/
+const SCENE_CHUNK = /EmberCanvas|StoryCanvas|\/three|react-three/
 const GLOW = '[data-testid="background-glow"]'
 const TEXT = 'h1, h2, main p, main figcaption'
 

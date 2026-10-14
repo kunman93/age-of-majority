@@ -5,7 +5,7 @@ pure logic, BDD steps and setup. Every task is test-first.
 
 ## 1. Shared GSAP setup
 
-- [ ] 1.1 Add `src/gsap.ts`, which registers `useGSAP` and `ScrollTrigger`, sets `ignoreMobileResize` and refreshes
+- [x] 1.1 Add `src/gsap.ts`, which registers `useGSAP` and `ScrollTrigger`, sets `ignoreMobileResize` and refreshes
   ScrollTrigger once after `document.fonts.ready`. Make `useStoryScroll` import from it and drop its own registration
   and fonts refresh (design.md decision 8). Remove `gsap` from the BDD `SCENE_CHUNK` pattern. Verify that `npm test`,
   `npm run build` and `npm run test:bdd` pass, including "does not download the 3D scene"

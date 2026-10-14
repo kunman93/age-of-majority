@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
+import { ScrollTrigger } from '../gsap'
 import { useStoryScroll } from './useStoryScroll'
 
 const invalidate = vi.hoisted(() => vi.fn())
@@ -85,43 +85,4 @@ it('kills its scroll trigger on unmount', () => {
   unmount()
 
   expect(ScrollTrigger.getAll()).toHaveLength(0)
-})
-
-const mockFonts = () => {
-  let resolve!: () => void
-  const ready = new Promise<void>((done) => {
-    resolve = done
-  })
-  Object.defineProperty(document, 'fonts', {
-    value: { ready },
-    configurable: true,
-  })
-  return resolve
-}
-
-it('refreshes the scroll trigger once the fonts are ready', async () => {
-  const resolve = mockFonts()
-  const refresh = vi.spyOn(ScrollTrigger, 'refresh')
-  renderDriver()
-  refresh.mockClear()
-
-  resolve()
-  await Promise.resolve()
-  await Promise.resolve()
-
-  expect(refresh).toHaveBeenCalledTimes(1)
-})
-
-it('does not refresh after unmount when the fonts resolve late', async () => {
-  const resolve = mockFonts()
-  const refresh = vi.spyOn(ScrollTrigger, 'refresh')
-  const { unmount } = renderDriver()
-  unmount()
-  refresh.mockClear()
-
-  resolve()
-  await Promise.resolve()
-  await Promise.resolve()
-
-  expect(refresh).not.toHaveBeenCalled()
 })
