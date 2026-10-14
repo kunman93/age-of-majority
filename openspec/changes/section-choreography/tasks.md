@@ -73,9 +73,9 @@ pure logic, BDD steps and setup. Every task is test-first.
 
 ## 7. Integration
 
-- [ ] 7.1 Run `npm run build`, `npm test`, `npm run test:bdd`, `npm run lint` and `npm run format:check`, and verify
+- [x] 7.1 Run `npm run build`, `npm test`, `npm run test:bdd`, `npm run lint` and `npm run format:check`, and verify
   that all pass
-- [ ] 7.2 Validate the change with `openspec validate section-choreography --strict` and verify that it reports it
+- [x] 7.2 Validate the change with `openspec validate section-choreography --strict` and verify that it reports it
   as valid
 
 ## Workflow follow-up
