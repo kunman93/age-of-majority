@@ -1,6 +1,8 @@
 import { act, render, screen } from '@testing-library/react'
 import { beforeEach, expect, it, vi } from 'vitest'
 import App from '../App'
+import { glowTint } from '../choreography/glowTint'
+import { ScrollTrigger } from '../gsap'
 import Background from './Background'
 
 const canvas = vi.hoisted(() => ({ fail: false }))
@@ -153,4 +155,23 @@ it('shows no stage illustration with the 3D scene', async () => {
 
   await screen.findByTestId('ember-canvas')
   expect(document.querySelector('[data-stage-illustration]')).toBeNull()
+})
+
+it('sets the glow tint on load, also with reduced motion', () => {
+  stubReducedMotion(true)
+
+  renderBackground('static')
+
+  expect(
+    screen.getByTestId('background-glow').style.getPropertyValue('--glow-tint'),
+  ).toBe(glowTint(0))
+})
+
+it('kills the page-wide scroll trigger on unmount', () => {
+  const { unmount } = renderBackground('static')
+  expect(ScrollTrigger.getAll()).toHaveLength(1)
+
+  unmount()
+
+  expect(ScrollTrigger.getAll()).toHaveLength(0)
 })

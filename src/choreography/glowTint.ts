@@ -1,7 +1,8 @@
+// The stops leave room for the brightest ember composited over the glow
 type Rgb = readonly [number, number, number]
 
-const DARK_YELLOW: Rgb = [77, 61, 10]
-const DARK_ORANGE: Rgb = [74, 42, 20]
+const DARK_YELLOW: Rgb = [58, 45, 8]
+const DARK_ORANGE: Rgb = [70, 38, 18]
 const DARK_RED: Rgb = [74, 28, 24]
 
 const mix = (from: Rgb, to: Rgb, amount: number) =>

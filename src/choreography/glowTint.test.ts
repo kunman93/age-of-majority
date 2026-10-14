@@ -6,8 +6,8 @@ import { glowTint } from './glowTint'
 
 const styles = readFileSync('src/index.css', 'utf8')
 
-const DARK_YELLOW = 'rgb(77, 61, 10)'
-const DARK_ORANGE = 'rgb(74, 42, 20)'
+const DARK_YELLOW = 'rgb(58, 45, 8)'
+const DARK_ORANGE = 'rgb(70, 38, 18)'
 const DARK_RED = 'rgb(74, 28, 24)'
 
 describe('glowTint', () => {
@@ -25,8 +25,8 @@ describe('glowTint', () => {
   })
 
   it('blends continuously between the stops', () => {
-    expect(glowTint(0.25)).toBe('rgb(76, 52, 15)')
-    expect(glowTint(0.75)).toBe('rgb(74, 35, 22)')
+    expect(glowTint(0.25)).toBe('rgb(64, 42, 13)')
+    expect(glowTint(0.75)).toBe('rgb(72, 33, 21)')
   })
 
   it('clamps progress outside 0..1', () => {

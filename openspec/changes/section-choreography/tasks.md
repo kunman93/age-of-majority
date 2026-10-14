@@ -16,7 +16,7 @@ pure logic, BDD steps and setup. Every task is test-first.
   red = today's `--color-glow`), interpolated in RGB and clamped (design.md decision 6). Verify with unit tests: the
   stops at 0, 0.5 and 1, a midpoint between stops, clamping outside 0..1, and every text color in `index.css` at
   4.5:1 or more against each stop
-- [ ] 2.2 Drive the tint with one page-wide ScrollTrigger outside any reduced-motion condition, writing
+- [x] 2.2 Drive the tint with one page-wide ScrollTrigger outside any reduced-motion condition, writing
   `--glow-tint` on the glow `div`, with the gradient using it. Verify with a `Background` unit test that the variable
   is set on load. Add the background-scene scenarios "Visitor scrolls from the opening to the finale", "Visitor
   scrolls back to the top", "Visitor who prefers reduced motion sees the tint shift" and "Visitor reads the finale

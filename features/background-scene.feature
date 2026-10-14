@@ -100,3 +100,31 @@ Feature: Background scene
     When I open the home page
     Then no canvas is shown
     And every text has a contrast ratio of at least 4.5 against the brightest pixel of the background
+
+  Scenario: Visitor scrolls from the opening to the finale
+    When I open the home page
+    Then the glow's tint is a dark yellow
+    When I scroll halfway down the page
+    Then the glow's tint is a dark orange
+    When I scroll to the end of the page
+    Then the glow's tint is a dark red
+
+  Scenario: Visitor scrolls back to the top
+    When I open the home page
+    And I remember the glow's tint
+    And I scroll to the end of the page
+    And I scroll back to the top
+    Then the glow's tint is the remembered tint
+
+  Scenario: Visitor who prefers reduced motion sees the tint shift
+    Given the visitor prefers reduced motion
+    When I open the home page
+    Then the glow's tint is a dark yellow
+    When I scroll to the end of the page
+    Then the glow's tint is a dark red
+
+  Scenario: Visitor reads the finale over the red glow
+    Given the visitor prefers reduced motion
+    When I open the home page
+    And I scroll to the end of the page
+    Then every text has a contrast ratio of at least 4.5 against the brightest pixel of the background
