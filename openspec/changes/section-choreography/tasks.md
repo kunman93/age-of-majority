@@ -84,7 +84,7 @@ pure logic, BDD steps and setup. Every task is test-first.
   board", "Visitor reads the board on a phone", "Visitor hovers a message card" and "Visitor who prefers reduced motion
   hovers a message card". Verify that they and the existing contrast, static card and no-horizontal-scroll scenarios
   pass. Check the look in `npm run dev`
-- [ ] 5.4 Replace the cards' fade-and-rise with the scrubbed slide-in timeline (opacity `none`, `x: ±100` with
+- [x] 5.4 Replace the cards' fade-and-rise with the scrubbed slide-in timeline (opacity `none`, `x: ±100` with
   `back.inOut(3)`, side by global card index, design.md decision 3). Verify with a unit test that with reduced motion no
   inline `opacity` or `transform` is set on the cards. Add the scenario "Visitor scrolls the wishes into view", and
   verify that it and "Visitor reads revealed text" pass

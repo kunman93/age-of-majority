@@ -36,7 +36,10 @@ export const waitUntilIntro = (
   page: Page,
   expected: Partial<IntroState>,
   timeout = LOOP_TIMEOUT_MS,
-) => expect.poll(() => introState(page), { timeout }).toMatchObject(expected)
+) =>
+  expect
+    .poll(() => introState(page), { timeout, intervals: [100] })
+    .toMatchObject(expected)
 
 export const waitUntilPartlyTyped = (page: Page, sentence: number) =>
   expect

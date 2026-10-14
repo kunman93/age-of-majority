@@ -1,7 +1,7 @@
 import { act, render, renderHook, screen } from '@testing-library/react'
 import { afterEach, expect, it, vi } from 'vitest'
 import App from '../App'
-import { ScrollTrigger } from '../gsap'
+import { gsap, ScrollTrigger } from '../gsap'
 import type { SceneMode } from '../background/useSceneMode'
 import TypedIntro from './TypedIntro'
 import { useChoreography } from './useChoreography'
@@ -144,6 +144,86 @@ it('reveals each target before its top reaches the middle', () => {
   reveals.forEach((reveal) => {
     expect(reveal.vars.start).toBe('top bottom')
     expect(reveal.vars.end).toBe('clamp(top 60%)')
+  })
+})
+
+const inlineTransforms = () =>
+  [...document.querySelectorAll<HTMLElement>('[data-reveal]')]
+    .map((element) => element.style.transform)
+    .filter((transform) => transform && transform !== 'none')
+
+const tweenVarsOf = (element: HTMLElement) =>
+  gsap.getTweensOf(element).map((tween) => tween.vars)
+
+const cardSlots = () => [
+  ...document.querySelectorAll<HTMLElement>('[data-reveal="card"]'),
+]
+
+it('sets no inline opacity or transform on the cards with reduced motion', () => {
+  stubReducedMotion(true)
+
+  render(<App />)
+
+  const cards = cardSlots()
+  expect(cards).toHaveLength(document.querySelectorAll('figure').length)
+  cards.forEach((card) => {
+    expect(card.style.opacity).toBe('')
+    expect(card.style.transform).toBe('')
+  })
+  expect(inlineTransforms()).toEqual([])
+})
+
+it('slides the cards in from alternating sides by their global index and fades them in', () => {
+  stubReducedMotion(false)
+
+  render(<App />)
+
+  const cards = cardSlots()
+  expect(cards.length).toBeGreaterThan(2)
+  cards.forEach((card, index) => {
+    const sign = index % 2 === 0 ? -1 : 1
+    const vars = tweenVarsOf(card)
+    expect(vars).toHaveLength(2)
+    expect(vars).toContainEqual(
+      expect.objectContaining({ opacity: 0, ease: 'none' }),
+    )
+    expect(vars).toContainEqual(
+      expect.objectContaining({ x: sign * 100, ease: 'back.inOut(3)' }),
+    )
+    vars.forEach((tween) => expect(tween).not.toHaveProperty('y'))
+  })
+})
+
+it('keeps the fade-and-rise for the headings and the finale', () => {
+  stubReducedMotion(false)
+
+  render(<App />)
+
+  const others = [
+    ...document.querySelectorAll<HTMLElement>(
+      '[data-reveal]:not([data-reveal="card"])',
+    ),
+  ]
+  expect(others.length).toBeGreaterThan(0)
+  others.forEach((element) =>
+    expect(tweenVarsOf(element)).toEqual([
+      expect.objectContaining({ opacity: 0, y: 40, ease: 'none' }),
+    ]),
+  )
+})
+
+it('scrubs each card timeline with the existing end', () => {
+  stubReducedMotion(false)
+
+  render(<App />)
+
+  const triggers = ScrollTrigger.getAll().filter((trigger) =>
+    cardSlots().includes(trigger.trigger as HTMLElement),
+  )
+  expect(triggers).toHaveLength(cardSlots().length)
+  triggers.forEach((trigger) => {
+    expect(trigger.vars.scrub).toBe(0.5)
+    expect(trigger.vars.end).toBe('clamp(top 60%)')
   })
 })
 

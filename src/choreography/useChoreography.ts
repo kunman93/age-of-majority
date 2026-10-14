@@ -8,6 +8,14 @@ const NO_REDUCED_MOTION = '(prefers-reduced-motion: no-preference)'
 const targets = (scope: HTMLElement, selector: string) =>
   gsap.utils.toArray<HTMLElement>(selector, scope)
 
+// finished before the element's top reaches the middle of the viewport
+const scrubbedReveal = (trigger: HTMLElement) => ({
+  trigger,
+  start: 'top bottom',
+  end: 'clamp(top 60%)',
+  scrub: 0.5,
+})
+
 export function useChoreography(
   scope: RefObject<HTMLElement | null>,
   mode: SceneMode,
@@ -36,19 +44,29 @@ export function useChoreography(
         })
 
         // from, not to: the markup is the final state
-        targets(root, '[data-reveal]').forEach((target) =>
-          gsap.from(target, {
-            opacity: 0,
-            y: 40,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: target,
-              start: 'top bottom',
-              end: 'clamp(top 60%)',
-              scrub: 0.5,
-            },
-          }),
+        targets(root, '[data-reveal]:not([data-reveal="card"])').forEach(
+          (target) =>
+            gsap.from(target, {
+              opacity: 0,
+              y: 40,
+              ease: 'none',
+              scrollTrigger: scrubbedReveal(target),
+            }),
         )
+
+        // opacity stays linear in its own tween so the overshoot of the slide
+        // never flickers the text
+        targets(root, '[data-reveal="card"]').forEach((card, index) => {
+          const side = index % 2 === 0 ? -1 : 1
+          gsap
+            .timeline({ scrollTrigger: scrubbedReveal(card) })
+            .from(card, { opacity: 0, ease: 'none', duration: 1 }, 0)
+            .from(
+              card,
+              { x: side * 100, ease: 'back.inOut(3)', duration: 1 },
+              0,
+            )
+        })
 
         return restoreIntro
       })

@@ -86,6 +86,15 @@ Feature: Content choreography
     And I move the pointer over the card
     Then the card keeps its original tilt
 
+  Scenario: Visitor scrolls the wishes into view
+    When I open the home page
+    And I scroll until the top of the first "Family Ipsum" message card just enters the viewport from below
+    Then the two "Family Ipsum" message cards are shifted sideways from their places, in opposite directions
+    And neither card is fully visible
+    When I scroll until both "Family Ipsum" message cards are in the upper half of the viewport
+    Then both "Family Ipsum" message cards are fully visible and in their final positions
+    And the page does not scroll horizontally
+
   Scenario: Visitor scrolls back up past a family
     When I open the home page
     And I scroll until the "Family Ipsum" heading is in the upper half of the viewport

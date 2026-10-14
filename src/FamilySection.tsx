@@ -40,7 +40,7 @@ function FamilySection({
         {family.messages.map((message, index) => (
           // GSAP folds a CSS rotate into its transform, so the reveal moves a
           // wrapper and the card keeps its tilt
-          <div key={index} data-reveal className="w-full sm:w-[28rem]">
+          <div key={index} data-reveal="card" className="w-full sm:w-[28rem]">
             <figure
               className={`bg-plum border-ember relative space-y-3 rounded-lg border-l-4 p-5 shadow-lg shadow-black/30 sm:p-6 ${TAPE} ${PIN} ${SWING} ${TILTS[(firstCardIndex + index) % TILTS.length]}`}
             >

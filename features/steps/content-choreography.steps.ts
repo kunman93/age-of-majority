@@ -395,11 +395,72 @@ Then('the finale heading is fully visible without moving', async ({ page }) => {
   await expectStillAndVisible(finale(page).getByRole('heading'))
 })
 
-type HoverState = { tilt: number; pin: { x: number; y: number } }
-const beforeHover = new WeakMap<Page, HoverState>()
-
 const firstCard = (page: Page, family: string) =>
   section(page, family).getByRole('figure').first()
+
+const cardSlots = (page: Page, family: string) =>
+  section(page, family).getByRole('figure').locator('..')
+
+const slideOffsetOf = (slot: Locator) =>
+  slot.evaluate((element) => {
+    const { transform } = getComputedStyle(element)
+    return transform === 'none' ? 0 : new DOMMatrix(transform).m41
+  })
+
+When(
+  'I scroll until the top of the first {string} message card just enters the viewport from below',
+  async ({ page }, family: string) => {
+    await scrollTopTo(cardSlots(page, family).first(), 1, -1)
+  },
+)
+
+When(
+  'I scroll until both {string} message cards are in the upper half of the viewport',
+  async ({ page }, family: string) => {
+    await scrollTopTo(cardSlots(page, family).first(), 0.25)
+  },
+)
+
+Then(
+  'the two {string} message cards are shifted sideways from their places, in opposite directions',
+  async ({ page }, family: string) => {
+    const slots = await cardSlots(page, family).all()
+    expect(slots).toHaveLength(2)
+    await expect
+      .poll(async () => {
+        const [first, second] = await Promise.all(slots.map(slideOffsetOf))
+        return (
+          first !== 0 && second !== 0 && Math.sign(first) !== Math.sign(second)
+        )
+      })
+      .toBe(true)
+  },
+)
+
+Then('neither card is fully visible', async ({ page }) => {
+  for (const slot of await cardSlots(page, 'Family Ipsum').all()) {
+    await expect
+      .poll(() => opacityOf(slot), { timeout: SETTLE_TIMEOUT_MS })
+      .toBeLessThan(1)
+  }
+})
+
+Then(
+  'both {string} message cards are fully visible and in their final positions',
+  async ({ page }, family: string) => {
+    for (const slot of await cardSlots(page, family).all()) {
+      await expect
+        .poll(() => opacityOf(slot), { timeout: SETTLE_TIMEOUT_MS })
+        .toBe(1)
+      await expect
+        .poll(() => slideOffsetOf(slot), { timeout: SETTLE_TIMEOUT_MS })
+        .toBe(0)
+    }
+  },
+)
+
+type HoverState = { tilt: number; pin: { x: number; y: number } }
+const beforeHover = new WeakMap<Page, HoverState>()
 
 const tiltOf = (card: Locator) =>
   card.evaluate((element) => parseFloat(getComputedStyle(element).rotate))
