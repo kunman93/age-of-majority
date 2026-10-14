@@ -153,13 +153,15 @@ it('shows no illustrations in scene mode', () => {
   expect(document.querySelectorAll('[data-stage-illustration]')).toHaveLength(0)
 })
 
-it('left-aligns the intro while the heading stays centered', () => {
+it('left-aligns the heading and the intro', () => {
   render(<App />)
 
   const intro = document.querySelector('[data-intro]')!
   expect(intro).toHaveClass('text-left')
   expect(intro).not.toHaveClass('text-center')
-  expect(screen.getByRole('banner')).toHaveClass('text-center')
+  const greeting = screen.getByRole('heading', { level: 1 })
+  expect(greeting).toHaveClass('text-left')
+  expect(greeting).not.toHaveClass('text-center')
 })
 
 it('puts the heading and overline above one board holding every family', () => {

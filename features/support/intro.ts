@@ -53,7 +53,7 @@ export const waitUntilPartlyTyped = (page: Page, sentence: number) =>
           state.typed < state.total
         )
       },
-      { timeout: LOOP_TIMEOUT_MS },
+      { timeout: LOOP_TIMEOUT_MS, intervals: [50] },
     )
     .toBe(true)
 

@@ -92,7 +92,7 @@ pure logic, BDD steps and setup. Every task is test-first.
 - [x] 5.5 Left-align the heading's text (design.md decision 5). Update "Visitor opens the card on a phone, landscape
   phone, tablet, laptop or desktop" so it checks that the heading and intro text are left-aligned, and verify that it
   passes
-- [ ] 5.6 Replace the per-card triggers with one staggered timeline on the board (design.md decision 3). Verify with a
+- [x] 5.6 Replace the per-card triggers with one staggered timeline on the board (design.md decision 3). Verify with a
   unit test that with reduced motion no inline `opacity` or `transform` is set on the cards. Update "Visitor scrolls
   the wishes into view" (last card revealed), add "Visitor scrolls back above the board", and verify that they and
   "Visitor reads revealed text" pass

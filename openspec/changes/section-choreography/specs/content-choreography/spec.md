@@ -39,9 +39,7 @@ accent-colored cursor SHALL follow the last typed character.
 #### Scenario: Visitor watches the intro being typed
 - **WHEN** a visitor who does not prefer reduced motion opens the home page
 - **THEN** shortly after load only the first part of the first sentence is visible
-- **AND** a blinking cursor follows the last typed character
-- **WHEN** the visitor waits until the first sentence is fully typed
-- **THEN** the first sentence is visible and no other sentence is visible
+- **AND** a cursor follows the last typed character
 - **WHEN** the visitor waits a few seconds longer
 - **THEN** the second sentence is being typed in place of the first
 

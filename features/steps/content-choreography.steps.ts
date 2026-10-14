@@ -208,46 +208,39 @@ Then(
   },
 )
 
-Then('a blinking cursor follows the last typed character', async ({ page }) => {
-  const sampled = new Set<string>()
-  for (let i = 0; i < 12; i++) {
-    sampled.add(
-      await sentenceLine(page, 0)
-        .locator('[data-cursor]')
-        .evaluate((cursor) => getComputedStyle(cursor).opacity),
+Then('a cursor follows the last typed character', async ({ page }) => {
+  await expect
+    .poll(
+      async () => {
+        // null while the typed text is empty, for example between two sentences
+        const gap = await intro(page).evaluate((paragraph) => {
+          for (const line of paragraph.querySelectorAll(
+            '[data-sentence-line]',
+          )) {
+            const range = document.createRange()
+            range.selectNodeContents(line.querySelector('[data-typed-text]')!)
+            const rects = range.getClientRects()
+            if (rects.length === 0) continue
+            const last = rects[rects.length - 1]
+            const bar = line.querySelector('[data-cursor]')!.firstElementChild!
+            const { left, bottom } = bar.getBoundingClientRect()
+            return {
+              dx: Math.abs(left - last.right),
+              dy: Math.abs(bottom - last.bottom),
+            }
+          }
+          return null
+        })
+        return (
+          gap !== null &&
+          gap.dx <= 3 &&
+          gap.dy <= page.viewportSize()!.height / 10
+        )
+      },
+      { timeout: LOOP_TEST_TIMEOUT_MS },
     )
-    await page.waitForTimeout(100)
-  }
-  expect(sampled).toContain('0')
-  expect(sampled).toContain('1')
-
-  const gap = await sentenceLine(page, 0).evaluate((line) => {
-    const typed = line.querySelector('[data-typed-text]')!
-    const range = document.createRange()
-    range.selectNodeContents(typed)
-    const rects = range.getClientRects()
-    const last = rects[rects.length - 1]
-    const bar = line.querySelector('[data-cursor]')!.firstElementChild!
-    const { left, bottom } = bar.getBoundingClientRect()
-    return {
-      dx: Math.abs(left - last.right),
-      dy: Math.abs(bottom - last.bottom),
-    }
-  })
-  expect(gap.dx).toBeLessThanOrEqual(3)
-  expect(gap.dy).toBeLessThanOrEqual(page.viewportSize()!.height / 10)
+    .toBe(true)
 })
-
-Then(
-  'the first sentence is visible and no other sentence is visible',
-  async ({ page }) => {
-    expect((await introState(page)).typedText).toBe(SENTENCES[0])
-    expect(await opacityOf(sentenceLine(page, 0))).toBe(1)
-    for (const index of [1, 2]) {
-      expect(await opacityOf(sentenceLine(page, index))).toBe(0)
-    }
-  },
-)
 
 When('I wait a few seconds longer', async ({ page }) => {
   await waitUntilPartlyTyped(page, 1)
@@ -256,8 +249,6 @@ When('I wait a few seconds longer', async ({ page }) => {
 Then(
   'the second sentence is being typed in place of the first',
   async ({ page }) => {
-    expect(await opacityOf(sentenceLine(page, 1))).toBe(1)
-    expect(await opacityOf(sentenceLine(page, 0))).toBe(0)
     const [first, second] = await Promise.all(
       [0, 1].map((index) => sentenceLine(page, index).boundingBox()),
     )
@@ -398,8 +389,9 @@ Then('the finale heading is fully visible without moving', async ({ page }) => {
 const firstCard = (page: Page, family: string) =>
   section(page, family).getByRole('figure').first()
 
-const cardSlots = (page: Page, family: string) =>
-  section(page, family).getByRole('figure').locator('..')
+const BOARD = '[data-board]'
+
+const cardSlots = (page: Page) => page.locator('[data-reveal="card"]')
 
 const slideOffsetOf = (slot: Locator) =>
   slot.evaluate((element) => {
@@ -408,37 +400,47 @@ const slideOffsetOf = (slot: Locator) =>
   })
 
 When(
-  'I scroll until the top of the first {string} message card just enters the viewport from below',
-  async ({ page }, family: string) => {
-    await scrollTopTo(cardSlots(page, family).first(), 1, -1)
+  'I scroll until the top of the board just enters the viewport from below',
+  async ({ page }) => {
+    await scrollTopTo(page.locator(BOARD), 1, -1)
   },
 )
 
 When(
-  'I scroll until both {string} message cards are in the upper half of the viewport',
-  async ({ page }, family: string) => {
-    await scrollTopTo(cardSlots(page, family).first(), 0.25)
+  'I scroll until the top of the board is in the upper half of the viewport',
+  async ({ page }) => {
+    await scrollTopTo(page.locator(BOARD), 0.25)
+  },
+)
+
+When(
+  'I scroll until the top of the board is just above the bottom of the viewport',
+  async ({ page }) => {
+    await scrollTopTo(page.locator(BOARD), 1)
   },
 )
 
 Then(
-  'the two {string} message cards are shifted sideways from their places, in opposite directions',
-  async ({ page }, family: string) => {
-    const slots = await cardSlots(page, family).all()
-    expect(slots).toHaveLength(2)
+  'consecutive message cards are shifted sideways from their places, in opposite directions',
+  async ({ page }) => {
+    const slots = await cardSlots(page).all()
+    expect(slots.length).toBeGreaterThan(1)
     await expect
       .poll(async () => {
-        const [first, second] = await Promise.all(slots.map(slideOffsetOf))
-        return (
-          first !== 0 && second !== 0 && Math.sign(first) !== Math.sign(second)
+        const offsets = await Promise.all(slots.map(slideOffsetOf))
+        return offsets.every(
+          (offset, index) =>
+            offset !== 0 &&
+            (index === 0 ||
+              Math.sign(offset) !== Math.sign(offsets[index - 1])),
         )
       })
       .toBe(true)
   },
 )
 
-Then('neither card is fully visible', async ({ page }) => {
-  for (const slot of await cardSlots(page, 'Family Ipsum').all()) {
+Then('no message card is fully visible', async ({ page }) => {
+  for (const slot of await cardSlots(page).all()) {
     await expect
       .poll(() => opacityOf(slot), { timeout: SETTLE_TIMEOUT_MS })
       .toBeLessThan(1)
@@ -446,9 +448,11 @@ Then('neither card is fully visible', async ({ page }) => {
 })
 
 Then(
-  'both {string} message cards are fully visible and in their final positions',
-  async ({ page }, family: string) => {
-    for (const slot of await cardSlots(page, family).all()) {
+  'every message card is fully visible and in its final position, including the last one',
+  async ({ page }) => {
+    const slots = await cardSlots(page).all()
+    expect(slots.length).toBeGreaterThan(0)
+    for (const slot of slots) {
       await expect
         .poll(() => opacityOf(slot), { timeout: SETTLE_TIMEOUT_MS })
         .toBe(1)

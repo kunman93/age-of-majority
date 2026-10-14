@@ -54,17 +54,27 @@ export function useChoreography(
             }),
         )
 
-        // opacity stays linear in its own tween so the overshoot of the slide
-        // never flickers the text
+        // one timeline on the board, so the lower cards are in place by the
+        // time the visitor reaches them. Opacity stays linear in its own tween
+        // so the overshoot of the slide never flickers the text
+        const [board] = targets(root, '[data-board]')
+        const wishes = gsap.timeline({
+          scrollTrigger: {
+            trigger: board,
+            start: 'top bottom',
+            end: 'clamp(top 40%)',
+            scrub: 0.5,
+          },
+        })
         targets(root, '[data-reveal="card"]').forEach((card, index) => {
           const side = index % 2 === 0 ? -1 : 1
-          gsap
-            .timeline({ scrollTrigger: scrubbedReveal(card) })
-            .from(card, { opacity: 0, ease: 'none', duration: 1 }, 0)
+          const position = index * 0.15
+          wishes
+            .from(card, { opacity: 0, ease: 'none', duration: 1 }, position)
             .from(
               card,
               { x: side * 100, ease: 'back.inOut(3)', duration: 1 },
-              0,
+              position,
             )
         })
 

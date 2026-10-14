@@ -135,11 +135,16 @@ it('reveals each target before its top reaches the middle', () => {
 
   render(<App />)
 
-  const reveals = ScrollTrigger.getAll().filter((trigger) =>
-    (trigger.trigger as HTMLElement).hasAttribute('data-reveal'),
-  )
+  // the cards are revealed by the board's timeline, not by their own triggers
+  const reveals = ScrollTrigger.getAll().filter((trigger) => {
+    const element = trigger.trigger as HTMLElement
+    return (
+      element.hasAttribute('data-reveal') &&
+      element.getAttribute('data-reveal') !== 'card'
+    )
+  })
   expect(reveals).toHaveLength(
-    document.querySelectorAll('[data-reveal]').length,
+    document.querySelectorAll('[data-reveal]:not([data-reveal="card"])').length,
   )
   reveals.forEach((reveal) => {
     expect(reveal.vars.start).toBe('top bottom')
@@ -212,18 +217,38 @@ it('keeps the fade-and-rise for the headings and the finale', () => {
   )
 })
 
-it('scrubs each card timeline with the existing end', () => {
+it('reveals all cards with one scrubbed timeline on the board', () => {
   stubReducedMotion(false)
 
   render(<App />)
 
-  const triggers = ScrollTrigger.getAll().filter((trigger) =>
+  const board = document.querySelector('[data-board]')
+  const boardTriggers = ScrollTrigger.getAll().filter(
+    (trigger) => trigger.trigger === board,
+  )
+  expect(boardTriggers).toHaveLength(1)
+  expect(boardTriggers[0].vars).toMatchObject({
+    start: 'top bottom',
+    end: 'clamp(top 40%)',
+    scrub: 0.5,
+  })
+  const cardTriggers = ScrollTrigger.getAll().filter((trigger) =>
     cardSlots().includes(trigger.trigger as HTMLElement),
   )
-  expect(triggers).toHaveLength(cardSlots().length)
-  triggers.forEach((trigger) => {
-    expect(trigger.vars.scrub).toBe(0.5)
-    expect(trigger.vars.end).toBe('clamp(top 60%)')
+  expect(cardTriggers).toEqual([])
+})
+
+it('staggers the cards by 0.15 per global index in that timeline', () => {
+  stubReducedMotion(false)
+
+  render(<App />)
+
+  cardSlots().forEach((card, index) => {
+    const tweens = gsap.getTweensOf(card)
+    expect(tweens).toHaveLength(2)
+    tweens.forEach((tween) =>
+      expect(tween.startTime()).toBeCloseTo(index * 0.15, 5),
+    )
   })
 })
 

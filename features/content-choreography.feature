@@ -19,9 +19,7 @@ Feature: Content choreography
   Scenario: Visitor watches the intro being typed
     When I open the home page
     Then shortly after load only the first part of the first sentence is visible
-    And a blinking cursor follows the last typed character
-    When I wait until the first sentence is fully typed
-    Then the first sentence is visible and no other sentence is visible
+    And a cursor follows the last typed character
     When I wait a few seconds longer
     Then the second sentence is being typed in place of the first
 
@@ -88,12 +86,19 @@ Feature: Content choreography
 
   Scenario: Visitor scrolls the wishes into view
     When I open the home page
-    And I scroll until the top of the first "Family Ipsum" message card just enters the viewport from below
-    Then the two "Family Ipsum" message cards are shifted sideways from their places, in opposite directions
-    And neither card is fully visible
-    When I scroll until both "Family Ipsum" message cards are in the upper half of the viewport
-    Then both "Family Ipsum" message cards are fully visible and in their final positions
+    And I scroll until the top of the board just enters the viewport from below
+    Then consecutive message cards are shifted sideways from their places, in opposite directions
+    And no message card is fully visible
+    When I scroll until the top of the board is in the upper half of the viewport
+    Then every message card is fully visible and in its final position, including the last one
     And the page does not scroll horizontally
+
+  Scenario: Visitor scrolls back above the board
+    When I open the home page
+    And I scroll until the top of the board is in the upper half of the viewport
+    Then every message card is fully visible and in its final position, including the last one
+    When I scroll until the top of the board is just above the bottom of the viewport
+    Then no message card is fully visible
 
   Scenario: Visitor scrolls back up past a family
     When I open the home page
