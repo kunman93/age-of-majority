@@ -17,7 +17,7 @@ function App() {
           <h1 className="text-sun text-4xl leading-tight font-bold break-words sm:text-5xl lg:text-6xl">
             Happy 18th Birthday, Sara!
           </h1>
-          <p className="text-lg leading-relaxed sm:text-xl">
+          <p className="text-xl leading-relaxed sm:text-2xl">
             Today you come of age. This card gathers wishes from your family,
             near and far, to celebrate you and everything ahead of you. Scroll
             on and read what they have to say.
