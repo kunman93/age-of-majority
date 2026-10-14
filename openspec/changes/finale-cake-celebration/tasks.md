@@ -25,7 +25,7 @@ BDD steps and test support are done by the main session. Every task is test-firs
   button's name, a click blows out and shows "Make a wish!", a second click changes nothing, focus stays, `onLeaveBack`
   resets, and the trigger is killed on unmount. Verify with `App.test.tsx` that the cake is the last element of the
   finale and that the existing finale tests pass
-- [ ] 2.3 Add `features/birthday-cake.feature` and `features/steps/birthday-cake.steps.ts` with the static scenarios:
+- [x] 2.3 Add `features/birthday-cake.feature` and `features/steps/birthday-cake.steps.ts` with the static scenarios:
   the cake below the signature and last on the card, the accessible name and hidden picture, tap, Enter and Space,
   the focus indicator, tapping again, reset after scrolling up and back down, no reset after scrolling up a little,
   reduced motion (lit, then unlit at once, no animation, no confetti, no 3D cake request), and no WebGL. Verify
