@@ -272,6 +272,33 @@ it('kills its scroll triggers on unmount', () => {
   expect(ScrollTrigger.getAll()).toHaveLength(0)
 })
 
+it('does not replay the opening when the mode changes', () => {
+  stubReducedMotion(false)
+  const main = document.createElement('main')
+  main.append(document.createElement('h1'))
+  const opening = document.createElement('div')
+  opening.dataset.opening = ''
+  main.append(opening)
+  render(<TypedIntro text="Hello. World." />, { container: opening })
+  const scope = { current: main }
+  const { rerender } = renderHook(
+    ({ mode }: { mode: SceneMode }) => useChoreography(scope, mode),
+    { initialProps: { mode: 'scene' as SceneMode } },
+  )
+  const heading = main.querySelector('h1')!
+  const intro = main.querySelector<HTMLElement>('[data-intro]')!
+  gsap.getTweensOf(heading).forEach((tween) => tween.progress(1))
+  intro.dataset.sentence = '1'
+  const typed = main.querySelector('[data-typed-text]')!
+  typed.textContent = 'Hel'
+
+  rerender({ mode: 'static' })
+
+  expect(heading.style.opacity).not.toBe('0')
+  expect(intro.dataset.sentence).toBe('1')
+  expect(typed.textContent).toBe('Hel')
+})
+
 it('refreshes the scroll positions when the mode changes', () => {
   stubReducedMotion(false)
   const main = document.createElement('main')

@@ -83,7 +83,7 @@ export function useChoreography(
 
       return () => matchMedia.revert()
     },
-    { scope, dependencies: [mode], revertOnUpdate: true },
+    { scope },
   )
 
   // the showcase height depends on the mode and moves everything below it
