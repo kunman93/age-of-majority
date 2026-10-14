@@ -3,6 +3,7 @@ import TypedIntro from './choreography/TypedIntro'
 import { useChoreography } from './choreography/useChoreography'
 import Background from './background/Background'
 import { useSceneMode } from './background/useSceneMode'
+import Cake from './cake/Cake'
 import FamilySection from './FamilySection'
 import { families } from './families'
 import Showcase from './story/Showcase'
@@ -28,7 +29,7 @@ function App() {
       <Background mode={mode} onSceneError={fallBackToStatic} />
       <main
         ref={main}
-        className="space-y-12 px-5 pb-12 sm:space-y-16 sm:px-8 sm:pb-16 lg:pb-24"
+        className="space-y-12 overflow-x-clip px-5 pb-12 sm:space-y-16 sm:px-8 sm:pb-16 lg:pb-24"
       >
         <header
           data-opening
@@ -86,6 +87,7 @@ function App() {
           <p className="text-blush text-lg sm:text-xl">
             With love, your family
           </p>
+          <Cake mode={mode} onSceneError={fallBackToStatic} />
         </section>
       </main>
     </>

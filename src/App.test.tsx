@@ -107,6 +107,11 @@ it('renders the finale after the last family', () => {
   expect(follows(lastFamily, finale)).toBeTruthy()
   expect(follows(heading, message)).toBeTruthy()
   expect(follows(message, signature)).toBeTruthy()
+  const cake = within(finale).getByRole('button', {
+    name: 'Tap the cake to blow out the candles',
+  })
+  expect(follows(signature, cake)).toBeTruthy()
+  expect(finale.lastElementChild).toBe(cake)
   expect(finale.nextElementSibling).toBeNull()
   expect(container.lastElementChild).toBe(finale.parentElement)
 })

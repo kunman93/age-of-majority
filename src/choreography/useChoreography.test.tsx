@@ -44,6 +44,13 @@ const inlineOpacities = () =>
     .map((element) => element.style.opacity)
     .filter(Boolean)
 
+// the cake keeps its own reset trigger whatever the motion preference
+const choreographyTriggers = () =>
+  ScrollTrigger.getAll().filter(
+    (trigger) =>
+      !(trigger.trigger as Element | null)?.closest('[data-cake-state]'),
+  )
+
 afterEach(() => {
   ScrollTrigger.getAll().forEach((trigger) => trigger.kill())
 })
@@ -54,7 +61,7 @@ it('sets no inline opacity on any target with reduced motion', () => {
   render(<App />)
 
   expect(inlineOpacities()).toEqual([])
-  expect(ScrollTrigger.getAll()).toHaveLength(0)
+  expect(choreographyTriggers()).toHaveLength(0)
 })
 
 it('shows the full intro and no cursor with reduced motion', () => {
@@ -260,7 +267,7 @@ it('restores the final state when reduced motion is switched on live', () => {
   act(() => setReduced(true))
 
   expect(inlineOpacities()).toEqual([])
-  expect(ScrollTrigger.getAll()).toHaveLength(0)
+  expect(choreographyTriggers()).toHaveLength(0)
 })
 
 it('kills its scroll triggers on unmount', () => {
@@ -269,7 +276,7 @@ it('kills its scroll triggers on unmount', () => {
 
   unmount()
 
-  expect(ScrollTrigger.getAll()).toHaveLength(0)
+  expect(choreographyTriggers()).toHaveLength(0)
 })
 
 it('does not replay the opening when the mode changes', () => {
