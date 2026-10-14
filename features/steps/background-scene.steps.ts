@@ -7,10 +7,12 @@ import {
   relativeLuminance,
   type Rgba,
 } from '../support/color.ts'
+import { EMBER_CANVAS, holdRenderingContext } from '../support/canvases.ts'
+import { countDifferingPixels } from '../support/screenshot.ts'
 
 const { Given, When, Then } = createBdd()
 
-const SCENE_CHUNK = /EmberCanvas|\/three|react-three/
+const SCENE_CHUNK = /EmberCanvas|StoryCanvas|\/three|react-three|gsap/
 const GLOW = '[data-testid="background-glow"]'
 const TEXT = 'h1, h2, main p, main figcaption'
 
@@ -190,8 +192,8 @@ const expectToCoverViewport = async (page: Page, selector: string) => {
 Then(
   'exactly one canvas covers the whole viewport behind the content',
   async ({ page }) => {
-    await expect(page.locator('canvas')).toHaveCount(1)
-    await expectToCoverViewport(page, 'canvas')
+    await expect(page.locator(EMBER_CANVAS)).toHaveCount(1)
+    await expectToCoverViewport(page, EMBER_CANVAS)
   },
 )
 
@@ -213,14 +215,14 @@ Then(
 
 Then('the canvas is hidden from assistive technology', async ({ page }) => {
   const hidden = await page
-    .locator('canvas')
+    .locator(EMBER_CANVAS)
     .evaluate((canvas) => canvas.closest('[aria-hidden="true"]') !== null)
   expect(hidden).toBe(true)
 })
 
 Then('the canvas does not catch pointer input', async ({ page }) => {
   const pointerEvents = await page
-    .locator('canvas')
+    .locator(EMBER_CANVAS)
     .evaluate((canvas) => getComputedStyle(canvas).pointerEvents)
   expect(pointerEvents).toBe('none')
 })
@@ -228,7 +230,7 @@ Then('the canvas does not catch pointer input', async ({ page }) => {
 Then(
   'the canvas has at most {int} device pixels per CSS pixel',
   async ({ page }, maximum: number) => {
-    const ratio = await page.locator('canvas').evaluate((canvas) => ({
+    const ratio = await page.locator(EMBER_CANVAS).evaluate((canvas) => ({
       horizontal: (canvas as HTMLCanvasElement).width / canvas.clientWidth,
       vertical: (canvas as HTMLCanvasElement).height / canvas.clientHeight,
     }))
@@ -293,18 +295,7 @@ Then(
 )
 
 Then('I keep a handle to the canvas rendering context', async ({ page }) => {
-  // The renderer is set up once the canvas leaves its 300px default width
-  await expect
-    .poll(() =>
-      page.locator('canvas').evaluate((c) => (c as HTMLCanvasElement).width),
-    )
-    .not.toBe(300)
-  await page.locator('canvas').evaluate((canvas) => {
-    const context =
-      (canvas as HTMLCanvasElement).getContext('webgl2') ??
-      (canvas as HTMLCanvasElement).getContext('webgl')
-    ;(window as unknown as { heldContext: unknown }).heldContext = context
-  })
+  await holdRenderingContext(page, EMBER_CANVAS)
 })
 
 When('the visitor turns on reduced motion', async ({ page }) => {
@@ -322,35 +313,6 @@ Then('the held rendering context is released', async ({ page }) => {
     )
     .toBe(true)
 })
-
-const countDifferingPixels = (page: Page, first: Buffer, second: Buffer) =>
-  page.evaluate(
-    async ([a, b]) => {
-      const read = async (base64: string) => {
-        const image = new Image()
-        image.src = `data:image/png;base64,${base64}`
-        await image.decode()
-        const canvas = document.createElement('canvas')
-        canvas.width = image.width
-        canvas.height = image.height
-        const context = canvas.getContext('2d')!
-        context.drawImage(image, 0, 0)
-        return context.getImageData(0, 0, canvas.width, canvas.height).data
-      }
-      const [left, right] = [await read(a), await read(b)]
-      let differing = 0
-      for (let i = 0; i < left.length; i += 4) {
-        if (
-          left[i] !== right[i] ||
-          left[i + 1] !== right[i + 1] ||
-          left[i + 2] !== right[i + 2]
-        )
-          differing += 1
-      }
-      return differing
-    },
-    [first.toString('base64'), second.toString('base64')],
-  )
 
 Then('the embers are visible on the background', async ({ page }) => {
   await page.addStyleTag({ content: 'main { visibility: hidden }' })
