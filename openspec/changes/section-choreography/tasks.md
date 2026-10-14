@@ -38,7 +38,7 @@ pure logic, BDD steps and setup. Every task is test-first.
 
 ## 4. Typewriter intro
 
-- [ ] 4.1 Restructure the intro into a `sr-only` full text and an `aria-hidden` typed part, a cursor and an untyped
+- [x] 4.1 Restructure the intro into a `sr-only` full text and an `aria-hidden` typed part, a cursor and an untyped
   rest. The default markup is the final state. Add the counter tween, the blinking cursor that fades out about 2 s
   after typing, and the `data-typed="done"` marker. On revert, restore the full text (design.md decision 5). Verify
   with unit tests: with reduced motion, the visible text is the full intro and the cursor is hidden. Add the scenarios

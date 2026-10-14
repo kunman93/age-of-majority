@@ -3,6 +3,7 @@ import { afterEach, expect, it, vi } from 'vitest'
 import App from '../App'
 import { ScrollTrigger } from '../gsap'
 import type { SceneMode } from '../background/useSceneMode'
+import TypedIntro from './TypedIntro'
 import { useChoreography } from './useChoreography'
 
 vi.mock('../background/useSceneMode', () => ({
@@ -54,6 +55,33 @@ it('sets no inline opacity on any target with reduced motion', () => {
 
   expect(inlineOpacities()).toEqual([])
   expect(ScrollTrigger.getAll()).toHaveLength(0)
+})
+
+it('shows the full intro and no cursor with reduced motion', () => {
+  stubReducedMotion(true)
+
+  render(<App />)
+
+  const intro = document.querySelector('[data-intro]')!
+  expect(intro).toHaveAttribute('data-typed', 'done')
+  expect(intro.querySelector('[data-typed-text]')!.textContent).toMatch(
+    /^Today you come of age.*what they have to say\.$/,
+  )
+  expect(intro.querySelector('[data-untyped-text]')).toBeEmptyDOMElement()
+  expect(intro.querySelector('[data-cursor]')).toHaveClass('opacity-0')
+  expect(
+    (intro.querySelector('[data-cursor]') as HTMLElement).style.opacity,
+  ).toBe('')
+})
+
+it('types the intro out without reduced motion', () => {
+  stubReducedMotion(false)
+
+  render(<App />)
+
+  const intro = document.querySelector('[data-intro]')!
+  expect(intro).toHaveAttribute('data-typed', 'typing')
+  expect(intro.querySelector('[data-typed-text]')).toBeEmptyDOMElement()
 })
 
 it('takes over the targets before the first paint without reduced motion', () => {
@@ -134,7 +162,9 @@ it('kills its scroll triggers on unmount', () => {
 
 it('refreshes the scroll positions when the mode changes', () => {
   stubReducedMotion(false)
-  const scope = { current: document.createElement('main') }
+  const main = document.createElement('main')
+  render(<TypedIntro text="Hello" />, { container: main })
+  const scope = { current: main }
   const { rerender } = renderHook(
     ({ mode }: { mode: SceneMode }) => useChoreography(scope, mode),
     { initialProps: { mode: 'scene' as SceneMode } },

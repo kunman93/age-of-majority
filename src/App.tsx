@@ -1,10 +1,14 @@
 import { useId, useRef } from 'react'
+import TypedIntro from './choreography/TypedIntro'
 import { useChoreography } from './choreography/useChoreography'
 import Background from './background/Background'
 import { useSceneMode } from './background/useSceneMode'
 import FamilySection from './FamilySection'
 import { families } from './families'
 import Showcase from './story/Showcase'
+
+const INTRO =
+  'Today you come of age. This card gathers wishes from your family, near and far, to celebrate you and everything ahead of you. Scroll on and read what they have to say.'
 
 function App() {
   const finaleHeadingId = useId()
@@ -26,11 +30,7 @@ function App() {
           <h1 className="text-sun text-4xl leading-tight font-bold break-words sm:text-5xl lg:text-6xl">
             Happy 18th Birthday, Sara!
           </h1>
-          <p data-intro className="text-xl leading-relaxed sm:text-2xl">
-            Today you come of age. This card gathers wishes from your family,
-            near and far, to celebrate you and everything ahead of you. Scroll
-            on and read what they have to say.
-          </p>
+          <TypedIntro text={INTRO} />
         </header>
         <Showcase mode={mode} onSceneError={fallBackToStatic} />
         {families.map((family, index) => (

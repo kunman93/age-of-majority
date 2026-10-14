@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test'
 import { createBdd } from 'playwright-bdd'
+import { intro } from '../support/intro.ts'
 import { opacityOf, scrollTopTo } from '../support/scroll.ts'
 
 const { Given, When, Then } = createBdd()
@@ -16,13 +17,13 @@ Then(
 )
 
 Then('the family headings are below the intro', async ({ page }) => {
-  const intro = await page.getByText(/^Today you come of age/).boundingBox()
+  const introBox = await intro(page).boundingBox()
   const headings = await page
     .getByRole('heading', { level: 2, name: /^Family / })
     .all()
   for (const heading of headings) {
     const box = await heading.boundingBox()
-    expect(box!.y).toBeGreaterThan(intro!.y + intro!.height - 1)
+    expect(box!.y).toBeGreaterThan(introBox!.y + introBox!.height - 1)
   }
 })
 

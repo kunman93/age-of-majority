@@ -1,5 +1,6 @@
 import { useEffect, type RefObject } from 'react'
 import type { SceneMode } from '../background/useSceneMode'
+import { addTypewriter } from './typewriter'
 import { gsap, ScrollTrigger, useGSAP } from '../gsap'
 
 const NO_REDUCED_MOTION = '(prefers-reduced-motion: no-preference)'
@@ -18,7 +19,10 @@ export function useChoreography(
       const matchMedia = gsap.matchMedia()
 
       matchMedia.add(NO_REDUCED_MOTION, () => {
-        gsap.from(targets(root, 'h1'), { opacity: 0, duration: 0.8 })
+        const load = gsap.timeline()
+        load.from(targets(root, 'h1'), { opacity: 0, duration: 0.8 })
+        const [intro] = targets(root, '[data-intro]')
+        const restoreIntro = addTypewriter(load, intro)
 
         const opening = targets(root, '[data-opening]')
         gsap.to(opening, {
@@ -46,6 +50,8 @@ export function useChoreography(
             },
           }),
         )
+
+        return restoreIntro
       })
 
       return () => matchMedia.revert()

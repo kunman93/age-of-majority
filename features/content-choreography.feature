@@ -11,8 +11,40 @@ Feature: Content choreography
     Then the finale heading, message and signature are visible
     And no content has been faded or moved
 
+  Scenario: Visitor without WebGL sees the content move
+    Given the browser does not support WebGL
+    When I open the home page
+    Then the intro is typed out
+
+  Scenario: Visitor watches the intro being typed
+    When I open the home page
+    Then shortly after load only the first part of the intro is visible
+    And a blinking cursor follows the last typed character
+    When I wait until the intro is fully typed
+    Then the full intro is visible
+    And a few seconds later no cursor is visible
+
+  Scenario: Assistive technology reads the full intro at once
+    When I open the home page
+    Then the accessible text of the intro is the full intro, while it is still being typed
+    And the cursor is hidden from assistive technology
+
+  Scenario: Opening stays in place while the intro is typed
+    When I open the home page
+    And I remember where the greeting is
+    And I wait until the intro is fully typed
+    Then the greeting is where it was
+
+  Scenario: Visitor turns on reduced motion while the intro is typed
+    When I open the home page
+    And the intro is partly typed
+    And the visitor turns on reduced motion
+    Then the full intro is shown at once
+    And no content has been faded or moved
+
   Scenario: Visitor scrolls away from the opening and back
     When I open the home page
+    And I wait until the intro is fully typed
     And I scroll until the opening is half out of the viewport
     Then the opening is partly faded out
     When I scroll back to the top

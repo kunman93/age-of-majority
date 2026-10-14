@@ -41,7 +41,7 @@ it('marks the opening and the intro', () => {
   render(<App />)
 
   expect(screen.getByRole('banner')).toHaveAttribute('data-opening')
-  expect(
-    screen.getByText(/^Today you come of age/).closest('[data-intro]'),
-  ).not.toBeNull()
+  expect(document.querySelector('[data-intro]')).toHaveTextContent(
+    /Today you come of age/,
+  )
 })

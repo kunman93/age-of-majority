@@ -31,6 +31,7 @@ it('renders the intro below the heading', () => {
   })
   const intro = screen.getByText(
     'Today you come of age. This card gathers wishes from your family, near and far, to celebrate you and everything ahead of you. Scroll on and read what they have to say.',
+    { selector: '.sr-only' },
   )
   expect(
     heading.compareDocumentPosition(intro) & Node.DOCUMENT_POSITION_FOLLOWING,
@@ -40,7 +41,9 @@ it('renders the intro below the heading', () => {
 it('renders the family headings in order after the intro', () => {
   render(<App />)
 
-  const intro = screen.getByText(/^Today you come of age/)
+  const intro = screen.getByText(/^Today you come of age/, {
+    selector: '.sr-only',
+  })
   const headings = screen.getAllByRole('heading', {
     level: 2,
     name: /^Family /,

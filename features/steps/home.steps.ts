@@ -1,5 +1,6 @@
 import { expect, type Page } from '@playwright/test'
 import { createBdd } from 'playwright-bdd'
+import { intro, waitUntilIntroIsTyped } from '../support/intro.ts'
 
 const { When, Then } = createBdd()
 
@@ -12,13 +13,15 @@ Then('I see the heading {string}', async ({ page }, name: string) => {
 })
 
 Then('I see the intro {string}', async ({ page }, text: string) => {
-  await expect(page.getByText(text, { exact: true })).toBeVisible()
+  await waitUntilIntroIsTyped(page)
+  await expect(intro(page)).toBeVisible()
+  await expect(page.locator('[data-intro] [data-typed-text]')).toHaveText(text)
 })
 
 Then('the intro is below the heading', async ({ page }) => {
   const heading = await page.getByRole('heading', { level: 1 }).boundingBox()
-  const intro = await page.getByText(/^Today you come of age/).boundingBox()
-  expect(intro!.y).toBeGreaterThan(heading!.y + heading!.height - 1)
+  const introBox = await intro(page).boundingBox()
+  expect(introBox!.y).toBeGreaterThan(heading!.y + heading!.height - 1)
 })
 
 const CENTER_TOLERANCE = 2
@@ -66,7 +69,7 @@ Then(
 Then('the text of the heading and the intro is centered', async ({ page }) => {
   for (const locator of [
     page.getByRole('heading', { level: 1 }),
-    page.getByText(/^Today you come of age/),
+    intro(page),
   ]) {
     await expect(locator).toHaveCSS('text-align', 'center')
   }

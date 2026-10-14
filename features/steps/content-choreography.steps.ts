@@ -1,6 +1,7 @@
 /// <reference lib="dom" />
 import { expect, type Locator, type Page } from '@playwright/test'
 import { createBdd } from 'playwright-bdd'
+import { intro, waitUntilIntroIsTyped } from '../support/intro.ts'
 import { opacityOf, scrollTopTo } from '../support/scroll.ts'
 
 const { When, Then } = createBdd()
@@ -31,8 +32,6 @@ const heading = (page: Page, family: string) =>
 
 const finale = (page: Page) =>
   page.getByRole('region', { name: "Here's to you, Sara!" })
-
-const intro = (page: Page) => page.getByText(/^Today you come of age/)
 
 Then('the greeting and the full intro are shown at once', async ({ page }) => {
   for (const text of [page.getByRole('heading', { level: 1 }), intro(page)]) {
@@ -177,3 +176,123 @@ Then(
     }
   },
 )
+
+const INTRO = '[data-intro]'
+const TYPED = '[data-intro] [data-typed-text]'
+const CURSOR = '[data-intro] [data-cursor]'
+
+const typedLength = (page: Page) =>
+  page.locator(TYPED).evaluate((typed) => typed.textContent!.length)
+
+const fullLength = (page: Page) =>
+  page.locator(`${INTRO} .sr-only`).evaluate((full) => full.textContent!.length)
+
+const waitUntilTypingStarted = (page: Page) =>
+  expect
+    .poll(() => typedLength(page), { timeout: SETTLE_TIMEOUT_MS })
+    .toBeGreaterThan(0)
+
+When('I wait until the intro is fully typed', async ({ page }) => {
+  await waitUntilIntroIsTyped(page)
+})
+
+Then('the intro is typed out', async ({ page }) => {
+  await waitUntilTypingStarted(page)
+  expect(await typedLength(page)).toBeLessThan(await fullLength(page))
+  await waitUntilIntroIsTyped(page)
+})
+
+Then(
+  'shortly after load only the first part of the intro is visible',
+  async ({ page }) => {
+    await waitUntilTypingStarted(page)
+    expect(await typedLength(page)).toBeLessThan(await fullLength(page))
+  },
+)
+
+Then('a blinking cursor follows the last typed character', async ({ page }) => {
+  const sampled = new Set<string>()
+  for (let i = 0; i < 12; i++) {
+    sampled.add(
+      await page
+        .locator(CURSOR)
+        .evaluate((cursor) => getComputedStyle(cursor).opacity),
+    )
+    await page.waitForTimeout(100)
+  }
+  expect(sampled).toContain('0')
+  expect(sampled).toContain('1')
+
+  const gap = await page.evaluate(
+    ([typedSelector, cursorSelector]) => {
+      const typed = document.querySelector(typedSelector)!
+      const range = document.createRange()
+      range.selectNodeContents(typed)
+      const rects = range.getClientRects()
+      const last = rects[rects.length - 1]
+      const bar = document.querySelector(cursorSelector)!.firstElementChild!
+      const { left } = bar.getBoundingClientRect()
+      return {
+        dx: Math.abs(left - last.right),
+        dy: Math.abs(bar.getBoundingClientRect().bottom - last.bottom),
+      }
+    },
+    [TYPED, CURSOR],
+  )
+  expect(gap.dx).toBeLessThanOrEqual(3)
+  expect(gap.dy).toBeLessThanOrEqual(page.viewportSize()!.height / 10)
+})
+
+Then('the full intro is visible', async ({ page }) => {
+  const typed = page.locator(TYPED)
+  await expect(typed).toBeVisible()
+  expect(await typedLength(page)).toBe(await fullLength(page))
+  expect(await opacityOf(page.locator(INTRO))).toBe(1)
+})
+
+Then('a few seconds later no cursor is visible', async ({ page }) => {
+  await expect
+    .poll(() => opacityOf(page.locator(CURSOR)), { timeout: SETTLE_TIMEOUT_MS })
+    .toBe(0)
+})
+
+Then(
+  'the accessible text of the intro is the full intro, while it is still being typed',
+  async ({ page }) => {
+    const full = await page.locator(`${INTRO} .sr-only`).innerText()
+    expect(await typedLength(page)).toBeLessThan(full.length)
+    expect(await page.locator(INTRO).ariaSnapshot()).toContain(full)
+  },
+)
+
+Then('the cursor is hidden from assistive technology', async ({ page }) => {
+  const hidden = await page
+    .locator(CURSOR)
+    .evaluate((cursor) => cursor.closest('[aria-hidden="true"]') !== null)
+  expect(hidden).toBe(true)
+})
+
+const greetingPositions = new WeakMap<Page, number>()
+
+When('I remember where the greeting is', async ({ page }) => {
+  await waitUntilTypingStarted(page)
+  greetingPositions.set(
+    page,
+    (await page.getByRole('heading', { level: 1 }).boundingBox())!.y,
+  )
+})
+
+Then('the greeting is where it was', async ({ page }) => {
+  const box = await page.getByRole('heading', { level: 1 }).boundingBox()
+  expect(box!.y).toBe(greetingPositions.get(page))
+})
+
+When('the intro is partly typed', async ({ page }) => {
+  await waitUntilTypingStarted(page)
+})
+
+Then('the full intro is shown at once', async ({ page }) => {
+  await waitUntilIntroIsTyped(page)
+  expect(await typedLength(page)).toBe(await fullLength(page))
+  expect(await opacityOf(page.locator(CURSOR))).toBe(0)
+})
