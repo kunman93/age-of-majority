@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 
+@custom-variant short (@media (max-height: 540px));
+
 @theme {
   --color-night: #2a1215;
   --color-plum: #3d1c20;
