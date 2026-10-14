@@ -1,32 +1,18 @@
-import { Component, lazy, Suspense, useState, type ReactNode } from 'react'
-import { supportsWebGL } from './supportsWebGL'
+import { lazy, Suspense } from 'react'
+import SceneErrorBoundary from './SceneErrorBoundary'
 import { usePageVisible } from './usePageVisible'
-import { usePrefersReducedMotion } from './usePrefersReducedMotion'
+import type { SceneMode } from './useSceneMode'
 
 const EmberCanvas = lazy(() => import('./EmberCanvas'))
 
-class BackgroundErrorBoundary extends Component<
-  { children: ReactNode },
-  { failed: boolean }
-> {
-  state = { failed: false }
-
-  static getDerivedStateFromError() {
-    return { failed: true }
-  }
-
-  render() {
-    return this.state.failed ? null : this.props.children
-  }
-}
-
-function Background() {
-  const prefersReducedMotion = usePrefersReducedMotion()
+function Background({
+  mode,
+  onSceneError,
+}: {
+  mode: SceneMode
+  onSceneError: () => void
+}) {
   const pageVisible = usePageVisible()
-  const [webGLSupported, setWebGLSupported] = useState<boolean>()
-  if (!prefersReducedMotion && webGLSupported === undefined) {
-    setWebGLSupported(supportsWebGL())
-  }
 
   return (
     <>
@@ -35,12 +21,12 @@ function Background() {
         aria-hidden="true"
         className="from-glow to-night pointer-events-none fixed inset-0 -z-10 bg-radial-[at_50%_30%] to-70%"
       />
-      {!prefersReducedMotion && webGLSupported && (
-        <BackgroundErrorBoundary>
+      {mode === 'scene' && (
+        <SceneErrorBoundary onError={onSceneError}>
           <Suspense fallback={null}>
             <EmberCanvas paused={!pageVisible} />
           </Suspense>
-        </BackgroundErrorBoundary>
+        </SceneErrorBoundary>
       )}
     </>
   )

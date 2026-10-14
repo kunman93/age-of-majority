@@ -41,6 +41,13 @@ Feature: Background scene
     And the static glow covers the whole viewport behind the content
     And the greeting is shown
 
+  Scenario: 3D scene fails to load
+    Given the 3D scene fails to load
+    When I open the home page
+    Then no canvas is shown
+    And the static glow covers the whole viewport behind the content
+    And the greeting is shown
+
   Scenario: Visitor on a high-density screen
     Given the screen has a device pixel ratio of 3
     When I open the home page
@@ -63,6 +70,21 @@ Feature: Background scene
     Then the 3D scene is rendering
     And every text has a contrast ratio of at least 4.5 against the brightest pixel of the background
     And the embers are visible on the background
+
+  Scenario Outline: Visitor reads the "<section>" over the 3D background
+    Given I count the draw calls of the page
+    When I open the home page
+    Then the 3D scene is rendering
+    When I scroll 5 percent through the showcase
+    Then the story object shows "17"
+    When I scroll the "<section>" to the middle of the screen
+    Then the story object is not drawn over the "<section>"
+    And every text has a contrast ratio of at least 4.5 against the brightest pixel of the background
+
+    Examples:
+      | section      |
+      | first family |
+      | finale       |
 
   Scenario: Visitor turns on reduced motion while the card is open
     When I open the home page

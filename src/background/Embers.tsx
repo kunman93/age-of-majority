@@ -5,7 +5,7 @@ import { AdditiveBlending } from 'three'
 import { createEmbers, EMBER_BOX } from './embers'
 
 export const EMBER_COUNT = 120
-const MAX_OPACITY = 0.35
+const MAX_OPACITY = 0.3
 
 const vertexShader = /* glsl */ `
   attribute float aSize;

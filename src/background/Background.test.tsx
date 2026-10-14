@@ -12,6 +12,8 @@ vi.mock('./EmberCanvas', () => ({
   },
 }))
 
+vi.mock('./StoryCanvas', () => ({ default: () => null }))
+
 function stubReducedMotion(matches: boolean) {
   vi.stubGlobal('matchMedia', () => ({
     matches,
@@ -30,10 +32,11 @@ beforeEach(() => {
   canvas.fail = false
 })
 
-it('always shows the static glow', async () => {
-  stubWebGL(true)
+const renderBackground = (mode: 'scene' | 'static', onSceneError = vi.fn()) =>
+  render(<Background mode={mode} onSceneError={onSceneError} />)
 
-  render(<Background />)
+it('always shows the static glow', async () => {
+  renderBackground('scene')
 
   expect(screen.getByTestId('background-glow')).toHaveAttribute(
     'aria-hidden',
@@ -43,12 +46,43 @@ it('always shows the static glow', async () => {
   expect(screen.getByTestId('background-glow')).toBeInTheDocument()
 })
 
-it('renders only the glow with reduced motion', () => {
-  stubReducedMotion(true)
-  stubWebGL(true)
+it('renders only the glow in static mode', () => {
+  renderBackground('static')
 
-  render(<Background />)
+  expect(screen.getByTestId('background-glow')).toBeInTheDocument()
+  expect(screen.queryByTestId('ember-canvas')).toBeNull()
+})
 
+it('renders the canvas in scene mode', async () => {
+  renderBackground('scene')
+
+  expect(await screen.findByTestId('ember-canvas')).toHaveAttribute(
+    'data-paused',
+    'false',
+  )
+})
+
+it('pauses the canvas while the page is hidden', async () => {
+  renderBackground('scene')
+  const embers = await screen.findByTestId('ember-canvas')
+
+  act(() => {
+    vi.spyOn(document, 'visibilityState', 'get').mockReturnValue('hidden')
+    document.dispatchEvent(new Event('visibilitychange'))
+  })
+
+  expect(embers).toHaveAttribute('data-paused', 'true')
+})
+
+it('reports a failing canvas and keeps the glow', async () => {
+  canvas.fail = true
+  vi.spyOn(console, 'error').mockImplementation(() => {})
+  const onSceneError = vi.fn()
+
+  renderBackground('scene', onSceneError)
+
+  await act(() => Promise.resolve())
+  expect(onSceneError).toHaveBeenCalled()
   expect(screen.getByTestId('background-glow')).toBeInTheDocument()
   expect(screen.queryByTestId('ember-canvas')).toBeNull()
 })
@@ -57,15 +91,16 @@ it('does not probe WebGL with reduced motion', () => {
   stubReducedMotion(true)
   stubWebGL(true)
 
-  render(<Background />)
+  render(<App />)
 
   expect(HTMLCanvasElement.prototype.getContext).not.toHaveBeenCalled()
+  expect(screen.queryByTestId('ember-canvas')).toBeNull()
 })
 
 it('renders only the glow without WebGL', () => {
   stubWebGL(false)
 
-  render(<Background />)
+  render(<App />)
 
   expect(screen.getByTestId('background-glow')).toBeInTheDocument()
   expect(screen.queryByTestId('ember-canvas')).toBeNull()
@@ -84,7 +119,7 @@ it('unmounts the canvas when reduced motion is switched on live', async () => {
     removeEventListener: vi.fn(),
   }))
   stubWebGL(true)
-  render(<Background />)
+  render(<App />)
   await screen.findByTestId('ember-canvas')
 
   act(() => {
@@ -94,30 +129,6 @@ it('unmounts the canvas when reduced motion is switched on live', async () => {
 
   expect(screen.queryByTestId('ember-canvas')).toBeNull()
   expect(screen.getByTestId('background-glow')).toBeInTheDocument()
-})
-
-it('renders the canvas when motion and WebGL are available', async () => {
-  stubWebGL(true)
-
-  render(<Background />)
-
-  expect(await screen.findByTestId('ember-canvas')).toHaveAttribute(
-    'data-paused',
-    'false',
-  )
-})
-
-it('pauses the canvas while the page is hidden', async () => {
-  stubWebGL(true)
-  render(<Background />)
-  const embers = await screen.findByTestId('ember-canvas')
-
-  act(() => {
-    vi.spyOn(document, 'visibilityState', 'get').mockReturnValue('hidden')
-    document.dispatchEvent(new Event('visibilitychange'))
-  })
-
-  expect(embers).toHaveAttribute('data-paused', 'true')
 })
 
 it('keeps the glow and the card when the canvas throws', async () => {
@@ -133,4 +144,13 @@ it('keeps the glow and the card when the canvas throws', async () => {
   expect(
     screen.getByRole('heading', { name: 'Happy 18th Birthday, Sara!' }),
   ).toBeInTheDocument()
+})
+
+it('shows no stage illustration with the 3D scene', async () => {
+  stubWebGL(true)
+
+  render(<App />)
+
+  await screen.findByTestId('ember-canvas')
+  expect(document.querySelector('[data-stage-illustration]')).toBeNull()
 })

@@ -1,6 +1,18 @@
 import { render, screen, within } from '@testing-library/react'
-import { expect, it } from 'vitest'
+import { beforeEach, expect, it, vi } from 'vitest'
 import App from './App'
+
+const mode = vi.hoisted(() => ({ current: 'static' as 'scene' | 'static' }))
+
+vi.mock('./background/useSceneMode', () => ({
+  useSceneMode: () => ({ mode: mode.current, fallBackToStatic: () => {} }),
+}))
+
+vi.mock('./background/Background', () => ({ default: () => null }))
+
+beforeEach(() => {
+  mode.current = 'static'
+})
 
 it('renders the birthday heading', () => {
   render(<App />)
@@ -62,4 +74,46 @@ it('renders the finale after the last family', () => {
   expect(follows(message, signature)).toBeTruthy()
   expect(finale.nextElementSibling).toBeNull()
   expect(container.lastElementChild).toBe(finale.parentElement)
+})
+
+const showcase = () => document.querySelector('[data-showcase]')
+
+it('renders the showcase between the opening and the first family', () => {
+  render(<App />)
+
+  const opening = screen.getByRole('banner')
+  const firstFamily = screen.getByRole('region', { name: 'Family Lorem' })
+  expect(opening.nextElementSibling).toBe(showcase())
+  expect(showcase()!.nextElementSibling).toBe(firstFamily)
+})
+
+it('hides the showcase from assistive technology and gives it no text', () => {
+  render(<App />)
+
+  expect(showcase()).toHaveAttribute('aria-hidden', 'true')
+  expect(showcase()!.textContent).toBe('')
+})
+
+it('keeps the opening a plain header', () => {
+  render(<App />)
+
+  expect(screen.getByRole('banner').tagName).toBe('HEADER')
+})
+
+it('shows the three stage illustrations in order in static mode', () => {
+  mode.current = 'static'
+  render(<App />)
+
+  const stages = [...showcase()!.querySelectorAll('[data-stage-illustration]')]
+  expect(
+    stages.map((el) => el.getAttribute('data-stage-illustration')),
+  ).toEqual(['17', '18', 'key'])
+  expect(document.querySelectorAll('[data-stage-illustration]')).toHaveLength(3)
+})
+
+it('shows no illustrations in scene mode', () => {
+  mode.current = 'scene'
+  render(<App />)
+
+  expect(document.querySelectorAll('[data-stage-illustration]')).toHaveLength(0)
 })
