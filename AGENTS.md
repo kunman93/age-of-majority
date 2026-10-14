@@ -69,6 +69,14 @@ Apply to everyone who writes code or config here: the main session and every cus
   instant (for example a blink phase or an opacity of exactly 0 or 1 mid-loop) and no fixed waits to reach a state:
   poll for it instead. A fixed window is allowed only to prove that something does not change, and must be a named
   constant. Leave the animation detail to a unit test of its config or to manual review.
+  Prefer fewer tests that each catch a real regression over many that raise coverage.
+  Before keeping any new test, check three things, and delete the test if one fails:
+  1. It fails when the behavior it names breaks. Break the production code on purpose (flip a condition, drop a
+     guard) and see it fail. A test that still passes proves nothing.
+  2. It asserts an outcome a user or caller can observe, not how the code is wired: no assertions that a prop or
+     object is passed through, that a mock was called, or on call counts, pixel diffs, or magic numbers.
+  3. It passes every time: run it at least 10 times (for Playwright, `--repeat-each=10`) and under load. Fix the
+     cause of a failure; never dismiss it as flakiness.
 - Boy Scout rule, limited to code you are already touching.
 - Minimal dependencies: justify every new package.
 - Secure by default: never introduce secrets, tokens, or credentials into the repository, sanitize input, use least privilege.
