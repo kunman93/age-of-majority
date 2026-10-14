@@ -45,7 +45,7 @@ pure logic, BDD steps and setup. Every task is test-first.
   "Visitor watches the intro being typed", "Assistive technology reads the full intro at once", "Opening stays in
   place while the intro is typed" and "Visitor turns on reduced motion while the intro is typed", and verify that
   they pass
-- [ ] 4.2 Adapt the existing `home`, `visual-design`, `families` and `finale` steps and features to the modified
+- [x] 4.2 Adapt the existing `home`, `visual-design`, `families` and `finale` steps and features to the modified
   specs. The intro steps wait for `data-typed="done"`. "Visitor sees a static card" runs with reduced motion. Add the
   reduced-motion scenarios for the greeting, the last family and the finale. Verify that `npm run test:bdd` passes in
   full

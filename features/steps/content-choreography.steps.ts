@@ -296,3 +296,33 @@ Then('the full intro is shown at once', async ({ page }) => {
   expect(await typedLength(page)).toBe(await fullLength(page))
   expect(await opacityOf(page.locator(CURSOR))).toBe(0)
 })
+
+When(
+  'I scroll until the {string} heading just enters the viewport',
+  async ({ page }, family: string) => {
+    await scrollTopTo(heading(page, family), 1, -1)
+  },
+)
+
+When(
+  'I scroll until the finale heading just enters the viewport',
+  async ({ page }) => {
+    await scrollTopTo(finale(page).getByRole('heading'), 1, -1)
+  },
+)
+
+const expectStillAndVisible = async (locator: Locator) => {
+  expect(await opacityOf(locator)).toBe(1)
+  expect(await offsetYOf(locator)).toBe(0)
+}
+
+Then(
+  'the {string} heading is fully visible without moving',
+  async ({ page }, family: string) => {
+    await expectStillAndVisible(heading(page, family))
+  },
+)
+
+Then('the finale heading is fully visible without moving', async ({ page }) => {
+  await expectStillAndVisible(finale(page).getByRole('heading'))
+})

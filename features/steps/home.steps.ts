@@ -1,6 +1,6 @@
 import { expect, type Page } from '@playwright/test'
 import { createBdd } from 'playwright-bdd'
-import { intro, waitUntilIntroIsTyped } from '../support/intro.ts'
+import { intro } from '../support/intro.ts'
 
 const { When, Then } = createBdd()
 
@@ -13,7 +13,6 @@ Then('I see the heading {string}', async ({ page }, name: string) => {
 })
 
 Then('I see the intro {string}', async ({ page }, text: string) => {
-  await waitUntilIntroIsTyped(page)
   await expect(intro(page)).toBeVisible()
   await expect(page.locator('[data-intro] [data-typed-text]')).toHaveText(text)
 })

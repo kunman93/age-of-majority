@@ -18,3 +18,9 @@ Feature: Families
     When I scroll to the family "Family Dolor"
     Then the family "Family Dolor" and its messages are visible
     And the page scrolls without animation
+
+  Scenario: Visitor who prefers reduced motion scrolls to the last family
+    Given the visitor prefers reduced motion
+    When I open the home page
+    And I scroll until the "Family Dolor" heading just enters the viewport
+    Then the "Family Dolor" heading is fully visible without moving

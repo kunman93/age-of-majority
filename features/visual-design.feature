@@ -37,5 +37,6 @@ Feature: Visual design
     Then every text has a contrast ratio of at least 4.5 against its background
 
   Scenario: Visitor sees a static card
+    Given the visitor prefers reduced motion
     When I open the home page
     Then no element animates or transitions

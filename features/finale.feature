@@ -11,3 +11,9 @@ Feature: Finale
     Then the finale is not in view
     When I scroll to the finale
     Then the finale heading, message and signature are visible
+
+  Scenario: Visitor who prefers reduced motion scrolls to the finale
+    Given the visitor prefers reduced motion
+    When I open the home page
+    And I scroll until the finale heading just enters the viewport
+    Then the finale heading is fully visible without moving
