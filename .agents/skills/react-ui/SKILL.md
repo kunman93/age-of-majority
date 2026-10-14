@@ -31,6 +31,7 @@ React 19, TypeScript, Vite, Tailwind CSS 4. Tests: Vitest + Testing Library (uni
 ## TDD for UI
 
 - Components: Vitest + Testing Library. Query like a user (`getByRole`, `getByText`), assert what the user sees or can do, not implementation details.
+- Every new test must pass the three checks under "Quality level" in `AGENTS.md` (mutation check, observable outcome, repeat runs). Do not test that a prop is forwarded or a mock was called.
 - User-visible outcomes: a Gherkin scenario in `features/` through Playwright-BDD.
 - Animation: assert the end state, with reduced motion enabled to make it deterministic. Do not assert intermediate frames. jsdom has no `window.matchMedia`; `src/test-setup.ts` stubs it globally with `matches: false` (no reduced motion), which the background tests rely on. Override the stub per test with `matches: true` for `(prefers-reduced-motion: reduce)` before testing code that uses `gsap.matchMedia()`. In Playwright use `test.use({ reducedMotion: 'reduce' })` or `page.emulateMedia({ reducedMotion: 'reduce' })`. Do not mock GSAP away.
 - WebGL does not render in jsdom. Unit-test the pure logic around a scene. Cover the canvas itself through Playwright, which runs Chromium with WebGL.
