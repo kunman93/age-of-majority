@@ -68,10 +68,10 @@ Then(
   },
 )
 
-Then('the text of the heading is centered', async ({ page }) => {
+Then('the text of the heading is left-aligned', async ({ page }) => {
   await expect(page.getByRole('heading', { level: 1 })).toHaveCSS(
     'text-align',
-    'center',
+    /^(left|start)$/,
   )
 })
 

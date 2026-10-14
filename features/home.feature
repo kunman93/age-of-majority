@@ -20,7 +20,7 @@ Feature: Home page
     And a <device> window
     When I open the home page
     Then the heading and the intro are centered in the window
-    And the text of the heading is centered
+    And the text of the heading is left-aligned
     And the text of the intro is left-aligned
     And the content after the intro starts at or below the bottom of the window
 

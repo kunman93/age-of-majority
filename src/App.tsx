@@ -32,9 +32,9 @@ function App() {
       >
         <header
           data-opening
-          className="mx-auto flex min-h-svh max-w-[720px] flex-col justify-center space-y-12 py-12 text-center sm:space-y-16 sm:py-16 lg:py-24 short:space-y-4 short:py-4"
+          className="mx-auto flex min-h-svh max-w-[720px] flex-col justify-center space-y-12 py-12 sm:space-y-16 sm:py-16 lg:py-24 short:space-y-4 short:py-4"
         >
-          <h1 className="text-sun text-4xl leading-tight font-bold break-words sm:text-5xl lg:text-6xl">
+          <h1 className="text-sun text-left text-4xl leading-tight font-bold break-words sm:text-5xl lg:text-6xl">
             Happy 18th Birthday, Sara!
           </h1>
           <TypedIntro text={INTRO} />

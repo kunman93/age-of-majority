@@ -89,7 +89,7 @@ pure logic, BDD steps and setup. Every task is test-first.
   inline `opacity` or `transform` is set on the cards. Add the scenario "Visitor scrolls the wishes into view", and
   verify that it and "Visitor reads revealed text" pass
 
-- [ ] 5.5 Left-align the heading's text (design.md decision 5). Update "Visitor opens the card on a phone, landscape
+- [x] 5.5 Left-align the heading's text (design.md decision 5). Update "Visitor opens the card on a phone, landscape
   phone, tablet, laptop or desktop" so it checks that the heading and intro text are left-aligned, and verify that it
   passes
 - [ ] 5.6 Replace the per-card triggers with one staggered timeline on the board (design.md decision 3). Verify with a
