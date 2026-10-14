@@ -98,7 +98,8 @@ motion and after a revert. With motion, one `repeat: -1` timeline handles each s
 sentence with a counter tween from 0 to its length (`ease: 'none'`, length × 0.03 s), writing `slice(0, n)` and
 `slice(n)` into the two spans. It then holds the sentence for 2 s and erases it with the counter running back to 0 at
 about twice the typing speed. A `yoyo` tween makes the cursor blink for the whole loop. A ScrollTrigger on
-`[data-opening]` (`top top` to `bottom top`) calls `pause()` on leave and `resume()` on enter back.
+`[data-opening]` (`top top` to `bottom top`) calls `pause()` on leave and `resume()` on enter back. The end of the load timeline starts the loop only while the
+opening has not been left.
 
 For BDD, the `<p>` carries `data-typed` (`typing`, `shown`, `erasing`, or `done` for the static full text) and
 `data-sentence` (the active index). Steps that do not test the typewriter run with reduced motion.
@@ -153,7 +154,8 @@ of `useStoryScroll`. The BDD `SCENE_CHUNK` pattern drops `gsap`, because GSAP is
 
 The showcase is `300svh` tall in scene mode and only as tall as the illustrations in static mode. When the mode
 changes (for example, a failed 3D load), every reveal below the showcase would keep stale positions. `useChoreography`
-takes `mode` as a `useGSAP` dependency and calls `ScrollTrigger.refresh()` when it changes.
+sets up GSAP once and only calls `ScrollTrigger.refresh()` when `mode` changes. Rebuilding the choreography on a mode
+change would replay the opening (the greeting fades in again and the intro restarts).
 
 ### 10. Birthday wishes: a wider section with wrapping flex rows per family
 
