@@ -12,7 +12,7 @@ pure logic, BDD steps and setup. Every task is test-first.
 
 ## 2. Glow tint (pure core and background)
 
-- [ ] 2.1 Add a pure `glowTint(progress)` in `src/choreography/glowTint.ts` with three dark stops (yellow, orange and
+- [x] 2.1 Add a pure `glowTint(progress)` in `src/choreography/glowTint.ts` with three dark stops (yellow, orange and
   red = today's `--color-glow`), interpolated in RGB and clamped (design.md decision 6). Verify with unit tests: the
   stops at 0, 0.5 and 1, a midpoint between stops, clamping outside 0..1, and every text color in `index.css` at
   4.5:1 or more against each stop
