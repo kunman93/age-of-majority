@@ -8,3 +8,20 @@ Feature: Home page
     When I open the home page
     Then I see the intro "Today you come of age. This card gathers wishes from your family, near and far, to celebrate you and everything ahead of you. Scroll on and read what they have to say."
     And the intro is below the heading
+
+  Scenario Outline: Visitor sees the opening centered on a <device> window
+    Given a <device> window
+    When I open the home page
+    Then the heading and the intro are centered in the window
+    And the text of the heading and the intro is centered
+    And the content after the intro starts at or below the bottom of the window
+
+    Examples:
+      | device |
+      | phone  |
+      | landscape |
+      | tablet |
+      | laptop |
+      | tall   |
+      | shortwide |
+      | tiny |

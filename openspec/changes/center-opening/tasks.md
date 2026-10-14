@@ -2,7 +2,7 @@
 
 ## 1. Centered opening
 
-- [ ] 1.1 Add BDD scenarios to `features/home.feature` (a scenario outline over phone, tablet, laptop and desktop windows, adding a `tablet` 768×1024 entry to the shared window sizes in `features/steps/scroll-morph.steps.ts`) with steps in
+- [x] 1.1 Add BDD scenarios to `features/home.feature` (a scenario outline over phone, tablet, laptop and desktop windows, adding a `tablet` 768×1024 entry to the shared window sizes in `features/steps/scroll-morph.steps.ts`) with steps in
   `features/steps/home.steps.ts` that check the heading and intro are centered horizontally and vertically, their
   text is centered, and the content after the intro starts at or below the window bottom; verify they fail with
   `npm run test:bdd`
