@@ -1,8 +1,9 @@
 import { expect, type Page } from '@playwright/test'
 import { createBdd } from 'playwright-bdd'
+import { CAKE_CANVAS, holdRenderingContext } from '../support/canvases.ts'
 import { scrollTopTo } from '../support/scroll.ts'
 
-const { When, Then } = createBdd()
+const { Given, When, Then } = createBdd()
 
 const CANDLE_COUNT = 18
 const SCROLL_UP_A_LITTLE = 100
@@ -146,3 +147,90 @@ Then('no cake element has an animation or a transition', async ({ page }) => {
     expect(parseFloat(style.transitionDuration)).toBe(0)
   }
 })
+
+Given('the 3D cake fails to load', async ({ page }) => {
+  await page.route(/CakeCanvas/, (route) => route.abort())
+})
+
+const cakeCanvas = (page: Page) => page.locator(CAKE_CANVAS)
+
+Then(
+  'the cake is drawn in a canvas inside the cake button',
+  async ({ page }) => {
+    await expect(cakeCanvas(page)).toHaveCount(1)
+    const inside = await cakeCanvas(page).evaluate((canvas) => {
+      const button = canvas
+        .closest('[data-cake-state]')!
+        .getBoundingClientRect()
+      const box = canvas.getBoundingClientRect()
+      return (
+        box.width > 0 &&
+        box.left >= button.left - 1 &&
+        box.right <= button.right + 1 &&
+        box.top >= button.top - 1 &&
+        box.bottom <= button.bottom + 1
+      )
+    })
+    expect(inside).toBe(true)
+  },
+)
+
+Then(
+  'the cake canvas is hidden from assistive technology',
+  async ({ page }) => {
+    const hidden = await cakeCanvas(page).evaluate(
+      (canvas) => canvas.closest('[aria-hidden="true"]') !== null,
+    )
+    expect(hidden).toBe(true)
+  },
+)
+
+Then('the cake canvas does not catch pointer input', async ({ page }) => {
+  const pointerEvents = await cakeCanvas(page).evaluate(
+    (canvas) => getComputedStyle(canvas).pointerEvents,
+  )
+  expect(pointerEvents).toBe('none')
+})
+
+Then('no cake illustration is shown', async ({ page }) => {
+  await expect(page.locator('[data-cake-illustration]')).toHaveCount(0)
+})
+
+Then('no cake canvas is shown', async ({ page }) => {
+  await page.waitForLoadState('networkidle')
+  await expect(cakeCanvas(page)).toHaveCount(0)
+})
+
+Then('the cake is blown out', async ({ page }) => {
+  await expect(cake(page)).toHaveAttribute('data-cake-state', 'blown')
+})
+
+Then('the cake is lit', async ({ page }) => {
+  await expect(cake(page)).toHaveAttribute('data-cake-state', 'lit')
+})
+
+Then(
+  'the cake canvas has at most {int} device pixels per CSS pixel',
+  async ({ page }, maximum: number) => {
+    await expect
+      .poll(() =>
+        cakeCanvas(page).evaluate(
+          (canvas) => (canvas as HTMLCanvasElement).width,
+        ),
+      )
+      .not.toBe(300)
+    const ratio = await cakeCanvas(page).evaluate((canvas) => ({
+      horizontal: (canvas as HTMLCanvasElement).width / canvas.clientWidth,
+      vertical: (canvas as HTMLCanvasElement).height / canvas.clientHeight,
+    }))
+    expect(ratio.horizontal).toBeLessThanOrEqual(maximum)
+    expect(ratio.vertical).toBeLessThanOrEqual(maximum)
+  },
+)
+
+Then(
+  'I keep a handle to the cake canvas rendering context',
+  async ({ page }) => {
+    await holdRenderingContext(page, CAKE_CANVAS)
+  },
+)
