@@ -77,8 +77,8 @@ pure logic, BDD steps and setup. Every task is test-first.
   contrast, reveal and no-horizontal-scroll scenarios pass. Check the look in `npm run dev`
 
 - [ ] 5.3 Put the family sections on one cork board (`overflow-x: clip`, CSS pattern, no image), widen the card
-  wrappers to `sm:w-[28rem]`, add the pin and move the tape to a top corner, and add the hover swing with
-  `motion-safe:hover:` and `motion-safe:transition-[rotate,translate]` (design.md decision 10). Make the intro
+  wrappers to `sm:w-[28rem]`, add the pin through the tape at top center, pivot the tilt on the pin, and add
+  the hover swing with `motion-safe:hover:` and `motion-safe:transition-[rotate,box-shadow]` (design.md decision 10). Make the intro
   `text-left` (design.md decision 5). Update the scenarios "Visitor sees scrapbook cards", "Visitor reads the wishes on
   a wide screen" and "Visitor sees the opening centered" (heading centered, intro left-aligned). Add "Visitor sees the
   board", "Visitor reads the board on a phone", "Visitor hovers a message card" and "Visitor who prefers reduced motion

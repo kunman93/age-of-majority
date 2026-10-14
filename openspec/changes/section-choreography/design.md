@@ -162,15 +162,20 @@ The family sections sit on one board `div` below the overline and heading. The b
 subtle CSS dot pattern (`radial-gradient`), a rounded wooden frame (`border`) and an inner shadow, so it needs no image.
 The color is dark enough that the `text-tangerine` family headings keep 4.5:1, checked by the existing contrast steps.
 
-Each note shows a pin and a tape strip as decorative pseudo-elements, so assistive technology does not read them. The
-pin (`before:`) is a small red radial-gradient dot at the middle of the top edge. The tape (`after:`) is the existing
-translucent strip, moved to the top-left corner and turned by about -40 degrees.
+Each note shows a tape strip and a pin as decorative pseudo-elements, so assistive technology does not read them. The
+tape (`before:`) is the existing translucent strip at the middle of the top edge. The pin (`after:`) is a small red
+radial-gradient dot centered on the tape, painted above it. The `<figure>` uses `origin-[50%_0]` (the pin), so the
+tilt pivots around the pin.
 
-Hover tilt: the tilt classes are CSS `rotate`, so hover swaps the sign with
-`motion-safe:hover:rotate-[±1.2deg]` and lifts with `motion-safe:hover:-translate-y-1`. The `motion-safe:transition-[rotate,translate]`
-eases both. Tailwind v4 limits `hover:` to `(hover: hover)` devices, and `motion-safe:` keeps the card still with
-reduced motion. The lift uses the CSS `translate` property on the `<figure>`, and GSAP tweens `transform` on the
-wrapper, so they never fight.
+Hover swing: the tilt classes are CSS `rotate` around the pin, so hover swaps the sign with
+`motion-safe:hover:rotate-[±1.2deg]` and deepens the shadow, and the note swings like a pendulum. There is no upward
+lift, because a pinned note cannot move off its pin. `motion-safe:transition-[rotate,box-shadow]` with a slight
+overshoot (`cubic-bezier(0.34,1.56,0.64,1)`, about 300 ms) eases the swing. Tailwind v4 limits `hover:` to
+`(hover: hover)` devices, and `motion-safe:` keeps the card still with reduced motion. CSS `rotate` on the `<figure>`
+and GSAP's `transform` on the wrapper never fight.
+
+- *Alternative:* rotate around the center and lift with `translate`. Rejected because a pinned note would then leave
+  its pin.
 
 - *Alternative:* all cards of all families in one row, without family headings. Rejected because it drops the
   "section per family" grouping, which helps readers find their own family.

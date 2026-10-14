@@ -114,13 +114,15 @@ reveal in reverse.
 - **THEN** the finale heading, message and signature are fully visible and in their final position
 
 ### Requirement: Message cards tilt on hover
-When the content moves and the visitor's device can hover, a message card SHALL swing smoothly to the opposite tilt
-and lift slightly while the pointer is over it, and SHALL swing back when the pointer leaves. With reduced motion, a
+When the content moves and the visitor's device can hover, a message card SHALL swing on its pin to the opposite tilt
+while the pointer is over it, with a deeper shadow, and SHALL swing back when the pointer leaves. The pin SHALL stay
+in place while the card swings. With reduced motion, a
 card SHALL keep its tilt on hover.
 
 #### Scenario: Visitor hovers a message card
 - **WHEN** a visitor who does not prefer reduced motion moves the pointer over the first "Family Ipsum" message card
 - **THEN** the card is tilted in the opposite direction from before, by at most 2 degrees
+- **AND** its pin is at the same position as before
 - **WHEN** the visitor moves the pointer away
 - **THEN** the card is back at its original tilt
 

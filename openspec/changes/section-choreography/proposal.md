@@ -26,9 +26,9 @@ out. Visitors who prefer reduced motion keep a fully readable, still card.
   the portfolio's skills section. Each family's cards sit side by side in centered, wrapping flex rows in a section
   wider than the rest of the card, and stack vertically on phones. The cards are at least 400px wide on larger
   screens. All family headings and cards sit on one cork pin board drawn in CSS.
-- Family cards get a scrapbook look: paper-like notes with a slight alternating tilt, a pin at the top and a tape
-  strip at a top corner. They stay text only, with no images. With motion, a note swings to the opposite tilt and lifts
-  slightly on hover.
+- Family cards get a scrapbook look: paper-like notes with a slight alternating tilt, a tape strip at the top
+  with a pin through it. They stay text only, with no images. With motion, a note swings on its pin to the opposite
+  tilt on hover, like a pendulum.
 - Background: the static glow behind the content shifts its tint with the scroll position, from a dark yellow at the
   top through dark orange to dark red at the finale. The shift also runs with reduced motion because it is a color
   change, not movement. Text keeps at least 4.5:1 contrast. The embers are unchanged.

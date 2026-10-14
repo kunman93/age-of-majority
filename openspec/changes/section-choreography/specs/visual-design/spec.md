@@ -12,13 +12,14 @@ When the visitor prefers reduced motion, the card SHALL NOT animate or transitio
 ## ADDED Requirements
 
 ### Requirement: Family messages look like scrapbook cards
-Each family message SHALL be shown as a paper-like note with a pin at the middle of its top edge and a tape strip at a
-top corner. Consecutive notes SHALL be tilted slightly in alternating directions, by at most 2 degrees. The cards SHALL contain only text, with no images.
+Each family message SHALL be shown as a paper-like note with a tape strip at the middle of its top edge and a pin
+through the middle of the tape. Each note SHALL be tilted around its pin, and consecutive notes SHALL be tilted
+slightly in alternating directions, by at most 2 degrees. The cards SHALL contain only text, with no images.
 Their text SHALL stay upright enough to read and SHALL meet the card's contrast and size requirements.
 
 #### Scenario: Visitor sees scrapbook cards
 - **WHEN** a visitor opens the home page
-- **THEN** every message card has a pin at the middle of its top edge and a tape strip at a top corner
+- **THEN** every message card has a tape strip at the middle of its top edge, with a pin through its middle
 - **AND** consecutive message cards are tilted in opposite directions by at most 2 degrees
 - **AND** no message card contains an image
 
