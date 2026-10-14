@@ -5,11 +5,12 @@ const mockFonts = () => {
   const ready = new Promise<void>((done) => {
     resolve = done
   })
+  const fonts = Object.assign(new EventTarget(), { ready })
   Object.defineProperty(document, 'fonts', {
-    value: { ready },
+    value: fonts,
     configurable: true,
   })
-  return resolve
+  return { resolve, fonts }
 }
 
 const loadFresh = async () => {
@@ -27,13 +28,23 @@ it('registers ScrollTrigger', async () => {
 })
 
 it('refreshes ScrollTrigger once after the fonts are ready', async () => {
-  const resolve = mockFonts()
+  const { resolve } = mockFonts()
   const { ScrollTrigger } = await loadFresh()
   const refresh = vi.spyOn(ScrollTrigger, 'refresh')
 
   resolve()
   await Promise.resolve()
   await Promise.resolve()
+
+  expect(refresh).toHaveBeenCalledTimes(1)
+})
+
+it('refreshes ScrollTrigger when fonts that start loading after ready finish', async () => {
+  const { fonts } = mockFonts()
+  const { ScrollTrigger } = await loadFresh()
+  const refresh = vi.spyOn(ScrollTrigger, 'refresh')
+
+  fonts.dispatchEvent(new Event('loadingdone'))
 
   expect(refresh).toHaveBeenCalledTimes(1)
 })
