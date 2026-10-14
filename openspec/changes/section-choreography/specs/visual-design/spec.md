@@ -26,3 +26,19 @@ Their text SHALL stay upright enough to read and SHALL meet the card's contrast 
 - **WHEN** a visitor opens the home page in a 375px wide window
 - **THEN** the page does not scroll horizontally
 - **AND** every message card fits within the window width
+
+### Requirement: Birthday wishes are laid out in rows
+On a window at least 640px wide, the message cards of a family SHALL sit side by side in centered rows that wrap onto a
+new row when they do not fit, and the "Birthday wishes" section MAY be wider than the rest of the card. On a narrower
+window, the message cards SHALL be stacked vertically. Every card SHALL have the same width within a row, and the
+overline "From your family" SHALL meet the card's contrast and size requirements.
+
+#### Scenario: Visitor reads the wishes on a wide screen
+- **WHEN** a visitor opens the home page in a 1280px wide window
+- **THEN** the two "Family Ipsum" message cards are side by side, with their tops at the same height
+- **AND** the page does not scroll horizontally
+
+#### Scenario: Visitor reads the wishes on a phone
+- **WHEN** a visitor opens the home page in a 375px wide window
+- **THEN** the two "Family Ipsum" message cards are stacked vertically
+- **AND** every message card fits within the window width

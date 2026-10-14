@@ -70,25 +70,33 @@ The load timeline fades the `h1` in (about 0.8 s), then runs the typewriter. A s
 whole `[data-opening]` header to `opacity: 0` from `top top` to `bottom top`. The load fade targets the `h1` and the
 scroll fade targets the header, so they never fight over the same property. Their opacities multiply.
 
-### 5. Typewriter: a counter tween writes two text nodes; the rest of the text stays in layout
+### 5. Typewriter: a looping timeline types and erases each sentence in a reserved grid cell
 
-The intro `<p>` contains:
+A pure `splitSentences(text)` splits the intro after each `.`, `!` or `?` followed by a space. The intro `<p>` contains:
 
 - a `sr-only` span with the full text, which is what assistive technology reads, and
-- an `aria-hidden` span made of a typed part, a zero-width cursor (`absolute`, accent color) and the untyped rest with
-  `opacity: 0`.
+- an `aria-hidden` grid whose single cell holds one span per sentence, stacked with `col-start-1 row-start-1`. The cell
+  is as tall as the longest sentence, so the centered opening never moves. Every sentence span is made of a typed
+  part, a zero-width cursor (`absolute`, accent color) and the untyped rest with `opacity: 0`, so the sentence keeps
+  its line breaks while it is typed. Only the active sentence is shown. The others have `opacity: 0`.
 
-By default the typed part holds the full text and the rest is empty, which is the final state. With motion, one tween
-moves a counter from 0 to the text length (`ease: 'none'`, duration = length × 0.03 s). On each update it writes
-`text.slice(0, n)` and `text.slice(n)` into the two spans. The full text is always laid out, so line breaks and the
-centered position never change while typing. A `yoyo` tween makes the cursor blink. About 2 s after the last
-character, it fades out and the blink stops. On revert, the spans get the full text back and the cursor is hidden.
+By default the grid shows the full intro as one span, with the cursor hidden. This is the final state for reduced
+motion and after a revert. With motion, one `repeat: -1` timeline handles each sentence in turn. It types the
+sentence with a counter tween from 0 to its length (`ease: 'none'`, length × 0.03 s), writing `slice(0, n)` and
+`slice(n)` into the two spans. It then holds the sentence for 2 s and erases it with the counter running back to 0 at
+about twice the typing speed. A `yoyo` tween makes the cursor blink for the whole loop. A ScrollTrigger on
+`[data-opening]` (`top top` to `bottom top`) calls `pause()` on leave and `resume()` on enter back.
+
+For BDD, the `<p>` carries `data-typed` (`typing`, `shown`, `erasing`, or `done` for the static full text) and
+`data-sentence` (the active index). Steps that do not test the typewriter run with reduced motion.
 
 - *Alternative:* GSAP `TextPlugin`, as in the portfolio. Rejected because it replaces the element's text, so the
   untyped rest leaves the layout. The lines of centered text would then re-wrap and shift while typing, which breaks
   "Opening stays in place".
-- *Alternative:* React state per character. Rejected because it means about 190 re-renders for something GSAP can
-  write directly.
+- *Alternative:* React state per character. Rejected because a loop would re-render without end, for something GSAP
+  can write directly.
+- *Alternative:* type all three sentences one after the other in the same paragraph. Rejected because the user chose
+  type, hold and erase, one sentence at a time.
 
 ### 6. Glow tint: a pure mapping, driven by a ScrollTrigger outside the reduced-motion condition
 
@@ -131,6 +139,20 @@ The showcase is `300svh` tall in scene mode and only as tall as the illustration
 changes (for example, a failed 3D load), every reveal below the showcase would keep stale positions. `useChoreography`
 takes `mode` as a `useGSAP` dependency and calls `ScrollTrigger.refresh()` when it changes.
 
+### 10. Birthday wishes: a wider section with wrapping flex rows per family
+
+`App` wraps the family sections in a `<section>` labelled by an `h2` "Birthday wishes", with a `<p>` overline "From
+your family" (uppercase, letter-spaced, `text-blush`) above it, as in the portfolio's skills section. The family
+headings become `h3`. `<main>` drops its `max-w-[720px]`, the opening, showcase and finale each keep that column, and
+the wishes section gets `max-w-6xl`. The cards of each family sit in `flex flex-col items-center gap-10 sm:flex-row
+sm:flex-wrap sm:justify-center`. Each card's reveal wrapper is `w-full sm:w-80`, so the cards in a row share one width
+and the lines stay short. The tilt and tape strip are unchanged, and each card keeps its own `data-reveal`.
+
+- *Alternative:* all cards of all families in one row, without family headings. Rejected because it drops the
+  "section per family" grouping, which helps readers find their own family.
+- *Alternative:* keep the 720px column. Rejected because only two cards of about 20rem fit next to each other, which
+  makes the row too cramped for long messages.
+
 ## Risks / Trade-offs
 
 - [Main bundle grows by about 30 kB gzip for GSAP] → accepted. Motion now runs without WebGL. Reduced-motion
@@ -138,11 +160,13 @@ takes `mode` as a `useGSAP` dependency and calls `ScrollTrigger.refresh()` when 
 - [`from` tweens hide content before first paint, and a JS error would leave it hidden] → `useGSAP` reverts its
   context on unmount. The markup itself is the final state, so a failure before the hook runs leaves the card
   readable.
-- [The typewriter delays reading the intro by about 6 s] → assistive technology gets the full text immediately.
-  Reduced motion shows it at once.
+- [The typewriter delays reading the intro, and only one sentence is visible at a time] → assistive technology gets
+  the full text immediately. Reduced motion shows it at once.
+- [The endless loop does not meet WCAG 2.2.2 (Pause, Stop, Hide), because it has no pause control] → accepted by the
+  user. It is limited to the first screen: it pauses while the opening is scrolled away, and reduced motion stops it
+  entirely.
 - [BDD runtime grows because steps wait for typing and reveals] → steps that do not test motion run with reduced
-  motion or wait for the `data-intro` element's `data-typed="done"` marker. Only `content-choreography.feature`
-  exercises the full motion.
+  motion. Only `content-choreography.feature` exercises the full motion.
 - [The particle edge fade may look busy or noisy] → plan B (decision 7) after the user's review in `npm run dev`.
 - [Scrub lag can leave a reveal briefly incomplete when the visitor jumps by scrolling fast] → `end: 'top 60%'`
   leaves a margin. BDD waits for scrub to settle before measuring.

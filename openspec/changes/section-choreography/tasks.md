@@ -50,12 +50,31 @@ pure logic, BDD steps and setup. Every task is test-first.
   reduced-motion scenarios for the greeting, the last family and the finale. Verify that `npm run test:bdd` passes in
   full
 
+- [ ] 4.3 Loop the typewriter sentence by sentence (design.md decision 5). Add a pure `splitSentences(text)` and verify
+  it with unit tests (three sentences for the intro, each keeping its punctuation). Replace the one-shot typing with a
+  `repeat: -1` timeline that types, holds and erases each sentence in a reserved grid cell, keeps the cursor blinking,
+  writes `data-typed` and `data-sentence`, and pauses while the opening is scrolled away. Verify with unit tests that
+  with reduced motion the visible text is the full intro and the cursor is hidden. Switch the BDD steps that do not
+  test the typewriter to reduced motion. Update the scenarios "Visitor watches the intro being typed", "Assistive
+  technology reads the full intro at once", "Opening stays in place while the intro is typed", "Visitor turns on
+  reduced motion while the intro is typed", "Visitor scrolls away from the opening and back" and "Visitor reads the
+  intro", add "Visitor sees the intro loop" and "Typewriter pauses while the opening is scrolled away", and verify that
+  they pass
+
 ## 5. Scrapbook cards
 
 - [x] 5.1 Style each message `<figure>` as a paper-like card with a tape strip at its top edge, alternating tilt of
   at most 2 degrees through the CSS `rotate` property, and text only. Verify with the visual-design scenarios "Visitor
   sees scrapbook cards" and "Visitor reads a scrapbook card on a phone". The existing contrast, size and
   no-horizontal-scroll scenarios must still pass. Check the look in `npm run dev`
+
+- [ ] 5.2 Add the "Birthday wishes" section with the overline "From your family" and the `h2`, make the family
+  headings `h3`, move the 720px column from `<main>` to the opening, showcase and finale, and lay out each family's
+  cards in wrapping flex rows in a `max-w-6xl` section (design.md decision 10). Verify with `App.test.tsx`: the
+  heading levels, and the overline directly above the heading. Add the family-messages scenario "Visitor sees the
+  birthday wishes heading", update "Visitor sees all families in order", and add the visual-design scenarios "Visitor
+  reads the wishes on a wide screen" and "Visitor reads the wishes on a phone". Verify that they and the existing
+  contrast, reveal and no-horizontal-scroll scenarios pass. Check the look in `npm run dev`
 
 ## 6. Story object edge entry and exit
 
@@ -73,9 +92,9 @@ pure logic, BDD steps and setup. Every task is test-first.
 
 ## 7. Integration
 
-- [x] 7.1 Run `npm run build`, `npm test`, `npm run test:bdd`, `npm run lint` and `npm run format:check`, and verify
+- [ ] 7.1 Run `npm run build`, `npm test`, `npm run test:bdd`, `npm run lint` and `npm run format:check`, and verify
   that all pass
-- [x] 7.2 Validate the change with `openspec validate section-choreography --strict` and verify that it reports it
+- [ ] 7.2 Validate the change with `openspec validate section-choreography --strict` and verify that it reports it
   as valid
 
 ## Workflow follow-up
