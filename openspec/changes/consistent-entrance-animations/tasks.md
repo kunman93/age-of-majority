@@ -5,7 +5,7 @@ BDD steps and feature files, reviews and commits. Every task is test-first.
 
 ## 1. Shared motion config and heading entrance
 
-- [ ] 1.1 Add `src/choreography/motion.ts` with the shared values and the `scrubbedReveal` trigger factory (design.md
+- [x] 1.1 Add `src/choreography/motion.ts` with the shared values and the `scrubbedReveal` trigger factory (design.md
   decision 1), and make `useChoreography` read every motion value from it. Verify there are no motion literals left in
   `useChoreography.ts` (`grep` for `y:`/`x:`/`ease:`/`scrub:` literals) and `npm test` passes
 - [ ] 1.2 Mark the headings with `data-reveal="heading"` (the overline + "Birthday wishes" wrapper, family `h3`,

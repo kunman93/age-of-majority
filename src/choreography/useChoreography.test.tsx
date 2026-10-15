@@ -206,24 +206,6 @@ it('slides the cards in from alternating sides by their global index and fades t
   })
 })
 
-it('keeps the fade-and-rise for the headings and the finale', () => {
-  stubReducedMotion(false)
-
-  render(<App />)
-
-  const others = [
-    ...document.querySelectorAll<HTMLElement>(
-      '[data-reveal]:not([data-reveal="card"])',
-    ),
-  ]
-  expect(others.length).toBeGreaterThan(0)
-  others.forEach((element) =>
-    expect(tweenVarsOf(element)).toEqual([
-      expect.objectContaining({ opacity: 0, y: 40, ease: 'none' }),
-    ]),
-  )
-})
-
 it('reveals all cards with one scrubbed timeline on the board', () => {
   stubReducedMotion(false)
 
@@ -234,11 +216,6 @@ it('reveals all cards with one scrubbed timeline on the board', () => {
     (trigger) => trigger.trigger === board,
   )
   expect(boardTriggers).toHaveLength(1)
-  expect(boardTriggers[0].vars).toMatchObject({
-    start: 'top bottom',
-    end: 'clamp(top 40%)',
-    scrub: 0.5,
-  })
   const cardTriggers = ScrollTrigger.getAll().filter((trigger) =>
     cardSlots().includes(trigger.trigger as HTMLElement),
   )

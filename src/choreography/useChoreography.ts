@@ -2,19 +2,19 @@ import { useEffect, type RefObject } from 'react'
 import type { SceneMode } from '../background/useSceneMode'
 import { addTypewriter } from './typewriter'
 import { gsap, ScrollTrigger, useGSAP } from '../gsap'
+import {
+  CARD,
+  CARD_REVEAL_END,
+  HEADING,
+  LINEAR,
+  OPENING_FADE_SCRUB,
+  scrubbedReveal,
+} from './motion'
 
 const NO_REDUCED_MOTION = '(prefers-reduced-motion: no-preference)'
 
 const targets = (scope: HTMLElement, selector: string) =>
   gsap.utils.toArray<HTMLElement>(selector, scope)
-
-// finished before the element's top reaches the middle of the viewport
-const scrubbedReveal = (trigger: HTMLElement) => ({
-  trigger,
-  start: 'top bottom',
-  end: 'clamp(top 60%)',
-  scrub: 0.5,
-})
 
 export function useChoreography(
   scope: RefObject<HTMLElement | null>,
@@ -34,12 +34,12 @@ export function useChoreography(
         const { restore: restoreIntro } = addTypewriter(load, intro, opening[0])
         gsap.to(opening, {
           opacity: 0,
-          ease: 'none',
+          ease: LINEAR,
           scrollTrigger: {
             trigger: opening[0],
             start: 'top top',
             end: 'bottom top',
-            scrub: 0.5,
+            scrub: OPENING_FADE_SCRUB,
           },
         })
 
@@ -48,8 +48,7 @@ export function useChoreography(
           (target) =>
             gsap.from(target, {
               opacity: 0,
-              y: 40,
-              ease: 'none',
+              ...HEADING,
               scrollTrigger: scrubbedReveal(target),
             }),
         )
@@ -59,21 +58,17 @@ export function useChoreography(
         // so the overshoot of the slide never flickers the text
         const [board] = targets(root, '[data-board]')
         const wishes = gsap.timeline({
-          scrollTrigger: {
-            trigger: board,
-            start: 'top bottom',
-            end: 'clamp(top 40%)',
-            scrub: 0.5,
-          },
+          scrollTrigger: scrubbedReveal(board, CARD_REVEAL_END),
         })
         targets(root, '[data-reveal="card"]').forEach((card, index) => {
           const side = index % 2 === 0 ? -1 : 1
-          const position = index * 0.15
+          const position = index * CARD.stagger
+          const { duration } = CARD
           wishes
-            .from(card, { opacity: 0, ease: 'none', duration: 1 }, position)
+            .from(card, { opacity: 0, ease: LINEAR, duration }, position)
             .from(
               card,
-              { x: side * 100, ease: 'back.inOut(3)', duration: 1 },
+              { x: side * CARD.x, ease: CARD.ease, duration },
               position,
             )
         })
