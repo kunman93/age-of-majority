@@ -1,34 +1,33 @@
 import { expect, it } from 'vitest'
-import { ornamentLayout, PLACEMENTS } from './ornamentLayout'
+import { layerOf, ornamentLayout, PLACEMENTS } from './ornamentLayout'
 
-// the centered text and the story object live between these bands
-const BAND = 14
-
-it.each(PLACEMENTS)(
-  'keeps every %s ornament in the top or bottom band, clear of the content',
-  (placement) => {
-    expect(ornamentLayout[placement].length).toBeGreaterThan(0)
-    for (const { top } of ornamentLayout[placement]) {
-      expect(top <= BAND || top >= 100 - BAND).toBe(true)
-    }
-  },
+const compositions = PLACEMENTS.flatMap((placement) =>
+  ornamentLayout[placement].map((composition) => ({
+    placement,
+    ...composition,
+  })),
 )
 
 it.each(PLACEMENTS)(
-  'mixes sparkles, stars and confetti in the %s',
+  'frames the %s from the left and the right',
   (placement) => {
-    const kinds = new Set(ornamentLayout[placement].map(({ kind }) => kind))
-
-    expect(kinds).toEqual(new Set(['sparkle', 'star', 'confetti']))
+    expect(ornamentLayout[placement].map(({ side }) => side).sort()).toEqual([
+      'left',
+      'right',
+    ])
   },
 )
 
-it.each(PLACEMENTS)('keeps every %s ornament inside its layer', (placement) => {
-  for (const { left, top, size } of ornamentLayout[placement]) {
-    expect(left).toBeGreaterThanOrEqual(0)
-    expect(left).toBeLessThanOrEqual(100)
-    expect(top).toBeGreaterThanOrEqual(0)
-    expect(top).toBeLessThanOrEqual(100)
-    expect(size).toBeGreaterThan(0)
+it('gives every composition stems, blossoms and dust', () => {
+  for (const { pieces } of compositions) {
+    expect(new Set(pieces.map(({ piece }) => layerOf(piece)))).toEqual(
+      new Set(['stem', 'blossom', 'dust']),
+    )
   }
+})
+
+it('draws each of the four compositions differently, not as a mirror copy', () => {
+  const drawings = compositions.map(({ pieces }) => JSON.stringify(pieces))
+
+  expect(new Set(drawings).size).toBe(compositions.length)
 })

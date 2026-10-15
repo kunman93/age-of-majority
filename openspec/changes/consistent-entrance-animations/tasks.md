@@ -36,11 +36,11 @@ BDD steps and feature files, reviews and commits. Every task is test-first.
 
 ## 3. Ornaments
 
-- [ ] 3.1 Replace the icon ornaments with the botanical pieces (`src/ornaments/pieces/`) and the left and right
+- [x] 3.1 Replace the icon ornaments with the botanical pieces (`src/ornaments/pieces/`) and the left and right
   compositions per placement in `ornamentLayout.ts` (design.md decision 5). Unit tests: the layer is hidden from
   assistive technology, renders no `img`, renders every piece of a placement, and the opening and showcase
   compositions differ. Verify `npm test` passes
-- [ ] 3.2 Place the compositions edge-anchored in the opening (hidden on `short` windows) and in the showcase, in both
+- [x] 3.2 Place the compositions edge-anchored in the opening (hidden on `short` windows) and in the showcase, in both
   scene and static mode (design.md decision 5). Verify the opening stays centered (birthday-greeting BDD), no
   horizontal scroll (visual-design BDD) at all sizes, and no overlap with the greeting and intro at 320 by 568, 390 by
   844 and 1920 by 1080

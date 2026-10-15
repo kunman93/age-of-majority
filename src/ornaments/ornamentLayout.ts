@@ -1,144 +1,168 @@
-export const PLACEMENTS = ['opening', 'showcase'] as const
+import type { BlossomTone } from './pieces/Blossom'
+import type { StemVariant } from './pieces/Stem'
 
+export const PLACEMENTS = ['opening', 'showcase'] as const
 export type Placement = (typeof PLACEMENTS)[number]
 
-export type Ornament = {
-  kind: 'sparkle' | 'star' | 'confetti'
-  /** percent of the layer */
-  left: number
-  /** percent of the layer */
-  top: number
-  /** pixels */
+type Geometry = {
+  /** centre, percent of the composition's width */
+  x: number
+  /** centre, percent of the composition's height */
+  y: number
+  /** percent of the composition's width */
   size: number
-  color: 'text-sun' | 'text-tangerine' | 'text-ember' | 'text-blush'
-  /** pixels the ornament travels vertically over the page scroll */
-  drift: number
+  /** degrees */
+  rotation: number
 }
 
-export const ornamentLayout: Record<Placement, readonly Ornament[]> = {
+export type Piece = Geometry &
+  (
+    | { piece: 'stem'; variant: StemVariant }
+    | { piece: 'cosmos' | 'round'; tone: BlossomTone }
+    | { piece: 'dust'; seed: number }
+  )
+
+export type Composition = {
+  side: 'left' | 'right'
+  anchor: 'top' | 'bottom'
+  /** vw the composition is tall, before the clamp */
+  height: number
+  /** fraction of the composition's height that bleeds off its side edge */
+  bleed: number
+  /** painted first to last: dust, stems, then blossoms */
+  pieces: readonly Piece[]
+}
+
+export const layerOf = (piece: Piece['piece']) =>
+  piece === 'stem' ? 'stem' : piece === 'dust' ? 'dust' : 'blossom'
+
+export const ornamentLayout: Record<Placement, readonly Composition[]> = {
   opening: [
     {
-      kind: 'sparkle',
-      left: 6,
-      top: 4,
-      size: 28,
-      color: 'text-sun',
-      drift: -60,
+      side: 'left',
+      anchor: 'top',
+      height: 28,
+      bleed: 0.2,
+      pieces: [
+        { piece: 'dust', seed: 1, x: 56, y: 50, size: 110, rotation: 0 },
+        {
+          piece: 'stem',
+          variant: 'sweep',
+          x: 38,
+          y: 56,
+          size: 58,
+          rotation: 14,
+        },
+        {
+          piece: 'stem',
+          variant: 'arch',
+          x: 66,
+          y: 42,
+          size: 40,
+          rotation: -28,
+        },
+        { piece: 'round', tone: 'rose', x: 50, y: 38, size: 56, rotation: 10 },
+        {
+          piece: 'cosmos',
+          tone: 'coral',
+          x: 28,
+          y: 76,
+          size: 38,
+          rotation: -14,
+        },
+        { piece: 'cosmos', tone: 'rose', x: 78, y: 72, size: 24, rotation: 32 },
+      ],
     },
     {
-      kind: 'confetti',
-      left: 28,
-      top: 9,
-      size: 16,
-      color: 'text-ember',
-      drift: 40,
-    },
-    {
-      kind: 'star',
-      left: 52,
-      top: 3,
-      size: 22,
-      color: 'text-tangerine',
-      drift: -30,
-    },
-    {
-      kind: 'sparkle',
-      left: 86,
-      top: 8,
-      size: 20,
-      color: 'text-blush',
-      drift: 70,
-    },
-    { kind: 'star', left: 10, top: 92, size: 24, color: 'text-sun', drift: 50 },
-    {
-      kind: 'confetti',
-      left: 38,
-      top: 96,
-      size: 14,
-      color: 'text-blush',
-      drift: -45,
-    },
-    {
-      kind: 'sparkle',
-      left: 66,
-      top: 90,
-      size: 30,
-      color: 'text-tangerine',
-      drift: -70,
-    },
-    {
-      kind: 'confetti',
-      left: 90,
-      top: 95,
-      size: 18,
-      color: 'text-ember',
-      drift: 35,
+      side: 'right',
+      anchor: 'bottom',
+      height: 26,
+      bleed: 0.2,
+      pieces: [
+        { piece: 'dust', seed: 2, x: 46, y: 50, size: 100, rotation: 180 },
+        {
+          piece: 'stem',
+          variant: 'arch',
+          x: 60,
+          y: 52,
+          size: 54,
+          rotation: -18,
+        },
+        {
+          piece: 'stem',
+          variant: 'sweep',
+          x: 28,
+          y: 64,
+          size: 34,
+          rotation: -38,
+        },
+        { piece: 'cosmos', tone: 'rose', x: 50, y: 44, size: 62, rotation: 0 },
+        { piece: 'round', tone: 'coral', x: 72, y: 76, size: 34, rotation: 20 },
+        { piece: 'round', tone: 'rose', x: 22, y: 30, size: 22, rotation: -10 },
+      ],
     },
   ],
   showcase: [
     {
-      kind: 'star',
-      left: 8,
-      top: 6,
-      size: 26,
-      color: 'text-tangerine',
-      drift: 55,
+      side: 'left',
+      anchor: 'bottom',
+      height: 24,
+      bleed: 0.15,
+      pieces: [
+        { piece: 'dust', seed: 3, x: 50, y: 46, size: 104, rotation: 90 },
+        { piece: 'stem', variant: 'arch', x: 42, y: 56, size: 50, rotation: 8 },
+        {
+          piece: 'cosmos',
+          tone: 'coral',
+          x: 56,
+          y: 40,
+          size: 58,
+          rotation: -22,
+        },
+        { piece: 'round', tone: 'rose', x: 30, y: 74, size: 30, rotation: 40 },
+      ],
     },
     {
-      kind: 'sparkle',
-      left: 30,
-      top: 11,
-      size: 20,
-      color: 'text-sun',
-      drift: -40,
-    },
-    {
-      kind: 'confetti',
-      left: 60,
-      top: 5,
-      size: 16,
-      color: 'text-blush',
-      drift: 65,
-    },
-    {
-      kind: 'sparkle',
-      left: 88,
-      top: 10,
-      size: 28,
-      color: 'text-ember',
-      drift: -55,
-    },
-    {
-      kind: 'confetti',
-      left: 12,
-      top: 94,
-      size: 18,
-      color: 'text-sun',
-      drift: -50,
-    },
-    {
-      kind: 'sparkle',
-      left: 40,
-      top: 90,
-      size: 24,
-      color: 'text-blush',
-      drift: 45,
-    },
-    {
-      kind: 'star',
-      left: 70,
-      top: 95,
-      size: 22,
-      color: 'text-sun',
-      drift: -65,
-    },
-    {
-      kind: 'confetti',
-      left: 92,
-      top: 91,
-      size: 14,
-      color: 'text-tangerine',
-      drift: 30,
+      side: 'right',
+      anchor: 'top',
+      height: 28,
+      bleed: 0.2,
+      pieces: [
+        { piece: 'dust', seed: 4, x: 44, y: 54, size: 112, rotation: 270 },
+        {
+          piece: 'stem',
+          variant: 'sweep',
+          x: 58,
+          y: 54,
+          size: 56,
+          rotation: -8,
+        },
+        {
+          piece: 'stem',
+          variant: 'sweep',
+          x: 30,
+          y: 36,
+          size: 30,
+          rotation: 30,
+        },
+        {
+          piece: 'round',
+          tone: 'coral',
+          x: 46,
+          y: 62,
+          size: 50,
+          rotation: -30,
+        },
+        { piece: 'cosmos', tone: 'rose', x: 70, y: 28, size: 34, rotation: 12 },
+        {
+          piece: 'cosmos',
+          tone: 'coral',
+          x: 24,
+          y: 82,
+          size: 22,
+          rotation: 20,
+        },
+      ],
     },
   ],
 }

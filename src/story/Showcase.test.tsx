@@ -70,7 +70,7 @@ it('has no sticky part and a normal height in static mode', () => {
 
   const outer = container.firstElementChild!
   expect(outer).toHaveAttribute('data-showcase')
-  expect(outer.className).not.toContain('svh')
+  expect(outer.className).not.toContain('h-[300svh]')
   expect(container.innerHTML).not.toContain('sticky')
 })
 

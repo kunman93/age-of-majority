@@ -38,7 +38,7 @@ function Showcase({
     <div
       data-showcase
       aria-hidden="true"
-      className="relative mx-auto grid max-w-[720px] grid-cols-3 place-items-center gap-4 [&_svg]:h-auto [&_svg]:max-w-full"
+      className="relative mx-auto grid max-w-[720px] py-[min(30svh,16rem)] grid-cols-3 place-items-center gap-4 [&_svg]:h-auto [&_svg]:max-w-full"
     >
       <Ornaments placement="showcase" />
       {STAGES.map((stage) => (
