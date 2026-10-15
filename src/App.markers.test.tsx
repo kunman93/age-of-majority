@@ -67,6 +67,15 @@ it('marks the finale message, signature and cake for the fade after its heading'
   expect(finale).not.toHaveAttribute('data-reveal')
 })
 
+it("marks each family's card row as the trigger of its cards", () => {
+  render(<App />)
+
+  const rows = [...document.querySelectorAll('[data-cards]')]
+  expect(rows.map((row) => row.querySelectorAll('figure').length)).toEqual([
+    1, 2,
+  ])
+})
+
 it('marks the opening and the intro', () => {
   render(<App />)
 

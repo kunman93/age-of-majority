@@ -26,7 +26,7 @@ BDD steps and feature files, reviews and commits. Every task is test-first.
 
 ## 2. Per-family card reveal
 
-- [ ] 2.1 Add `data-cards` to each family's card row and replace the board-wide timeline with one scrubbed timeline
+- [x] 2.1 Add `data-cards` to each family's card row and replace the board-wide timeline with one scrubbed timeline
   per row, using `CARD` and the shared range, alternating sides by global index (design.md decision 4). Replace the
   "one board timeline" and stagger-number unit tests with a behavior test: at progress 0 consecutive cards are offset
   in opposite directions and transparent, at progress 1 all are in place. Verify `npm test` passes

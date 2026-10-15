@@ -36,7 +36,10 @@ function FamilySection({
       >
         {family.name}
       </h3>
-      <div className="flex flex-col items-center gap-10 sm:flex-row sm:flex-wrap sm:items-start sm:justify-center">
+      <div
+        data-cards
+        className="flex flex-col items-center gap-10 sm:flex-row sm:flex-wrap sm:items-start sm:justify-center"
+      >
         {family.messages.map((message, index) => (
           // GSAP folds a CSS rotate into its transform, so the reveal moves a
           // wrapper and the card keeps its tilt

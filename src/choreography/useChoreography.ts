@@ -65,24 +65,26 @@ export function useChoreography(
           }),
         )
 
-        // one timeline on the board, so the lower cards are in place by the
-        // time the visitor reaches them. Opacity stays linear in its own tween
-        // so the overshoot of the slide never flickers the text
-        const [board] = targets(root, '[data-board]')
-        const wishes = gsap.timeline({
-          scrollTrigger: scrubbedReveal(board, CARD_REVEAL_END),
-        })
-        targets(root, '[data-reveal="card"]').forEach((card, index) => {
-          const side = index % 2 === 0 ? -1 : 1
-          const position = index * CARD.stagger
-          const { duration } = CARD
-          wishes
-            .from(card, { opacity: 0, ease: LINEAR, duration }, position)
-            .from(
-              card,
-              { x: side * CARD.x, ease: CARD.ease, duration },
-              position,
-            )
+        // one timeline per family, so its cards come after its heading.
+        // Opacity stays linear in its own tween so the overshoot of the slide
+        // never flickers the text
+        const cards = targets(root, '[data-reveal="card"]')
+        targets(root, '[data-cards]').forEach((row) => {
+          const wishes = gsap.timeline({
+            scrollTrigger: scrubbedReveal(row, CARD_REVEAL_END),
+          })
+          targets(row, '[data-reveal="card"]').forEach((card, position) => {
+            const side = cards.indexOf(card) % 2 === 0 ? -1 : 1
+            const start = position * CARD.stagger
+            const { duration } = CARD
+            wishes
+              .from(card, { opacity: 0, ease: LINEAR, duration }, start)
+              .from(
+                card,
+                { x: side * CARD.x, ease: CARD.ease, duration },
+                start,
+              )
+          })
         })
 
         return restoreIntro
