@@ -1,5 +1,7 @@
 export const LINEAR = 'none'
 
+export const GREETING_FADE = 2.5
+
 export const HEADING = Object.freeze({ y: -100, ease: 'power2.inOut' })
 
 export const CARD = Object.freeze({

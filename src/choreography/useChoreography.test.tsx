@@ -171,6 +171,66 @@ const cardSlots = () => [
   ...document.querySelectorAll<HTMLElement>('[data-reveal="card"]'),
 ]
 
+const revealTargets = (kind: string) => [
+  ...document.querySelectorAll<HTMLElement>(`[data-reveal="${kind}"]`),
+]
+
+const setProgress = (element: HTMLElement, progress: number) =>
+  gsap.getTweensOf(element).forEach((tween) => tween.progress(progress))
+
+const placeOf = (element: HTMLElement) => ({
+  opacity: Number(element.style.opacity),
+  y: Number(gsap.getProperty(element, 'y')),
+})
+
+it('drops every heading in from above and fades it in', () => {
+  stubReducedMotion(false)
+  render(<App />)
+
+  const headings = revealTargets('heading')
+  expect(headings.length).toBeGreaterThan(3)
+  headings.forEach((heading) => {
+    setProgress(heading, 0)
+    expect(placeOf(heading).opacity).toBe(0)
+    expect(placeOf(heading).y).toBeLessThan(0)
+
+    setProgress(heading, 1)
+    expect(placeOf(heading)).toEqual({ opacity: 1, y: 0 })
+  })
+})
+
+it('fades the finale body in without moving it', () => {
+  stubReducedMotion(false)
+  render(<App />)
+
+  const [fade] = revealTargets('fade')
+  setProgress(fade, 0)
+  expect(placeOf(fade)).toEqual({ opacity: 0, y: 0 })
+
+  setProgress(fade, 1)
+  expect(placeOf(fade)).toEqual({ opacity: 1, y: 0 })
+})
+
+it('fades the greeting in without moving it', () => {
+  stubReducedMotion(false)
+  render(<App />)
+
+  const greeting = screen.getByRole('heading', { level: 1 })
+  expect(placeOf(greeting)).toEqual({ opacity: 0, y: 0 })
+
+  setProgress(greeting, 1)
+  expect(placeOf(greeting)).toEqual({ opacity: 1, y: 0 })
+})
+
+it('sets no inline style on any heading or the finale body with reduced motion', () => {
+  stubReducedMotion(true)
+  render(<App />)
+
+  const targets = [...revealTargets('heading'), ...revealTargets('fade')]
+  expect(targets.length).toBeGreaterThan(0)
+  targets.forEach((target) => expect(target.getAttribute('style')).toBeNull())
+})
+
 it('sets no inline opacity or transform on the cards with reduced motion', () => {
   stubReducedMotion(true)
 

@@ -12,7 +12,7 @@ BDD steps and feature files, reviews and commits. Every task is test-first.
   finale `h2`) and the finale body with `data-reveal="fade"`, and give the finale section `data-finale` (design.md
   decision 3). Update `App.markers.test.tsx` and the `main > [data-reveal]` selector in
   `features/steps/visual-design.steps.ts`. Verify the unit tests and the visual-design BDD scenarios pass
-- [ ] 1.3 Animate every scrolled heading with the shared drop (`from` `HEADING`, scrub 4, real range) and the finale
+- [x] 1.3 Animate every scrolled heading with the shared drop (`from` `HEADING`, scrub 4, real range) and the finale
   body with an opacity-only reveal. Slow the h1 fade to `GREETING_FADE` (opacity only, no drop).
   Replace the old fade-and-rise unit tests with behavior tests: at progress 0 a heading is above its
   place and transparent, at progress 1 it is in place and opaque, and with reduced motion no target has inline styles.
