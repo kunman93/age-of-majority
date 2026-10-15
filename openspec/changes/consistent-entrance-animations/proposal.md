@@ -21,8 +21,9 @@ finish, in the style of the owner's portfolio (kunman93/portfolio).
   right after their family heading, instead of all cards on one board-wide timeline.
 - All motion values (distances, easings, catch-up, trigger positions) live in one shared motion config instead of
   being repeated inline.
-- New decorative ornaments (inline SVG sparkles, stars and confetti in the accent colors) fill the side margins of the
-  opening and the showcase. They drift slightly with the scroll, are hidden from assistive technology, never catch
+- Elegant botanical compositions (inline SVG gold stems with leaves and buds, watercolor-style blossoms and fine gold
+  dust, inspired by watercolor birthday cards) frame the left and right margins of the opening and the showcase, with
+  a different composition in each. They drift slightly with the scroll, are hidden from assistive technology, never catch
   pointer input and stay still with reduced motion.
 - The UI/UX audit of all screens and its findings are listed in the PR.
 - **BREAKING** (behavior): scrolled reveals now settle shortly after the scroll stops instead of matching the scroll
@@ -32,7 +33,7 @@ finish, in the style of the owner's portfolio (kunman93/portfolio).
 
 ### New Capabilities
 
-- `ornaments`: decorative SVG ornaments in the margins of the opening and the showcase, their motion and their
+- `ornaments`: decorative botanical SVG compositions in the side margins of the opening and the showcase, their motion and their
   accessibility.
 
 ### Modified Capabilities

@@ -25,7 +25,7 @@ stays scroll-linked.
 | 5 | Message cards | one board timeline: lower families' cards are in place before their heading | per-family timeline after its heading |
 | 6 | Message cards | `back.inOut(3)` with scrub 0.5 jerks the card backwards on every scroll tick | same ease, smoothed by scrub 4 |
 | 7 | Motion values | inline literals in several places | one shared motion config |
-| 8 | Opening + showcase | ~4 screens with only text or the particle object | sparkles, stars, confetti ornaments |
+| 8 | Opening + showcase | ~4 screens with only text or the particle object | botanical compositions (gold stems, blossoms, gold dust) framing the side margins |
 | 9 | Cake hint | CSS keyframe, 1 s ease-out, 2.5 s delay | kept: an interaction invitation, not an entrance |
 | 10 | Card hover swing | CSS 300 ms overshoot | kept: an interaction, not an entrance |
 
@@ -78,18 +78,31 @@ global index, as today, so the alternation runs across families. The heading is 
 first and finishes earlier (`top 60%` of a higher element), which guarantees "cards not before their heading" without
 coupling the two timelines. Opacity keeps its own linear tween so the bounce never flickers the text.
 
-### 5. Ornaments as one data-driven component
+### 5. Ornaments as botanical compositions
 
-`src/ornaments/ornamentLayout.ts` holds pure data: per placement (`opening`, `showcase`) a list of
-`{ kind: 'sparkle' | 'star' | 'confetti', left, top, size, color, drift }` with `left`/`top` as percentages.
-`src/ornaments/Ornaments.tsx` renders an `aria-hidden`, `pointer-events-none`, `absolute inset-0` layer of inline
-SVGs, each with `data-ornament` and `data-drift`. The opening header gets `relative` and an `<Ornaments placement="opening" />`.
-The showcase renders `<Ornaments placement="showcase" />` inside its sticky viewport (scene mode) or around its grid
-(static mode). Positions stay in the outer bands (top/bottom 15% and the side margins) so the centered text and the
-story object stay clear. On `short` windows the opening ornaments are hidden, since there is no free band there.
+The first attempt, many small sparkle, star and confetti icons repeated in bands, read as clip-art and was rejected.
+The ornaments are a few large, layered, hand-authored botanical compositions instead, in the spirit of a watercolor
+birthday card (no figure, no copied artwork).
 
-The drift lives in `useChoreography` under the same reduced-motion guard: for each `[data-ornament]`, a scrubbed
-`y` tween of `data-drift` pixels over the page scroll of its container. *Alternative*: CSS `animation-timeline: scroll()`.
+- Pieces: hand-authored inline SVG components in `src/ornaments/pieces/`: a flowing gold stem with leaves and buds,
+  two distinct blossom shapes (layered petals, radial gradients, 70-90 % opacity) and a gold dust field of fine specks
+  that thins out. Gold uses a linear gradient for sheen. Gradient ids are unique per instance (`useId`).
+- Compositions: `src/ornaments/ornamentLayout.ts` holds pure data: per placement (`opening`, `showcase`) a left and a
+  right composition `{ side, top, scale, flip, pieces }`, where each piece has its layer (`stem`, `blossom`, `dust`),
+  offset, size, rotation and palette color. The four compositions differ; none is a mirror copy of another.
+- Rendering: `src/ornaments/Ornaments.tsx` renders an `aria-hidden`, `pointer-events-none`, `absolute inset-0` layer.
+  Each composition is anchored to its side edge, partly bleeding off-screen, about 18-28 vw tall on desktop and
+  shrinking to the corners on phones. Each piece carries `data-ornament` and its layer as `data-ornament-layer`.
+- Placement: the opening header gets `relative` and an `<Ornaments placement="opening" />`. The showcase renders
+  `<Ornaments placement="showcase" />` inside its sticky viewport (scene mode) or around its grid (static mode). The
+  compositions stay in the side margins so the centered text and the story object stay clear. On `short` windows the
+  opening ornaments are hidden, since there is no free margin there.
+
+*Alternative*: scattered small icons. Rejected: they read as clip-art.
+
+The drift lives in `useChoreography` under the same reduced-motion guard: a scrubbed `y` tween per piece, with the
+distance taken from `ORNAMENT_DRIFT` by its layer (stems slow, blossoms medium, dust fast), over the page scroll of
+its container. *Alternative*: CSS `animation-timeline: scroll()`.
 Rejected: not supported in Firefox and outside the GSAP reduced-motion revert.
 
 The ornaments sit in `main`, which already has `overflow-x-clip`, so they cannot cause horizontal scrolling.
@@ -105,4 +118,5 @@ The ornaments sit in `main`, which already has `overflow-x-clip`, so they cannot
 - [Existing unit tests assert wiring and magic numbers (`0.15` stagger, "one board timeline")] → delete the ones for
   removed behavior. Replace them with behavior tests: at reveal progress 0 a heading is above its final place and
   transparent, at progress 1 it is in place and opaque, and with reduced motion nothing has inline styles.
-- [Ornaments in the sticky showcase overlap the 3D object on a phone] → bands only at the top/bottom of the sticky viewport.
+- [Large SVGs with gradients cost paint time] → static SVG, transform-only drift, no filters or blur.
+- [Ornaments in the sticky showcase overlap the 3D object on a phone] → compositions shrink to the corners of the sticky viewport on phones.

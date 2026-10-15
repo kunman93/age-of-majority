@@ -36,14 +36,15 @@ BDD steps and feature files, reviews and commits. Every task is test-first.
 
 ## 3. Ornaments
 
-- [x] 3.1 Add `src/ornaments/ornamentLayout.ts` (pure placement data) and `src/ornaments/Ornaments.tsx` (an
-  `aria-hidden`, `pointer-events-none` layer of inline SVG sparkles, stars and confetti in the accent colors), with
-  unit tests that the layer is hidden from assistive technology, renders no `img`, and renders every ornament of a
-  placement. Verify `npm test` passes
-- [x] 3.2 Place the ornaments in the opening (hidden on `short` windows) and in the showcase, in both scene and static
-  mode (design.md decision 5). Verify the opening stays centered (birthday-greeting BDD) and no horizontal scroll
-  (visual-design BDD) at all sizes
-- [ ] 3.3 Add the ornament drift to `useChoreography` under the reduced-motion guard, using `ORNAMENT_DRIFT`. Verify
+- [ ] 3.1 Replace the icon ornaments with the botanical pieces (`src/ornaments/pieces/`) and the left and right
+  compositions per placement in `ornamentLayout.ts` (design.md decision 5). Unit tests: the layer is hidden from
+  assistive technology, renders no `img`, renders every piece of a placement, and the opening and showcase
+  compositions differ. Verify `npm test` passes
+- [ ] 3.2 Place the compositions edge-anchored in the opening (hidden on `short` windows) and in the showcase, in both
+  scene and static mode (design.md decision 5). Verify the opening stays centered (birthday-greeting BDD), no
+  horizontal scroll (visual-design BDD) at all sizes, and no overlap with the greeting and intro at 320 by 568, 390 by
+  844 and 1920 by 1080
+- [ ] 3.3 Add the ornament drift per layer to `useChoreography` under the reduced-motion guard, using `ORNAMENT_DRIFT`. Verify
   with a unit test that ornaments have no inline transform with reduced motion
 - [ ] 3.4 Add `features/ornaments.feature` with the `ornaments` spec scenarios and their steps. Verify they pass with
   `--repeat-each=10`, and that the overlap scenario fails when an ornament is moved onto the greeting

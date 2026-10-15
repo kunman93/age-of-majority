@@ -2,15 +2,16 @@
 
 ## Purpose
 
-Fills the otherwise empty margins of the opening and the showcase with festive, decorative ornaments, so the first
-screens of the card do not look empty, without hurting readability, accessibility or the layout.
+Frames the otherwise empty side margins of the opening and the showcase with elegant botanical compositions, so the
+first screens of the card do not look empty, without hurting readability, accessibility or the layout.
 
 ## ADDED Requirements
 
 ### Requirement: Opening and showcase are decorated with ornaments
-The opening and the showcase SHALL each show several decorative ornaments: sparkles, stars and confetti, drawn without
-images in the card's accent colors. The ornaments SHALL sit in the margins around the content and SHALL be shown with
-and without the 3D background and with and without reduced motion.
+The opening and the showcase SHALL each be decorated with an elegant botanical composition drawn without images: a
+few large pieces (gold stems with leaves and buds, watercolor-style blossoms with soft gradients and fine gold dust) in
+the card's palette, framing the content from the left and right side margins. The ornaments SHALL be shown with and
+without the 3D background and with and without reduced motion.
 
 #### Scenario: Visitor sees ornaments in the opening
 - **WHEN** a visitor opens the home page
@@ -20,6 +21,10 @@ and without the 3D background and with and without reduced motion.
 #### Scenario: Visitor sees ornaments next to the showcase
 - **WHEN** a visitor scrolls to the showcase
 - **THEN** ornaments are shown in the viewport next to the showcase
+
+#### Scenario: Visitor sees different compositions in the opening and the showcase
+- **WHEN** a visitor scrolls from the opening to the showcase
+- **THEN** the showcase shows a different ornament composition than the opening
 
 #### Scenario: Visitor without the 3D background sees ornaments
 - **WHEN** a visitor whose browser does not support WebGL opens the home page
@@ -40,8 +45,9 @@ page SHALL NOT scroll horizontally because of them.
 - **AND** the page does not scroll horizontally
 
 ### Requirement: Ornaments drift with the scroll
-When the visitor does not prefer reduced motion, the ornaments SHALL drift slightly vertically at different rates while
-the visitor scrolls, depending only on the scroll position, and SHALL drift back when the visitor scrolls back up.
+When the visitor does not prefer reduced motion, the ornaments SHALL drift slightly vertically while the visitor scrolls,
+each layer (stems, blossoms, dust) at its own rate, depending only on the scroll position, and SHALL drift back when
+the visitor scrolls back up.
 With reduced motion, the ornaments SHALL stay still.
 
 #### Scenario: Visitor scrolls past the ornaments
