@@ -45,7 +45,7 @@ function App() {
           aria-labelledby={wishesHeadingId}
           className="mx-auto max-w-6xl space-y-12 sm:space-y-16"
         >
-          <div className="space-y-3 text-center">
+          <div data-reveal="heading" className="space-y-3 text-center">
             <p className="text-blush text-base font-semibold tracking-[0.2em] uppercase">
               From your family
             </p>
@@ -70,24 +70,27 @@ function App() {
           </div>
         </section>
         <section
-          data-reveal
+          data-finale
           aria-labelledby={finaleHeadingId}
           className="mx-auto max-w-[720px] space-y-4"
         >
           <h2
+            data-reveal="heading"
             id={finaleHeadingId}
             className="text-sun text-3xl font-bold break-words sm:text-4xl"
           >
             Here's to you, Sara!
           </h2>
-          <p className="text-lg leading-relaxed sm:text-xl">
-            Eighteen years of you, and the best is still ahead. Whatever you
-            choose next, your family is cheering you on. Happy birthday!
-          </p>
-          <p className="text-blush text-lg sm:text-xl">
-            With love, your family
-          </p>
-          <Cake mode={mode} onSceneError={fallBackToStatic} />
+          <div data-reveal="fade" className="space-y-4">
+            <p className="text-lg leading-relaxed sm:text-xl">
+              Eighteen years of you, and the best is still ahead. Whatever you
+              choose next, your family is cheering you on. Happy birthday!
+            </p>
+            <p className="text-blush text-lg sm:text-xl">
+              With love, your family
+            </p>
+            <Cake mode={mode} onSceneError={fallBackToStatic} />
+          </div>
         </section>
       </main>
     </>

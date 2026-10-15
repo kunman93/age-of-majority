@@ -111,7 +111,7 @@ it('renders the finale after the last family', () => {
     name: 'Tap the cake to blow out the candles',
   })
   expect(follows(signature, cake)).toBeTruthy()
-  expect(finale.lastElementChild).toBe(cake)
+  expect(finale.lastElementChild!.lastElementChild).toBe(cake)
   expect(finale.nextElementSibling).toBeNull()
   expect(container.lastElementChild).toBe(finale.parentElement)
 })

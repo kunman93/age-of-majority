@@ -175,7 +175,7 @@ Then(
   'the content column is centered and no wider than 720px',
   async ({ page }) => {
     const columns = await page
-      .locator('main > header, main > [data-showcase], main > [data-reveal]')
+      .locator('main > header, main > [data-showcase], main > [data-finale]')
       .evaluateAll((elements) =>
         elements.map((column) => {
           const box = column.getBoundingClientRect()

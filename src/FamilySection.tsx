@@ -30,7 +30,7 @@ function FamilySection({
   return (
     <section aria-labelledby={headingId} className="space-y-6">
       <h3
-        data-reveal
+        data-reveal="heading"
         id={headingId}
         className="text-tangerine text-center text-2xl font-bold break-words sm:text-3xl"
       >
