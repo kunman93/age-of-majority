@@ -71,7 +71,7 @@ Then('nothing follows the cake', async ({ page }) => {
     const main = section.closest('main')!
     return (
       button.nextElementSibling !== null ||
-      button.parentElement !== section ||
+      button.parentElement !== section.lastElementChild ||
       section.nextElementSibling !== null ||
       main.lastElementChild !== section
     )

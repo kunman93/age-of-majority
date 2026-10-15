@@ -188,3 +188,11 @@ it('puts the heading and overline above one board holding every family', () => {
     .forEach((card) => expect(board).toContainElement(card))
   expect(board.querySelector('img, svg, picture')).toBeNull()
 })
+
+it('decorates the opening with ornaments', () => {
+  render(<App />)
+
+  expect(
+    screen.getByRole('banner').querySelectorAll('svg[data-ornament]').length,
+  ).toBeGreaterThan(0)
+})

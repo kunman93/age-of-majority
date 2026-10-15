@@ -166,12 +166,13 @@ const expectToCoverViewport = async (page: Page, selector: string) => {
   expect(box.width).toBe(box.viewportWidth)
   expect(box.height).toBe(box.viewportHeight)
   // pointer-events: none hides the background from hit testing, so make it
-  // hit-testable to prove it is painted below the content. The cake's glow is
-  // decoration above the content that never catches input, so it stays out.
+  // hit-testable to prove it is painted below the content. The cake's glow and the
+  // ornaments are decoration above the content that never catches input, so
+  // they stay out.
   const contentIsOnTop = await page.evaluate(() => {
     const style = document.createElement('style')
     style.textContent =
-      '[aria-hidden="true"]:not([data-cake-halo]), [aria-hidden="true"] * { pointer-events: auto !important }'
+      '[aria-hidden="true"]:not([data-cake-halo], [data-ornaments]), [aria-hidden="true"] *:not([data-ornaments], [data-ornaments] *) { pointer-events: auto !important }'
     document.head.append(style)
     try {
       const visibleText = [

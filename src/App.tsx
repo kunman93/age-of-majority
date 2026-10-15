@@ -7,6 +7,7 @@ import Cake from './cake/Cake'
 import FamilySection from './FamilySection'
 import { families } from './families'
 import Showcase from './story/Showcase'
+import Ornaments from './ornaments/Ornaments'
 
 const INTRO =
   'Today you come of age. This card gathers wishes from your family, near and far, to celebrate you and everything ahead of you. Scroll on and read what they have to say.'
@@ -33,8 +34,9 @@ function App() {
       >
         <header
           data-opening
-          className="mx-auto flex min-h-svh max-w-[720px] flex-col justify-center space-y-12 py-12 sm:space-y-16 sm:py-16 lg:py-24 short:space-y-4 short:py-4"
+          className="relative mx-auto flex min-h-svh max-w-[720px] flex-col justify-center space-y-12 py-12 sm:space-y-16 sm:py-16 lg:py-24 short:space-y-4 short:py-4"
         >
+          <Ornaments placement="opening" className="short:hidden" />
           <h1 className="text-sun text-left text-4xl leading-tight font-bold break-words sm:text-5xl lg:text-6xl">
             Happy 18th Birthday, Sara!
           </h1>

@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react'
 import SceneErrorBoundary from '../background/SceneErrorBoundary'
 import type { SceneMode } from '../background/useSceneMode'
+import Ornaments from '../ornaments/Ornaments'
 import StageIllustration from './StageIllustration'
 import { STAGES } from './stageShapes'
 
@@ -22,6 +23,7 @@ function Showcase({
         className="mx-auto h-[300svh] max-w-[720px]"
       >
         <div className="sticky top-0 h-svh">
+          <Ornaments placement="showcase" />
           <SceneErrorBoundary onError={onSceneError}>
             <Suspense fallback={null}>
               <StoryCanvas />
@@ -36,8 +38,9 @@ function Showcase({
     <div
       data-showcase
       aria-hidden="true"
-      className="mx-auto grid max-w-[720px] grid-cols-3 place-items-center gap-4 [&_svg]:h-auto [&_svg]:max-w-full"
+      className="relative mx-auto grid max-w-[720px] grid-cols-3 place-items-center gap-4 [&_svg]:h-auto [&_svg]:max-w-full"
     >
+      <Ornaments placement="showcase" />
       {STAGES.map((stage) => (
         <StageIllustration key={stage} stage={stage} />
       ))}

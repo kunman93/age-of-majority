@@ -36,11 +36,11 @@ BDD steps and feature files, reviews and commits. Every task is test-first.
 
 ## 3. Ornaments
 
-- [ ] 3.1 Add `src/ornaments/ornamentLayout.ts` (pure placement data) and `src/ornaments/Ornaments.tsx` (an
+- [x] 3.1 Add `src/ornaments/ornamentLayout.ts` (pure placement data) and `src/ornaments/Ornaments.tsx` (an
   `aria-hidden`, `pointer-events-none` layer of inline SVG sparkles, stars and confetti in the accent colors), with
   unit tests that the layer is hidden from assistive technology, renders no `img`, and renders every ornament of a
   placement. Verify `npm test` passes
-- [ ] 3.2 Place the ornaments in the opening (hidden on `short` windows) and in the showcase, in both scene and static
+- [x] 3.2 Place the ornaments in the opening (hidden on `short` windows) and in the showcase, in both scene and static
   mode (design.md decision 5). Verify the opening stays centered (birthday-greeting BDD) and no horizontal scroll
   (visual-design BDD) at all sizes
 - [ ] 3.3 Add the ornament drift to `useChoreography` under the reduced-motion guard, using `ORNAMENT_DRIFT`. Verify

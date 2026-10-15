@@ -60,7 +60,7 @@ it('reports a failing story canvas and keeps the sticky part', async () => {
   await act(() => Promise.resolve())
   expect(onSceneError).toHaveBeenCalled()
   expect(screen.queryByTestId('story-canvas')).toBeNull()
-  expect(container.firstElementChild!.firstElementChild).toBeEmptyDOMElement()
+  expect(container.firstElementChild!.firstElementChild).toHaveClass('sticky')
 })
 
 it('has no sticky part and a normal height in static mode', () => {
@@ -83,4 +83,31 @@ it('lays the three illustrations out in one row', () => {
   expect(outer.className).toContain('grid-cols-3')
   expect(outer.className).not.toContain('grid-cols-2')
   expect(outer.querySelectorAll('[data-stage-illustration]')).toHaveLength(3)
+})
+
+it.each(['scene', 'static'] as const)(
+  'is decorated with ornaments in %s mode',
+  (mode) => {
+    const { container } = render(
+      <Showcase mode={mode} onSceneError={() => {}} />,
+    )
+
+    expect(
+      container.querySelectorAll('[data-showcase] svg[data-ornament]').length,
+    ).toBeGreaterThan(0)
+  },
+)
+
+it('keeps the ornaments when the story canvas fails', async () => {
+  storyCanvas.fail = true
+  vi.spyOn(console, 'error').mockImplementation(() => {})
+
+  const { container } = render(
+    <Showcase mode="scene" onSceneError={() => {}} />,
+  )
+
+  await act(() => Promise.resolve())
+  expect(
+    container.querySelectorAll('svg[data-ornament]').length,
+  ).toBeGreaterThan(0)
 })
