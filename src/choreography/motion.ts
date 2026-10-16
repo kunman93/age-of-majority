@@ -2,6 +2,9 @@ export const LINEAR = 'none'
 
 export const GREETING_FADE = 2.5
 
+// the greeting is exempt from the heading entrance, so it has its own ease
+export const GREETING_EASE = 'power2.inOut'
+
 export const HEADING = Object.freeze({ y: -100, ease: 'power2.inOut' })
 
 export const CARD = Object.freeze({

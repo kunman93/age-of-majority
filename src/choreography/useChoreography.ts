@@ -5,6 +5,7 @@ import { gsap, ScrollTrigger, useGSAP } from '../gsap'
 import {
   CARD,
   CARD_REVEAL_END,
+  GREETING_EASE,
   GREETING_FADE,
   HEADING,
   LINEAR,
@@ -33,7 +34,7 @@ export function useChoreography(
         load.from(targets(root, 'h1'), {
           opacity: 0,
           duration: GREETING_FADE,
-          ease: HEADING.ease,
+          ease: GREETING_EASE,
         })
         const [intro] = targets(root, '[data-intro]')
         const opening = targets(root, '[data-opening]')
