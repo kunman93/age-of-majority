@@ -14,6 +14,13 @@ export const CARD = Object.freeze({
 // seconds a reveal lags behind the scroll position
 export const SCRUB = 4
 
+// pixels an ornament travels over the scroll past its container
+export const ORNAMENT_DRIFT = Object.freeze({
+  stem: 40,
+  blossom: 90,
+  dust: 160,
+})
+
 export const OPENING_FADE_SCRUB = 0.5
 
 const REVEAL_END = 'clamp(top 60%)'

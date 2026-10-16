@@ -31,7 +31,7 @@ function Ornaments({
     <div
       aria-hidden="true"
       data-ornaments
-      className={`pointer-events-none absolute inset-y-0 left-[calc(50%-50vw)] mb-0 w-screen ${className}`}
+      className={`pointer-events-none [overflow-anchor:none] absolute inset-y-0 left-[calc(50%-50vw)] mb-0 w-screen ${className}`}
     >
       {ornamentLayout[placement].map(
         ({ side, anchor, height, bleed, pieces }) => (

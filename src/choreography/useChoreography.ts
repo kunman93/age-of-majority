@@ -8,6 +8,7 @@ import {
   GREETING_FADE,
   HEADING,
   LINEAR,
+  ORNAMENT_DRIFT,
   OPENING_FADE_SCRUB,
   scrubbedReveal,
 } from './motion'
@@ -85,6 +86,28 @@ export function useChoreography(
                 start,
               )
           })
+        })
+
+        // the drift is centered, so the ornaments rest where they are drawn
+        // halfway through their container's scroll
+        targets(root, '[data-ornament]').forEach((piece) => {
+          const layer = piece.dataset
+            .ornamentLayer as keyof typeof ORNAMENT_DRIFT
+          const half = ORNAMENT_DRIFT[layer] / 2
+          gsap.fromTo(
+            piece,
+            { y: -half },
+            {
+              y: half,
+              ease: LINEAR,
+              scrollTrigger: {
+                trigger: piece.closest('[data-ornaments]')!.parentElement,
+                start: 'top bottom',
+                end: 'bottom top',
+                scrub: true,
+              },
+            },
+          )
         })
 
         return restoreIntro

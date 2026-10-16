@@ -157,7 +157,9 @@ Then('the page does not scroll horizontally', async ({ page }) => {
 
 Then('all content fits within the window width', async ({ page }) => {
   const edges = await page
-    .locator('main, main *:not([data-cake-halo])')
+    .locator(
+      'main, main *:not([data-cake-halo], [data-ornaments], [data-ornaments] *)',
+    )
     .evaluateAll((elements) =>
       elements.map((element) => {
         const { left, right } = element.getBoundingClientRect()

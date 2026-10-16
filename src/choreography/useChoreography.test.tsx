@@ -228,6 +228,38 @@ it('sets no inline style on any heading or the finale body with reduced motion',
   targets.forEach((target) => expect(target.getAttribute('style')).toBeNull())
 })
 
+const ornaments = (layer: string) => [
+  ...document.querySelectorAll<HTMLElement>(`[data-ornament-layer="${layer}"]`),
+]
+
+const driftOf = (piece: HTMLElement) => {
+  setProgress(piece, 0)
+  const from = placeOf(piece).y
+  setProgress(piece, 1)
+  return placeOf(piece).y - from
+}
+
+it('drifts every ornament vertically with the scroll, dust faster than blossoms and blossoms faster than stems', () => {
+  stubReducedMotion(false)
+  render(<App />)
+
+  const [stem] = ornaments('stem')
+  const [blossom] = ornaments('blossom')
+  const [dust] = ornaments('dust')
+  expect(Math.abs(driftOf(stem))).toBeGreaterThan(0)
+  expect(Math.abs(driftOf(blossom))).toBeGreaterThan(Math.abs(driftOf(stem)))
+  expect(Math.abs(driftOf(dust))).toBeGreaterThan(Math.abs(driftOf(blossom)))
+})
+
+it('leaves every ornament still with reduced motion', () => {
+  stubReducedMotion(true)
+  render(<App />)
+
+  const pieces = document.querySelectorAll<HTMLElement>('[data-ornament]')
+  expect(pieces.length).toBeGreaterThan(0)
+  pieces.forEach((piece) => expect(piece.getAttribute('style')).toBeNull())
+})
+
 it('sets no inline opacity or transform on the cards with reduced motion', () => {
   stubReducedMotion(true)
 
