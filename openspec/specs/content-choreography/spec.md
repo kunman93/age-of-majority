@@ -8,9 +8,10 @@ a still card.
 ## Requirements
 
 ### Requirement: Content moves only without reduced motion
-The card's content (the greeting, the intro, the family sections and the finale) SHALL move only when the visitor does
-not prefer reduced motion, regardless of WebGL support or whether the 3D background loads. With reduced motion, all
-content SHALL be shown in its final state as soon as the page loads, and nothing SHALL animate or transition.
+The card's content (the greeting, the intro, the "Birthday wishes" heading and its overline, the family sections and
+the finale) SHALL move only when the visitor does not prefer reduced motion, regardless of WebGL support or whether the
+3D background loads. With reduced motion, all content SHALL be shown in its final state as soon as the page loads, and
+nothing SHALL animate or transition.
 
 #### Scenario: Visitor without WebGL sees the content move
 - **WHEN** a visitor whose browser does not support WebGL and who does not prefer reduced motion opens the home page
@@ -30,10 +31,10 @@ content SHALL be shown in its final state as soon as the page loads, and nothing
 - **AND** no content element moves any longer
 
 ### Requirement: Intro is typed sentence by sentence in a loop
-When the content moves, the greeting SHALL fade in on load, then the intro's sentences SHALL be typed one at a time at
-about 30 ms per character. Each sentence SHALL stay fully shown for about 2 s and then be erased before the next
-sentence is typed in its place. After the last sentence, the loop SHALL start again with the first. A blinking
-accent-colored cursor SHALL follow the last typed character.
+When the content moves, the greeting SHALL fade in slowly on load, over about 2.5 s and without moving, then the
+intro's sentences SHALL be typed one at a time at about 30 ms per character. Each sentence SHALL stay fully shown
+for about 2 s and then be erased before the next sentence is typed in its place. After the last sentence, the loop
+SHALL start again with the first. A blinking accent-colored cursor SHALL follow the last typed character.
 
 #### Scenario: Visitor watches the intro being typed
 - **WHEN** a visitor who does not prefer reduced motion opens the home page
@@ -41,6 +42,12 @@ accent-colored cursor SHALL follow the last typed character.
 - **AND** a cursor follows the last typed character
 - **WHEN** the visitor waits a few seconds longer
 - **THEN** the second sentence is being typed in place of the first
+
+#### Scenario: Visitor sees the greeting fade in slowly
+- **WHEN** a visitor who does not prefer reduced motion opens the home page
+- **THEN** about 1 s after load the greeting is still not fully opaque and is in its final position
+- **WHEN** the visitor waits a few seconds
+- **THEN** the greeting is fully opaque
 
 #### Scenario: Visitor sees the intro loop
 - **WHEN** a visitor who does not prefer reduced motion waits until the last sentence of the intro has been typed and erased
@@ -80,44 +87,33 @@ in, in reverse, when the visitor scrolls back up. Its fade SHALL depend only on 
 - **WHEN** the visitor scrolls back to the top
 - **THEN** the greeting and the intro are fully opaque
 
-### Requirement: Family headings and finale reveal while scrolling
-When the content moves, each family heading and the finale SHALL fade in and rise into place while they scroll into
-the viewport. Each reveal SHALL depend only on the scroll position, SHALL be complete before the element's top reaches
-the middle of the viewport, and SHALL play in reverse when the visitor scrolls back up.
+### Requirement: Headings and finale reveal while scrolling
+When the content moves, the "Birthday wishes" heading with its overline, each family heading and the finale heading
+SHALL drop in as described in "Every heading below the opening drops in the same way" while they scroll into the viewport. After the
+finale heading, the finale's message, signature and cake SHALL fade in without moving. Each reveal SHALL follow the
+scroll position with a smooth catch-up, SHALL be complete once the element is in the upper half of the viewport and
+the scroll has come to rest, and SHALL play in reverse when the visitor scrolls back up.
 
 #### Scenario: Visitor scrolls a family into view
 - **WHEN** a visitor who does not prefer reduced motion scrolls until the top of the "Family Ipsum" section just enters the viewport from below
-- **THEN** the "Family Ipsum" heading is not yet fully visible
+- **THEN** the "Family Ipsum" heading is not fully visible
 - **WHEN** the visitor scrolls until the "Family Ipsum" heading is in the upper half of the viewport
-- **THEN** the heading is fully visible and in its final position
+- **THEN** the heading becomes fully visible and settles in its final position
 
 #### Scenario: Visitor scrolls back up past a family
 - **WHEN** a visitor who does not prefer reduced motion has revealed the "Family Ipsum" section
 - **AND** scrolls back up until the top of the section is just above the bottom of the viewport
-- **THEN** the "Family Ipsum" heading is not fully visible again
+- **THEN** the "Family Ipsum" heading becomes not fully visible again
+
+#### Scenario: Visitor scrolls the birthday wishes heading into view
+- **WHEN** a visitor who does not prefer reduced motion scrolls until the "Birthday wishes" heading just enters the viewport from below
+- **THEN** the "Birthday wishes" heading and the overline "From your family" are not fully visible
+- **WHEN** the visitor scrolls until the "Birthday wishes" heading is in the upper half of the viewport
+- **THEN** the heading and the overline become fully visible and settle in their final positions
 
 #### Scenario: Visitor scrolls to the finale
 - **WHEN** a visitor who does not prefer reduced motion scrolls to the end of the page
-- **THEN** the finale heading, message and signature are fully visible and in their final position
-
-### Requirement: Message cards slide in together when the board is reached
-When the content moves, all message cards on the board SHALL fade in and slide in sideways, one shortly after the
-other and from alternating sides, with a bounce, while the board scrolls into view. All cards SHALL be fully revealed
-once the top of the board is in the upper half of the viewport. The reveal SHALL depend only on the scroll position
-and SHALL play in reverse on scroll-up.
-
-#### Scenario: Visitor scrolls the wishes into view
-- **WHEN** a visitor who does not prefer reduced motion scrolls until the top of the board just enters the viewport from below
-- **THEN** consecutive message cards are shifted sideways from their places, in opposite directions
-- **AND** no message card is fully visible
-- **WHEN** the visitor scrolls until the top of the board is in the upper half of the viewport
-- **THEN** every message card is fully visible and in its final position, including the last one
-- **AND** the page does not scroll horizontally
-
-#### Scenario: Visitor scrolls back above the board
-- **WHEN** a visitor who does not prefer reduced motion has revealed the message cards
-- **AND** scrolls back up until the top of the board is just above the bottom of the viewport
-- **THEN** no message card is fully visible again
+- **THEN** the finale heading, message and signature become fully visible and settle in their final position
 
 ### Requirement: Message cards tilt on hover
 When the content moves and the visitor's device can hover, a message card SHALL swing on its pin to the opposite tilt
@@ -137,16 +133,54 @@ card SHALL keep its tilt on hover.
 - **THEN** the card keeps its original tilt
 
 ### Requirement: Text is readable once revealed
-Whenever a family or finale text is in the upper half of the viewport, it SHALL be fully revealed and fully opaque
-and SHALL meet the card's contrast requirements. While the opening fills the first screen after the greeting has
-faded in, its text SHALL be fully opaque. Motion SHALL NOT change any text, its order or its availability to assistive
-technology.
+Whenever a family or finale text is in the upper half of the viewport and the visitor has stopped scrolling for a few
+seconds, it SHALL be fully revealed and fully opaque and SHALL meet the card's contrast requirements. While the opening
+fills the first screen after the greeting has faded in, its text SHALL be fully opaque. Motion SHALL NOT change any
+text, its order or its availability to assistive technology.
 
 #### Scenario: Visitor reads revealed text
 - **WHEN** a visitor who does not prefer reduced motion scrolls each family section and the finale to the middle of the viewport
-- **THEN** each of their headings, messages and authors is fully opaque
+- **THEN** each of their headings, messages and authors is fully opaque once the scroll has come to rest
 - **AND** each has a contrast ratio of at least 4.5:1 against its background
 
 #### Scenario: Assistive technology reads unrevealed content
 - **WHEN** a visitor who does not prefer reduced motion opens the home page
 - **THEN** every family heading, message and author and the finale are in the accessibility tree before they are scrolled into view
+
+### Requirement: Every heading below the opening drops in the same way
+When the content moves, every heading below the opening (the "Birthday wishes" heading with its overline, the family
+headings and the finale heading) SHALL enter the same way: it SHALL fade in while it drops down from above into its
+final position, over the same distance and with the same easing. None of them SHALL appear without it, and it
+SHALL NOT shift other content. The greeting is exempt and fades in instead.
+
+#### Scenario: Visitor sees every scrolled heading drop in from above
+- **WHEN** a visitor who does not prefer reduced motion scrolls until the "Birthday wishes" heading, a family heading or the finale heading just enters the viewport from below
+- **THEN** that heading is above its final position and not fully opaque
+
+#### Scenario: Heading entrance does not shift the content
+- **WHEN** a visitor who does not prefer reduced motion scrolls until the "Family Ipsum" heading just enters the viewport from below
+- **THEN** the "Family Ipsum" message cards are at the same place in the page as when the heading has settled
+
+### Requirement: Message cards slide in after their family heading
+When the content moves, each family's message cards SHALL fade in and slide in sideways, one shortly after the other
+and from alternating sides, with a bounce, while the family scrolls into view. A family's cards SHALL NOT be fully
+revealed before its heading. The reveal SHALL follow the scroll with the same catch-up as the headings, SHALL be
+complete once the cards are in the upper half of the viewport and the scroll has come to rest, and SHALL reverse on
+scroll-up.
+
+#### Scenario: Visitor scrolls a family's cards into view
+- **WHEN** a visitor who does not prefer reduced motion scrolls until the top of the "Family Ipsum" cards just enters the viewport from below
+- **THEN** consecutive "Family Ipsum" message cards are shifted sideways from their places, in opposite directions
+- **AND** no "Family Ipsum" message card is fully visible
+- **WHEN** the visitor scrolls until the "Family Ipsum" cards are in the upper half of the viewport
+- **THEN** every "Family Ipsum" message card becomes fully visible and settles in its final position
+- **AND** the page does not scroll horizontally
+
+#### Scenario: Cards wait for their family heading
+- **WHEN** a visitor who does not prefer reduced motion scrolls until the "Family Dolor" heading just enters the viewport from below
+- **THEN** no "Family Dolor" message card is fully visible
+
+#### Scenario: Visitor scrolls back above a family's cards
+- **WHEN** a visitor who does not prefer reduced motion has revealed the "Family Ipsum" message cards
+- **AND** scrolls back up until the top of the "Family Ipsum" section is just above the bottom of the viewport
+- **THEN** no "Family Ipsum" message card is fully visible again
