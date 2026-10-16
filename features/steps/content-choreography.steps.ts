@@ -13,7 +13,8 @@ import { opacityOf, scrollTopTo } from '../support/scroll.ts'
 const { When, Then } = createBdd()
 
 const OPENING = '[data-opening]'
-const SETTLE_TIMEOUT_MS = 5000
+// Reveals follow the scroll with a catch-up of up to 4 s
+const SETTLE_TIMEOUT_MS = 10000
 
 const offsetYOf = (locator: Locator) =>
   locator.evaluate((element) => {
@@ -33,11 +34,82 @@ const expectFinalState = async (locator: Locator) => {
 const section = (page: Page, family: string) =>
   page.getByRole('region', { name: family })
 
-const heading = (page: Page, family: string) =>
-  section(page, family).getByRole('heading', { name: family })
+// The element that carries the reveal: the heading itself, or the wrapper it shares with its overline
+const revealOf = (locator: Locator) =>
+  locator.locator('xpath=ancestor-or-self::*[@data-reveal][1]')
+
+const heading = (page: Page, name: string) =>
+  revealOf(page.getByRole('heading', { name, exact: true }))
 
 const finale = (page: Page) =>
   page.getByRole('region', { name: "Here's to you, Sara!" })
+
+const greeting = (page: Page) => page.getByRole('heading', { level: 1 })
+
+Then(
+  'shortly after load the greeting is not fully opaque yet and is in its final position',
+  async ({ page }) => {
+    await expect
+      .poll(() => opacityOf(greeting(page)), { timeout: SETTLE_TIMEOUT_MS })
+      .toBeLessThan(1)
+    expect(await offsetYOf(greeting(page))).toBe(0)
+  },
+)
+
+// The fade must outlast this, whatever the load time
+const GREETING_STILL_FADING_MS = 2000
+
+Then(
+  'the greeting does not become fully opaque within 2 seconds of the page starting to load',
+  async ({ page }) => {
+    const opaqueAtMs = await page.evaluate(
+      () =>
+        new Promise<number>((resolve) => {
+          const check = () => {
+            const h1 = document.querySelector('h1')!
+            if (Number(getComputedStyle(h1).opacity) === 1) {
+              resolve(performance.now())
+            } else {
+              requestAnimationFrame(check)
+            }
+          }
+          check()
+        }),
+    )
+    expect(opaqueAtMs).toBeGreaterThan(GREETING_STILL_FADING_MS)
+  },
+)
+
+Then(
+  'the {string} heading is above its final position and not fully opaque',
+  async ({ page }, name: string) => {
+    await expect
+      .poll(() => offsetYOf(heading(page, name)), {
+        timeout: SETTLE_TIMEOUT_MS,
+      })
+      .toBeLessThan(0)
+    await expect
+      .poll(() => opacityOf(heading(page, name)), {
+        timeout: SETTLE_TIMEOUT_MS,
+      })
+      .toBeLessThan(1)
+  },
+)
+
+const cardsTopInPage = (page: Page, family: string) =>
+  section(page, family)
+    .locator('[data-cards]')
+    .evaluate((row) => row.getBoundingClientRect().top + window.scrollY)
+
+Then(
+  'the {string} message cards are at the same place in the page as when the heading has settled',
+  async ({ page }, family: string) => {
+    const before = await cardsTopInPage(page, family)
+    await scrollTopTo(heading(page, family), 0.25)
+    await expectFinalState(heading(page, family))
+    expect(await cardsTopInPage(page, family)).toBe(before)
+  },
+)
 
 Then('the greeting and the full intro are shown at once', async ({ page }) => {
   for (const text of [page.getByRole('heading', { level: 1 }), intro(page)]) {
@@ -119,7 +191,7 @@ Then(
 )
 
 Then(
-  'the {string} heading is fully visible and in its final position',
+  'the {string} heading becomes fully visible and settles in its final position',
   async ({ page }, family: string) => {
     await expectFinalState(heading(page, family))
   },
@@ -130,12 +202,23 @@ Then(
   async ({ page }) => {
     const region = finale(page)
     for (const part of [
-      region.getByRole('heading'),
+      revealOf(region.getByRole('heading')),
       ...(await region.getByRole('paragraph').all()),
     ]) {
       await expect(part).toBeInViewport({ ratio: 1 })
       await expectFinalState(part)
     }
+  },
+)
+
+Then(
+  'the {string} heading becomes not fully visible again',
+  async ({ page }, family: string) => {
+    await expect
+      .poll(() => opacityOf(heading(page, family)), {
+        timeout: SETTLE_TIMEOUT_MS,
+      })
+      .toBeLessThan(1)
   },
 )
 
@@ -172,8 +255,10 @@ Then(
   async ({ page }) => {
     const tree = await page.locator('main').ariaSnapshot()
     const texts = await page
-      .locator('[data-reveal], [data-reveal] figcaption, [data-reveal] p')
-      .allInnerTexts()
+      .locator(
+        'h2[data-reveal], h3[data-reveal], [data-reveal] :is(h2, p, figcaption)',
+      )
+      .allTextContents()
     expect(texts.length).toBeGreaterThan(0)
     for (const text of texts) {
       for (const line of text.split('\n').filter(Boolean)) {
@@ -368,7 +453,7 @@ When(
 When(
   'I scroll until the finale heading just enters the viewport',
   async ({ page }) => {
-    await scrollTopTo(finale(page).getByRole('heading'), 1, -1)
+    await scrollTopTo(revealOf(finale(page).getByRole('heading')), 1, -1)
   },
 )
 
@@ -385,15 +470,17 @@ Then(
 )
 
 Then('the finale heading is fully visible without moving', async ({ page }) => {
-  await expectStillAndVisible(finale(page).getByRole('heading'))
+  await expectStillAndVisible(revealOf(finale(page).getByRole('heading')))
 })
 
 const firstCard = (page: Page, family: string) =>
   section(page, family).getByRole('figure').first()
 
-const BOARD = '[data-board]'
+const cardSlots = (page: Page, family: string) =>
+  section(page, family).locator('[data-reveal="card"]')
 
-const cardSlots = (page: Page) => page.locator('[data-reveal="card"]')
+const cardRow = (page: Page, family: string) =>
+  section(page, family).locator('[data-cards]')
 
 const slideOffsetOf = (slot: Locator) =>
   slot.evaluate((element) => {
@@ -402,30 +489,23 @@ const slideOffsetOf = (slot: Locator) =>
   })
 
 When(
-  'I scroll until the top of the board just enters the viewport from below',
-  async ({ page }) => {
-    await scrollTopTo(page.locator(BOARD), 1, -1)
+  'I scroll until the top of the {string} cards just enter the viewport from below',
+  async ({ page }, family: string) => {
+    await scrollTopTo(cardRow(page, family), 1, -1)
   },
 )
 
 When(
-  'I scroll until the top of the board is in the upper half of the viewport',
-  async ({ page }) => {
-    await scrollTopTo(page.locator(BOARD), 0.25)
-  },
-)
-
-When(
-  'I scroll until the top of the board is just above the bottom of the viewport',
-  async ({ page }) => {
-    await scrollTopTo(page.locator(BOARD), 1)
+  'I scroll until the {string} cards are in the upper half of the viewport',
+  async ({ page }, family: string) => {
+    await scrollTopTo(cardRow(page, family), 0.25)
   },
 )
 
 Then(
-  'consecutive message cards are shifted sideways from their places, in opposite directions',
-  async ({ page }) => {
-    const slots = await cardSlots(page).all()
+  'consecutive {string} message cards are shifted sideways from their places, in opposite directions',
+  async ({ page }, family: string) => {
+    const slots = await cardSlots(page, family).all()
     expect(slots.length).toBeGreaterThan(1)
     await expect
       .poll(async () => {
@@ -441,18 +521,23 @@ Then(
   },
 )
 
-Then('no message card is fully visible', async ({ page }) => {
-  for (const slot of await cardSlots(page).all()) {
-    await expect
-      .poll(() => opacityOf(slot), { timeout: SETTLE_TIMEOUT_MS })
-      .toBeLessThan(1)
-  }
-})
+Then(
+  'no {string} message card is fully visible',
+  async ({ page }, family: string) => {
+    const slots = await cardSlots(page, family).all()
+    expect(slots.length).toBeGreaterThan(0)
+    for (const slot of slots) {
+      await expect
+        .poll(() => opacityOf(slot), { timeout: SETTLE_TIMEOUT_MS })
+        .toBeLessThan(1)
+    }
+  },
+)
 
 Then(
-  'every message card is fully visible and in its final position, including the last one',
-  async ({ page }) => {
-    const slots = await cardSlots(page).all()
+  'every {string} message card becomes fully visible and settles in its final position',
+  async ({ page }, family: string) => {
+    const slots = await cardSlots(page, family).all()
     expect(slots.length).toBeGreaterThan(0)
     for (const slot of slots) {
       await expect
@@ -554,3 +639,43 @@ Then('the card keeps its original tilt', async ({ page }) => {
   await page.waitForTimeout(NO_TILT_WINDOW_MS)
   expect(await tiltOf(firstCard(page, 'Family Ipsum'))).toBeCloseTo(tilt, 1)
 })
+
+When(
+  'I scroll until the {string} heading is near the bottom of the viewport',
+  async ({ page }, family: string) => {
+    await scrollTopTo(heading(page, family), 0.75)
+  },
+)
+
+const SETTLE_POLL_INTERVAL_MS = 250
+
+// Polls until the reveals stop changing, then returns their opacities
+const settledOpacities = async (locators: Locator[]) => {
+  let last = ''
+  await expect
+    .poll(
+      async () => {
+        const now = JSON.stringify(await Promise.all(locators.map(opacityOf)))
+        const settled = now === last
+        last = now
+        return settled
+      },
+      { timeout: SETTLE_TIMEOUT_MS, intervals: [SETTLE_POLL_INTERVAL_MS] },
+    )
+    .toBe(true)
+  return JSON.parse(last) as number[]
+}
+
+Then(
+  'once the reveals have settled, no {string} message card is fully visible while its heading is not',
+  async ({ page }, family: string) => {
+    const slots = await cardSlots(page, family).all()
+    const [headingOpacity, ...cardOpacities] = await settledOpacities([
+      heading(page, family),
+      ...slots,
+    ])
+    expect(headingOpacity).toBeLessThan(1)
+    expect(cardOpacities.length).toBeGreaterThan(0)
+    for (const opacity of cardOpacities) expect(opacity).toBeLessThan(1)
+  },
+)

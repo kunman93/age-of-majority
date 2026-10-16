@@ -111,7 +111,7 @@ it('renders the finale after the last family', () => {
     name: 'Tap the cake to blow out the candles',
   })
   expect(follows(signature, cake)).toBeTruthy()
-  expect(finale.lastElementChild).toBe(cake)
+  expect(finale.lastElementChild!.lastElementChild).toBe(cake)
   expect(finale.nextElementSibling).toBeNull()
   expect(container.lastElementChild).toBe(finale.parentElement)
 })
@@ -187,4 +187,12 @@ it('puts the heading and overline above one board holding every family', () => {
     .getAllByRole('figure')
     .forEach((card) => expect(board).toContainElement(card))
   expect(board.querySelector('img, svg, picture')).toBeNull()
+})
+
+it('decorates the opening with ornaments', () => {
+  render(<App />)
+
+  expect(
+    screen.getByRole('banner').querySelectorAll('svg[data-ornament]').length,
+  ).toBeGreaterThan(0)
 })

@@ -1,14 +1,18 @@
 import { act, render, renderHook, screen } from '@testing-library/react'
+import { useRef } from 'react'
 import { afterEach, expect, it, vi } from 'vitest'
 import App from '../App'
 import { gsap, ScrollTrigger } from '../gsap'
 import type { SceneMode } from '../background/useSceneMode'
+import Showcase from '../story/Showcase'
 import TypedIntro from './TypedIntro'
 import { useChoreography } from './useChoreography'
 
 vi.mock('../background/useSceneMode', () => ({
   useSceneMode: () => ({ mode: 'static', fallBackToStatic: () => {} }),
 }))
+
+vi.mock('../background/StoryCanvas', () => ({ default: () => null }))
 
 vi.mock('../background/Background', () => ({ default: () => null }))
 
@@ -164,12 +168,149 @@ const inlineTransforms = () =>
     .map((element) => element.style.transform)
     .filter((transform) => transform && transform !== 'none')
 
-const tweenVarsOf = (element: HTMLElement) =>
-  gsap.getTweensOf(element).map((tween) => tween.vars)
-
 const cardSlots = () => [
   ...document.querySelectorAll<HTMLElement>('[data-reveal="card"]'),
 ]
+
+const revealTargets = (kind: string) => [
+  ...document.querySelectorAll<HTMLElement>(`[data-reveal="${kind}"]`),
+]
+
+const setProgress = (element: HTMLElement, progress: number) =>
+  gsap.getTweensOf(element).forEach((tween) => tween.progress(progress))
+
+const placeOf = (element: HTMLElement) => ({
+  opacity: Number(element.style.opacity),
+  y: Number(gsap.getProperty(element, 'y')),
+})
+
+it('drops every heading in from above and fades it in', () => {
+  stubReducedMotion(false)
+  render(<App />)
+
+  const headings = revealTargets('heading')
+  expect(headings.length).toBeGreaterThan(3)
+  headings.forEach((heading) => {
+    setProgress(heading, 0)
+    expect(placeOf(heading).opacity).toBe(0)
+    expect(placeOf(heading).y).toBeLessThan(0)
+
+    setProgress(heading, 1)
+    expect(placeOf(heading)).toEqual({ opacity: 1, y: 0 })
+  })
+})
+
+it('fades the finale body in without moving it', () => {
+  stubReducedMotion(false)
+  render(<App />)
+
+  const [fade] = revealTargets('fade')
+  setProgress(fade, 0)
+  expect(placeOf(fade)).toEqual({ opacity: 0, y: 0 })
+
+  setProgress(fade, 1)
+  expect(placeOf(fade)).toEqual({ opacity: 1, y: 0 })
+})
+
+it('fades the greeting in without moving it', () => {
+  stubReducedMotion(false)
+  render(<App />)
+
+  const greeting = screen.getByRole('heading', { level: 1 })
+  expect(placeOf(greeting)).toEqual({ opacity: 0, y: 0 })
+
+  setProgress(greeting, 1)
+  expect(placeOf(greeting)).toEqual({ opacity: 1, y: 0 })
+})
+
+it('is still fading the greeting in one second after the page loads', () => {
+  stubReducedMotion(false)
+  render(<App />)
+
+  const greeting = screen.getByRole('heading', { level: 1 })
+  gsap.getTweensOf(greeting)[0].parent!.time(1)
+
+  const { opacity, y } = placeOf(greeting)
+  expect(opacity).toBeGreaterThan(0)
+  expect(opacity).toBeLessThan(1)
+  expect(y).toBe(0)
+})
+
+it('sets no inline style on any heading or the finale body with reduced motion', () => {
+  stubReducedMotion(true)
+  render(<App />)
+
+  const targets = [...revealTargets('heading'), ...revealTargets('fade')]
+  expect(targets.length).toBeGreaterThan(0)
+  targets.forEach((target) => expect(target.getAttribute('style')).toBeNull())
+})
+
+const ornaments = (layer: string) => [
+  ...document.querySelectorAll<HTMLElement>(`[data-ornament-layer="${layer}"]`),
+]
+
+const driftOf = (piece: HTMLElement) => {
+  setProgress(piece, 0)
+  const from = placeOf(piece).y
+  setProgress(piece, 1)
+  return placeOf(piece).y - from
+}
+
+it('drifts every ornament vertically with the scroll, dust faster than blossoms and blossoms faster than stems', () => {
+  stubReducedMotion(false)
+  render(<App />)
+
+  const [stem] = ornaments('stem')
+  const [blossom] = ornaments('blossom')
+  const [dust] = ornaments('dust')
+  expect(Math.abs(driftOf(stem))).toBeGreaterThan(0)
+  expect(Math.abs(driftOf(blossom))).toBeGreaterThan(Math.abs(driftOf(stem)))
+  expect(Math.abs(driftOf(dust))).toBeGreaterThan(Math.abs(driftOf(blossom)))
+})
+
+it('drifts the pinned scene ornaments over the whole showcase, not just their pinned box', () => {
+  stubReducedMotion(false)
+  const showcaseHeight = 2160
+  const pinnedHeight = 720
+  vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(
+    function (this: Element) {
+      const height = this.hasAttribute('data-showcase')
+        ? showcaseHeight
+        : this.classList.contains('sticky')
+          ? pinnedHeight
+          : 0
+      return new DOMRect(0, 1000, 1000, height)
+    },
+  )
+  function Scene() {
+    const root = useRef<HTMLElement>(null)
+    useChoreography(root, 'scene')
+    return (
+      <main ref={root}>
+        <header data-opening>
+          <h1>Hello</h1>
+          <TypedIntro text="A sentence. Another sentence." />
+        </header>
+        <Showcase mode="scene" onSceneError={() => {}} />
+      </main>
+    )
+  }
+  render(<Scene />)
+
+  const [piece] = ornaments('dust')
+  const drift = gsap.getTweensOf(piece)[0].scrollTrigger!
+  ScrollTrigger.refresh()
+  expect(drift.end - drift.start).toBeGreaterThanOrEqual(showcaseHeight)
+})
+
+it('leaves every ornament still with reduced motion', () => {
+  stubReducedMotion(true)
+  render(<App />)
+
+  const pieces = document.querySelectorAll<HTMLElement>('[data-ornament]')
+  expect(pieces.length).toBeGreaterThan(0)
+  pieces.forEach((piece) => expect(piece.getAttribute('style')).toBeNull())
+})
 
 it('sets no inline opacity or transform on the cards with reduced motion', () => {
   stubReducedMotion(true)
@@ -185,78 +326,37 @@ it('sets no inline opacity or transform on the cards with reduced motion', () =>
   expect(inlineTransforms()).toEqual([])
 })
 
-it('slides the cards in from alternating sides by their global index and fades them in', () => {
-  stubReducedMotion(false)
+const setCardsProgress = (progress: number) =>
+  ScrollTrigger.getAll()
+    .filter((trigger) =>
+      (trigger.trigger as Element).hasAttribute('data-cards'),
+    )
+    .forEach((trigger) => trigger.animation!.progress(progress))
 
+const cardPlace = (card: HTMLElement) => ({
+  opacity: Number(card.style.opacity),
+  x: Number(gsap.getProperty(card, 'x')),
+})
+
+it('slides consecutive cards in from opposite sides and settles them in place', () => {
+  stubReducedMotion(false)
   render(<App />)
 
   const cards = cardSlots()
   expect(cards.length).toBeGreaterThan(2)
-  cards.forEach((card, index) => {
-    const sign = index % 2 === 0 ? -1 : 1
-    const vars = tweenVarsOf(card)
-    expect(vars).toHaveLength(2)
-    expect(vars).toContainEqual(
-      expect.objectContaining({ opacity: 0, ease: 'none' }),
-    )
-    expect(vars).toContainEqual(
-      expect.objectContaining({ x: sign * 100, ease: 'back.inOut(3)' }),
-    )
-    vars.forEach((tween) => expect(tween).not.toHaveProperty('y'))
+
+  setCardsProgress(0)
+  const before = cards.map(cardPlace)
+  before.forEach((place) => expect(place.opacity).toBe(0))
+  before.forEach((place, index) => {
+    expect(place.x).not.toBe(0)
+    if (index > 0) {
+      expect(Math.sign(place.x)).toBe(-Math.sign(before[index - 1].x))
+    }
   })
-})
 
-it('keeps the fade-and-rise for the headings and the finale', () => {
-  stubReducedMotion(false)
-
-  render(<App />)
-
-  const others = [
-    ...document.querySelectorAll<HTMLElement>(
-      '[data-reveal]:not([data-reveal="card"])',
-    ),
-  ]
-  expect(others.length).toBeGreaterThan(0)
-  others.forEach((element) =>
-    expect(tweenVarsOf(element)).toEqual([
-      expect.objectContaining({ opacity: 0, y: 40, ease: 'none' }),
-    ]),
-  )
-})
-
-it('reveals all cards with one scrubbed timeline on the board', () => {
-  stubReducedMotion(false)
-
-  render(<App />)
-
-  const board = document.querySelector('[data-board]')
-  const boardTriggers = ScrollTrigger.getAll().filter(
-    (trigger) => trigger.trigger === board,
-  )
-  expect(boardTriggers).toHaveLength(1)
-  expect(boardTriggers[0].vars).toMatchObject({
-    start: 'top bottom',
-    end: 'clamp(top 40%)',
-    scrub: 0.5,
-  })
-  const cardTriggers = ScrollTrigger.getAll().filter((trigger) =>
-    cardSlots().includes(trigger.trigger as HTMLElement),
-  )
-  expect(cardTriggers).toEqual([])
-})
-
-it('staggers the cards by 0.15 per global index in that timeline', () => {
-  stubReducedMotion(false)
-
-  render(<App />)
-
-  cardSlots().forEach((card, index) => {
-    const tweens = gsap.getTweensOf(card)
-    expect(tweens).toHaveLength(2)
-    tweens.forEach((tween) =>
-      expect(tween.startTime()).toBeCloseTo(index * 0.15, 5),
-    )
-  })
+  setCardsProgress(1)
+  cards.forEach((card) => expect(cardPlace(card)).toEqual({ opacity: 1, x: 0 }))
 })
 
 it('restores the final state when reduced motion is switched on live', () => {

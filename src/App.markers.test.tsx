@@ -21,20 +21,59 @@ vi.mock('./families', () => ({
   ],
 }))
 
-const reveals = () => [...document.querySelectorAll('[data-reveal]')]
+const revealing = (kind: string) => [
+  ...document.querySelectorAll(`[data-reveal="${kind}"]`),
+]
 
-it('marks each family heading, each message card and the finale for reveal', () => {
+it('marks every heading below the opening for the heading reveal', () => {
   render(<App />)
 
-  const headings = screen.getAllByRole('heading', { name: 'Family Twin' })
-  const messages = screen.getAllByRole('figure')
-  const finale = screen.getByRole('region', { name: "Here's to you, Sara!" })
-  expect(headings).toHaveLength(2)
-  expect(messages).toHaveLength(3)
-  expect(reveals()).toHaveLength(headings.length + messages.length + 1)
-  for (const target of [...headings, ...messages, finale]) {
-    expect(target.closest('[data-reveal]')).not.toBeNull()
+  const wishes = screen.getByRole('heading', { name: 'Birthday wishes' })
+  const families = screen.getAllByRole('heading', { name: 'Family Twin' })
+  const finale = screen.getByRole('heading', { name: "Here's to you, Sara!" })
+  const overline = screen.getByText('From your family')
+  expect(revealing('heading')).toHaveLength(families.length + 2)
+  for (const target of [wishes, overline, ...families, finale]) {
+    expect(target.closest('[data-reveal="heading"]')).not.toBeNull()
   }
+  expect(overline.closest('[data-reveal]')).toBe(
+    wishes.closest('[data-reveal]'),
+  )
+})
+
+it('marks each message card for the card reveal', () => {
+  render(<App />)
+
+  const messages = screen.getAllByRole('figure')
+  expect(revealing('card')).toHaveLength(messages.length)
+  for (const message of messages) {
+    expect(message.parentElement).toHaveAttribute('data-reveal', 'card')
+  }
+})
+
+it('marks the finale message, signature and cake for the fade after its heading', () => {
+  render(<App />)
+
+  const finale = screen.getByRole('region', { name: "Here's to you, Sara!" })
+  const fade = finale.querySelector('[data-reveal="fade"]')!
+  expect(revealing('fade')).toEqual([fade])
+  expect(fade).toHaveTextContent(/Eighteen years of you/)
+  expect(fade).toHaveTextContent(/With love, your family/)
+  expect(fade).toContainElement(screen.getByRole('button'))
+  expect(fade).not.toContainElement(
+    screen.getByRole('heading', { name: "Here's to you, Sara!" }),
+  )
+  expect(finale).toHaveAttribute('data-finale')
+  expect(finale).not.toHaveAttribute('data-reveal')
+})
+
+it("marks each family's card row as the trigger of its cards", () => {
+  render(<App />)
+
+  const rows = [...document.querySelectorAll('[data-cards]')]
+  expect(rows.map((row) => row.querySelectorAll('figure').length)).toEqual([
+    1, 2,
+  ])
 })
 
 it('marks the opening and the intro', () => {

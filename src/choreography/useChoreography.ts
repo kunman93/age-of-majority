@@ -2,19 +2,22 @@ import { useEffect, type RefObject } from 'react'
 import type { SceneMode } from '../background/useSceneMode'
 import { addTypewriter } from './typewriter'
 import { gsap, ScrollTrigger, useGSAP } from '../gsap'
+import {
+  CARD,
+  CARD_REVEAL_END,
+  GREETING_EASE,
+  GREETING_FADE,
+  HEADING,
+  LINEAR,
+  ORNAMENT_DRIFT,
+  OPENING_FADE_SCRUB,
+  scrubbedReveal,
+} from './motion'
 
 const NO_REDUCED_MOTION = '(prefers-reduced-motion: no-preference)'
 
 const targets = (scope: HTMLElement, selector: string) =>
   gsap.utils.toArray<HTMLElement>(selector, scope)
-
-// finished before the element's top reaches the middle of the viewport
-const scrubbedReveal = (trigger: HTMLElement) => ({
-  trigger,
-  start: 'top bottom',
-  end: 'clamp(top 60%)',
-  scrub: 0.5,
-})
 
 export function useChoreography(
   scope: RefObject<HTMLElement | null>,
@@ -28,54 +31,88 @@ export function useChoreography(
 
       matchMedia.add(NO_REDUCED_MOTION, () => {
         const load = gsap.timeline()
-        load.from(targets(root, 'h1'), { opacity: 0, duration: 0.8 })
+        load.from(targets(root, 'h1'), {
+          opacity: 0,
+          duration: GREETING_FADE,
+          ease: GREETING_EASE,
+        })
         const [intro] = targets(root, '[data-intro]')
         const opening = targets(root, '[data-opening]')
         const { restore: restoreIntro } = addTypewriter(load, intro, opening[0])
         gsap.to(opening, {
           opacity: 0,
-          ease: 'none',
+          ease: LINEAR,
           scrollTrigger: {
             trigger: opening[0],
             start: 'top top',
             end: 'bottom top',
-            scrub: 0.5,
+            scrub: OPENING_FADE_SCRUB,
           },
         })
 
         // from, not to: the markup is the final state
-        targets(root, '[data-reveal]:not([data-reveal="card"])').forEach(
-          (target) =>
-            gsap.from(target, {
-              opacity: 0,
-              y: 40,
-              ease: 'none',
-              scrollTrigger: scrubbedReveal(target),
-            }),
+        targets(root, '[data-reveal="heading"]').forEach((heading) =>
+          gsap.from(heading, {
+            opacity: 0,
+            ...HEADING,
+            scrollTrigger: scrubbedReveal(heading),
+          }),
+        )
+        // below the finale heading, so it follows the heading's drop
+        targets(root, '[data-reveal="fade"]').forEach((fade) =>
+          gsap.from(fade, {
+            opacity: 0,
+            ease: LINEAR,
+            scrollTrigger: scrubbedReveal(fade),
+          }),
         )
 
-        // one timeline on the board, so the lower cards are in place by the
-        // time the visitor reaches them. Opacity stays linear in its own tween
-        // so the overshoot of the slide never flickers the text
-        const [board] = targets(root, '[data-board]')
-        const wishes = gsap.timeline({
-          scrollTrigger: {
-            trigger: board,
-            start: 'top bottom',
-            end: 'clamp(top 40%)',
-            scrub: 0.5,
-          },
+        // one timeline per family, so its cards come after its heading.
+        // Opacity stays linear in its own tween so the overshoot of the slide
+        // never flickers the text
+        const cards = targets(root, '[data-reveal="card"]')
+        targets(root, '[data-cards]').forEach((row) => {
+          const wishes = gsap.timeline({
+            scrollTrigger: scrubbedReveal(row, CARD_REVEAL_END),
+          })
+          targets(row, '[data-reveal="card"]').forEach((card, position) => {
+            const side = cards.indexOf(card) % 2 === 0 ? -1 : 1
+            const start = position * CARD.stagger
+            const { duration } = CARD
+            wishes
+              .from(card, { opacity: 0, ease: LINEAR, duration }, start)
+              .from(
+                card,
+                { x: side * CARD.x, ease: CARD.ease, duration },
+                start,
+              )
+          })
         })
-        targets(root, '[data-reveal="card"]').forEach((card, index) => {
-          const side = index % 2 === 0 ? -1 : 1
-          const position = index * 0.15
-          wishes
-            .from(card, { opacity: 0, ease: 'none', duration: 1 }, position)
-            .from(
-              card,
-              { x: side * 100, ease: 'back.inOut(3)', duration: 1 },
-              position,
-            )
+
+        // the drift is centered, so the ornaments rest where they are drawn
+        // halfway through their container's scroll
+        targets(root, '[data-ornament]').forEach((piece) => {
+          const layer = piece.dataset
+            .ornamentLayer as keyof typeof ORNAMENT_DRIFT
+          const half = ORNAMENT_DRIFT[layer] / 2
+          gsap.fromTo(
+            piece,
+            { y: -half },
+            {
+              y: half,
+              ease: LINEAR,
+              scrollTrigger: {
+                // the scene's ornaments sit in a pinned box, whose own
+                // position stops moving; the showcase is the range that scrolls
+                trigger:
+                  piece.closest('[data-showcase]') ??
+                  piece.closest('[data-ornaments]')!.parentElement,
+                start: 'top bottom',
+                end: 'bottom top',
+                scrub: true,
+              },
+            },
+          )
         })
 
         return restoreIntro

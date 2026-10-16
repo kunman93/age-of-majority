@@ -61,12 +61,40 @@ Feature: Content choreography
     When I scroll back to the top
     Then the greeting and the full intro are fully visible
 
+  Scenario: Visitor sees the greeting fade in slowly
+    When I open the home page
+    Then shortly after load the greeting is not fully opaque yet and is in its final position
+    And the greeting does not become fully opaque within 2 seconds of the page starting to load
+
+  Scenario Outline: Visitor sees every scrolled heading drop in from above
+    When I open the home page
+    And I scroll until the "<heading>" heading just enters the viewport
+    Then the "<heading>" heading is above its final position and not fully opaque
+
+    Examples:
+      | heading            |
+      | Birthday wishes    |
+      | Family Ipsum       |
+      | Here's to you, Sara! |
+
+  Scenario: Heading entrance does not shift the content
+    When I open the home page
+    And I scroll until the "Family Ipsum" heading just enters the viewport
+    Then the "Family Ipsum" message cards are at the same place in the page as when the heading has settled
+
+  Scenario: Visitor scrolls the birthday wishes heading into view
+    When I open the home page
+    And I scroll until the "Birthday wishes" heading just enters the viewport
+    Then the "Birthday wishes" heading is not fully visible
+    When I scroll until the "Birthday wishes" heading is in the upper half of the viewport
+    Then the "Birthday wishes" heading becomes fully visible and settles in its final position
+
   Scenario: Visitor scrolls a family into view
     When I open the home page
     And I scroll until the top of the "Family Ipsum" section just enters the viewport from below
     Then the "Family Ipsum" heading is not fully visible
     When I scroll until the "Family Ipsum" heading is in the upper half of the viewport
-    Then the "Family Ipsum" heading is fully visible and in its final position
+    Then the "Family Ipsum" heading becomes fully visible and settles in its final position
 
   Scenario: Visitor hovers a message card
     When I open the home page
@@ -84,28 +112,33 @@ Feature: Content choreography
     And I move the pointer over the card
     Then the card keeps its original tilt
 
-  Scenario: Visitor scrolls the wishes into view
+  Scenario: Visitor scrolls a family's cards into view
     When I open the home page
-    And I scroll until the top of the board just enters the viewport from below
-    Then consecutive message cards are shifted sideways from their places, in opposite directions
-    And no message card is fully visible
-    When I scroll until the top of the board is in the upper half of the viewport
-    Then every message card is fully visible and in its final position, including the last one
+    And I scroll until the top of the "Family Ipsum" cards just enter the viewport from below
+    Then consecutive "Family Ipsum" message cards are shifted sideways from their places, in opposite directions
+    And no "Family Ipsum" message card is fully visible
+    When I scroll until the "Family Ipsum" cards are in the upper half of the viewport
+    Then every "Family Ipsum" message card becomes fully visible and settles in its final position
     And the page does not scroll horizontally
 
-  Scenario: Visitor scrolls back above the board
+  Scenario: Cards wait for their family heading
     When I open the home page
-    And I scroll until the top of the board is in the upper half of the viewport
-    Then every message card is fully visible and in its final position, including the last one
-    When I scroll until the top of the board is just above the bottom of the viewport
-    Then no message card is fully visible
+    And I scroll until the "Family Dolor" heading is near the bottom of the viewport
+    Then once the reveals have settled, no "Family Dolor" message card is fully visible while its heading is not
+
+  Scenario: Visitor scrolls back above a family's cards
+    When I open the home page
+    And I scroll until the "Family Ipsum" cards are in the upper half of the viewport
+    Then every "Family Ipsum" message card becomes fully visible and settles in its final position
+    When I scroll until the top of the "Family Ipsum" section is just above the bottom of the viewport
+    Then no "Family Ipsum" message card is fully visible
 
   Scenario: Visitor scrolls back up past a family
     When I open the home page
     And I scroll until the "Family Ipsum" heading is in the upper half of the viewport
-    Then the "Family Ipsum" heading is fully visible and in its final position
+    Then the "Family Ipsum" heading becomes fully visible and settles in its final position
     When I scroll until the top of the "Family Ipsum" section is just above the bottom of the viewport
-    Then the "Family Ipsum" heading is not fully visible
+    Then the "Family Ipsum" heading becomes not fully visible again
 
   # Skipped: flaky, see #49
   @skip

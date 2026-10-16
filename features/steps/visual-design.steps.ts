@@ -157,7 +157,9 @@ Then('the page does not scroll horizontally', async ({ page }) => {
 
 Then('all content fits within the window width', async ({ page }) => {
   const edges = await page
-    .locator('main, main *:not([data-cake-halo])')
+    .locator(
+      'main, main *:not([data-cake-halo], [data-ornaments], [data-ornaments] *)',
+    )
     .evaluateAll((elements) =>
       elements.map((element) => {
         const { left, right } = element.getBoundingClientRect()
@@ -175,7 +177,7 @@ Then(
   'the content column is centered and no wider than 720px',
   async ({ page }) => {
     const columns = await page
-      .locator('main > header, main > [data-showcase], main > [data-reveal]')
+      .locator('main > header, main > [data-showcase], main > [data-finale]')
       .evaluateAll((elements) =>
         elements.map((column) => {
           const box = column.getBoundingClientRect()

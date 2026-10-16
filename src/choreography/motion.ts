@@ -1,0 +1,41 @@
+export const LINEAR = 'none'
+
+export const GREETING_FADE = 2.5
+
+// the greeting is exempt from the heading entrance, so it has its own ease
+export const GREETING_EASE = 'power2.inOut'
+
+export const HEADING = Object.freeze({ y: -100, ease: 'power2.inOut' })
+
+export const CARD = Object.freeze({
+  x: 100,
+  ease: 'back.inOut(3)',
+  duration: 1,
+  stagger: 0.15,
+})
+
+// seconds a reveal lags behind the scroll position
+export const SCRUB = 4
+
+// pixels an ornament travels over the scroll past its container
+export const ORNAMENT_DRIFT = Object.freeze({
+  stem: 40,
+  blossom: 90,
+  dust: 160,
+})
+
+export const OPENING_FADE_SCRUB = 0.5
+
+const REVEAL_END = 'clamp(top 60%)'
+export const CARD_REVEAL_END = 'clamp(top 50%)'
+
+// finished before the element's top reaches the chosen height of the viewport
+export const scrubbedReveal = (
+  trigger: HTMLElement,
+  end: string = REVEAL_END,
+) => ({
+  trigger,
+  start: 'top bottom',
+  end,
+  scrub: SCRUB,
+})
