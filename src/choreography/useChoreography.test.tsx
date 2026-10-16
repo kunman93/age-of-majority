@@ -1,14 +1,18 @@
 import { act, render, renderHook, screen } from '@testing-library/react'
+import { useRef } from 'react'
 import { afterEach, expect, it, vi } from 'vitest'
 import App from '../App'
 import { gsap, ScrollTrigger } from '../gsap'
 import type { SceneMode } from '../background/useSceneMode'
+import Showcase from '../story/Showcase'
 import TypedIntro from './TypedIntro'
 import { useChoreography } from './useChoreography'
 
 vi.mock('../background/useSceneMode', () => ({
   useSceneMode: () => ({ mode: 'static', fallBackToStatic: () => {} }),
 }))
+
+vi.mock('../background/StoryCanvas', () => ({ default: () => null }))
 
 vi.mock('../background/Background', () => ({ default: () => null }))
 
@@ -264,15 +268,39 @@ it('drifts every ornament vertically with the scroll, dust faster than blossoms 
   expect(Math.abs(driftOf(dust))).toBeGreaterThan(Math.abs(driftOf(blossom)))
 })
 
-it('drifts the showcase ornaments too', () => {
+it('drifts the pinned scene ornaments over the whole showcase, not just their pinned box', () => {
   stubReducedMotion(false)
-  render(<App />)
-
-  const pieces = document.querySelectorAll<HTMLElement>(
-    '[data-showcase] [data-ornament]',
+  const showcaseHeight = 2160
+  const pinnedHeight = 720
+  vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(
+    function (this: Element) {
+      const height = this.hasAttribute('data-showcase')
+        ? showcaseHeight
+        : this.classList.contains('sticky')
+          ? pinnedHeight
+          : 0
+      return new DOMRect(0, 1000, 1000, height)
+    },
   )
-  expect(pieces.length).toBeGreaterThan(0)
-  pieces.forEach((piece) => expect(Math.abs(driftOf(piece))).toBeGreaterThan(0))
+  function Scene() {
+    const root = useRef<HTMLElement>(null)
+    useChoreography(root, 'scene')
+    return (
+      <main ref={root}>
+        <header data-opening>
+          <h1>Hello</h1>
+          <TypedIntro text="A sentence. Another sentence." />
+        </header>
+        <Showcase mode="scene" onSceneError={() => {}} />
+      </main>
+    )
+  }
+  render(<Scene />)
+
+  const [piece] = ornaments('dust')
+  const drift = gsap.getTweensOf(piece)[0].scrollTrigger!
+  ScrollTrigger.refresh()
+  expect(drift.end - drift.start).toBeGreaterThanOrEqual(showcaseHeight)
 })
 
 it('leaves every ornament still with reduced motion', () => {
