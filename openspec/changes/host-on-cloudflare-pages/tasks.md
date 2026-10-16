@@ -17,7 +17,7 @@ There is no UI work in this change, so the main session does every task. Every c
 
 ## 2. Keeping the link private
 
-- [ ] 2.1 Add the robots (`noindex, nofollow`) and referrer (`no-referrer`) meta tags to `index.html` (design.md
+- [x] 2.1 Add the robots (`noindex, nofollow`) and referrer (`no-referrer`) meta tags to `index.html` (design.md
   decision 4), with a BDD scenario in a new `features/deployment.feature` that checks the page tells search engines not
   to index or follow it and sets the no-referrer policy. Verify the scenario passes with `--repeat-each=10` and fails
   when either tag is removed
