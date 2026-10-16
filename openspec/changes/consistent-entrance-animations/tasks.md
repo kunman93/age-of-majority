@@ -17,7 +17,7 @@ BDD steps and feature files, reviews and commits. Every task is test-first.
   Replace the old fade-and-rise unit tests with behavior tests: at progress 0 a heading is above its
   place and transparent, at progress 1 it is in place and opaque, and with reduced motion no target has inline styles.
   Verify `npm test` passes and each new test fails when the drop direction is flipped
-- [ ] 1.4 Update the BDD support for the catch-up: raise `SETTLE_TIMEOUT_MS` to a named 10000, check the typing
+- [x] 1.4 Update the BDD support for the catch-up: raise `SETTLE_TIMEOUT_MS` to a named 10000, check the typing
   steps' timeouts cover the 2.5 s greeting fade, and adjust step wording to the modified scenarios
   ("becomes fully visible and settles", "becomes not fully visible again"). Add the scenarios "Visitor sees the
   greeting fade in slowly", "Visitor sees every scrolled heading drop in from above", "Visitor scrolls the birthday wishes
@@ -30,7 +30,7 @@ BDD steps and feature files, reviews and commits. Every task is test-first.
   per row, using `CARD` and the shared range, alternating sides by global index (design.md decision 4). Replace the
   "one board timeline" and stagger-number unit tests with a behavior test: at progress 0 consecutive cards are offset
   in opposite directions and transparent, at progress 1 all are in place. Verify `npm test` passes
-- [ ] 2.2 Replace the board scenarios with "Visitor scrolls a family's cards into view", "Cards wait for their family
+- [x] 2.2 Replace the board scenarios with "Visitor scrolls a family's cards into view", "Cards wait for their family
   heading" and "Visitor scrolls back above a family's cards" and their steps. Verify they pass with
   `--repeat-each=10`, and that "Cards wait for their family heading" fails on the old board-wide timeline
 
@@ -46,12 +46,12 @@ BDD steps and feature files, reviews and commits. Every task is test-first.
   844 and 1920 by 1080
 - [x] 3.3 Add the ornament drift per layer to `useChoreography` under the reduced-motion guard, using `ORNAMENT_DRIFT`. Verify
   with a unit test that ornaments have no inline transform with reduced motion
-- [ ] 3.4 Add `features/ornaments.feature` with the `ornaments` spec scenarios and their steps. Verify they pass with
+- [x] 3.4 Add `features/ornaments.feature` with the `ornaments` spec scenarios and their steps. Verify they pass with
   `--repeat-each=10`, and that the overlap scenario fails when an ornament is moved onto the greeting
 
 ## 4. Integration
 
-- [ ] 4.1 Run `npm run build`, `npm test`, `npm run test:bdd`, `npm run lint` and `npm run format:check`, and verify all
+- [x] 4.1 Run `npm run build`, `npm test`, `npm run test:bdd`, `npm run lint` and `npm run format:check`, and verify all
   pass, with no new `@skip`
 - [ ] 4.2 Check by hand at phone and desktop sizes, with and without reduced motion, that nothing flickers or jumps
   while elements animate in, and record the audit table from design.md for the PR description
