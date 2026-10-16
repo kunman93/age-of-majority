@@ -264,6 +264,17 @@ it('drifts every ornament vertically with the scroll, dust faster than blossoms 
   expect(Math.abs(driftOf(dust))).toBeGreaterThan(Math.abs(driftOf(blossom)))
 })
 
+it('drifts the showcase ornaments too', () => {
+  stubReducedMotion(false)
+  render(<App />)
+
+  const pieces = document.querySelectorAll<HTMLElement>(
+    '[data-showcase] [data-ornament]',
+  )
+  expect(pieces.length).toBeGreaterThan(0)
+  pieces.forEach((piece) => expect(Math.abs(driftOf(piece))).toBeGreaterThan(0))
+})
+
 it('leaves every ornament still with reduced motion', () => {
   stubReducedMotion(true)
   render(<App />)
