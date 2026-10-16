@@ -4,14 +4,14 @@ There is no UI work in this change, so the main session does every task. Every c
 
 ## 1. Local wishes in production builds
 
-- [ ] 1.1 Add `src/families.local.ts` to `.gitignore` (design.md decision 2). Verify `git check-ignore -v
+- [x] 1.1 Add `src/families.local.ts` to `.gitignore` (design.md decision 2). Verify `git check-ignore -v
   src/families.local.ts .env.local` reports an ignore rule for both
-- [ ] 1.2 Add a pure function that returns the local families when the build is production and the local module exists,
+- [x] 1.2 Add a pure function that returns the local families when the build is production and the local module exists,
   and the placeholders otherwise, with unit tests for the three cases (production with local file, production without,
   not production with local file). Wire it into `src/families.ts` with `import.meta.glob('./families.local.ts',
   { eager: true })` and `import.meta.env.PROD` (design.md decision 1). Verify `npm test` passes, each new test fails
   when its condition is flipped, and the existing `families.test.ts` still passes with a local file present
-- [ ] 1.3 With a temporary `src/families.local.ts` (one made-up family): verify `npm run build && npm run preview` shows
+- [x] 1.3 With a temporary `src/families.local.ts` (one made-up family): verify `npm run build && npm run preview` shows
   it, `npm run dev` and `npm run test:bdd` still show the placeholders, `git status` does not list the file, and a
   wish with a missing `author` fails `npm run build`. Delete the temporary file afterwards
 

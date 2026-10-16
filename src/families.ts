@@ -8,7 +8,7 @@ export type Family = {
   messages: readonly Message[]
 }
 
-export const families: readonly Family[] = [
+const placeholderFamilies: readonly Family[] = [
   {
     name: 'Family Lorem',
     messages: [
@@ -45,3 +45,22 @@ export const families: readonly Family[] = [
     ],
   },
 ]
+
+export function chooseFamilies(
+  placeholders: readonly Family[],
+  wishes: readonly Family[] | undefined,
+  isProduction: boolean,
+): readonly Family[] {
+  return isProduction && wishes ? wishes : placeholders
+}
+
+const localWishes = import.meta.glob<{ families: readonly Family[] }>(
+  './families.local.ts',
+  { eager: true },
+)['./families.local.ts']
+
+export const families = chooseFamilies(
+  placeholderFamilies,
+  localWishes?.families,
+  import.meta.env.PROD,
+)
