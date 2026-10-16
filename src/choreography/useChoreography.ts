@@ -102,7 +102,11 @@ export function useChoreography(
               y: half,
               ease: LINEAR,
               scrollTrigger: {
-                trigger: piece.closest('[data-ornaments]')!.parentElement,
+                // the scene's ornaments sit in a pinned box, whose own
+                // position stops moving; the showcase is the range that scrolls
+                trigger:
+                  piece.closest('[data-showcase]') ??
+                  piece.closest('[data-ornaments]')!.parentElement,
                 start: 'top bottom',
                 end: 'bottom top',
                 scrub: true,
