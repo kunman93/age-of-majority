@@ -33,7 +33,7 @@ There is no UI work in this change, so the main session does every task. Every c
 
 ## 4. Documentation
 
-- [ ] 4.1 Update the README: correct the intro (the maintainer collects the wishes, families do not post them), add
+- [x] 4.1 Update the README: correct the intro (the maintainer collects the wishes, families do not post them), add
   `npm run deploy` to the scripts table, and add a Deployment section with the hosting comparison and rationale from
   design.md, the shape of `src/families.local.ts` with an example, previewing the real wishes with `npm run build &&
   npm run preview`, a reminder to keep a private backup of the wishes file and `.env.local`, the one-time setup in this
@@ -44,7 +44,7 @@ There is no UI work in this change, so the main session does every task. Every c
 
 ## 5. Integration
 
-- [ ] 5.1 Run `npm run build`, `npm test`, `npm run test:bdd`, `npm run lint` and `npm run format:check` without a local
+- [x] 5.1 Run `npm run build`, `npm test`, `npm run test:bdd`, `npm run lint` and `npm run format:check` without a local
   wishes file or `.env.local`, and verify all pass
 
 ## Workflow follow-up
