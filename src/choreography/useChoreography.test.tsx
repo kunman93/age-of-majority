@@ -219,6 +219,19 @@ it('fades the greeting in without moving it', () => {
   expect(placeOf(greeting)).toEqual({ opacity: 1, y: 0 })
 })
 
+it('is still fading the greeting in one second after the page loads', () => {
+  stubReducedMotion(false)
+  render(<App />)
+
+  const greeting = screen.getByRole('heading', { level: 1 })
+  gsap.getTweensOf(greeting)[0].parent!.time(1)
+
+  const { opacity, y } = placeOf(greeting)
+  expect(opacity).toBeGreaterThan(0)
+  expect(opacity).toBeLessThan(1)
+  expect(y).toBe(0)
+})
+
 it('sets no inline style on any heading or the finale body with reduced motion', () => {
   stubReducedMotion(true)
   render(<App />)
