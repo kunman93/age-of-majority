@@ -24,9 +24,9 @@ There is no UI work in this change, so the main session does every task. Every c
 
 ## 3. Deploy command
 
-- [ ] 3.1 Add Wrangler as a dev dependency with `npm install --save-dev wrangler`. Verify `npx wrangler --version`
+- [x] 3.1 Add Wrangler as a dev dependency with `npm install --save-dev wrangler`. Verify `npx wrangler --version`
   prints the pinned version and `npm ci` succeeds
-- [ ] 3.2 Add `scripts/deploy.mjs` and the `deploy` script `node --env-file-if-exists=.env.local scripts/deploy.mjs`
+- [x] 3.2 Add `scripts/deploy.mjs` and the `deploy` script `node --env-file-if-exists=.env.local scripts/deploy.mjs`
   (design.md decision 5). Verify: without `src/families.local.ts`, `npm run deploy` exits non-zero naming the file,
   before building; with the file but without `CLOUDFLARE_PAGES_PROJECT`, it exits non-zero naming the variable and
   `.env.local`, before building; and `npm run lint` and `npm run format:check` cover the new script
