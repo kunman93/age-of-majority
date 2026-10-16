@@ -24,8 +24,8 @@ There is no UI work in this change, so the main session does every task. Every c
 
 ## 3. Deploy command
 
-- [x] 3.1 Add Wrangler as a dev dependency with `npm install --save-dev wrangler`. Verify `npx wrangler --version`
-  prints the pinned version and `npm ci` succeeds
+- [x] 3.1 Run Wrangler with `npx` at an exact version from the deploy script instead of adding a dev dependency
+  (design.md decision 5). Verify `package.json` has no `wrangler` dependency and `npm ci` succeeds
 - [x] 3.2 Add `scripts/deploy.mjs` and the `deploy` script `node --env-file-if-exists=.env.local scripts/deploy.mjs`
   (design.md decision 5). Verify: without `src/families.local.ts`, `npm run deploy` exits non-zero naming the file,
   before building; with the file but without `CLOUDFLARE_PAGES_PROJECT`, it exits non-zero naming the variable and
@@ -37,8 +37,8 @@ There is no UI work in this change, so the main session does every task. Every c
   `npm run deploy` to the scripts table, and add a Deployment section with the hosting comparison and rationale from
   design.md, the shape of `src/families.local.ts` with an example, previewing the real wishes with `npm run build &&
   npm run preview`, a reminder to keep a private backup of the wishes file and `.env.local`, the one-time setup in this
-  order (`npx wrangler login`, generate the project name, write `CLOUDFLARE_PAGES_PROJECT` to `.env.local`,
-  `npx wrangler pages project create <name> --production-branch main`), then `npm run deploy`, how to revoke a
+  order (`npx wrangler@4.151.1 login`, generate the project name, write `CLOUDFLARE_PAGES_PROJECT` to `.env.local`,
+  `npx wrangler@4.151.1 pages project create <name> --production-branch main`), then `npm run deploy`, how to revoke a
   leaked link, and a short ready-to-send message for the birthday child with the link. Verify every documented command,
   variable and file name matches `package.json` and the code
 

@@ -68,20 +68,20 @@ export const families: readonly Family[] = [
 ]
 ```
 
-Only production builds show these wishes. The dev server and all tests always show the placeholders. Preview them with `npm run build && npm run preview`. A mistake in the file, such as a missing `author`, fails the build.
+Only production builds show these wishes. The dev server and all tests always show the placeholders. Preview them with `npm run build && npm run preview`. `npm run deploy` checks the file first and stops with a message for a mistake such as a missing `author`, an empty list or a leftover Lorem ipsum text.
 
 Keep a private backup of `src/families.local.ts` and `.env.local`, because neither is in git.
 
 ### One-time setup
 
-1. Create a free Cloudflare account and run `npx wrangler login`.
+1. Create a free Cloudflare account and run `npx wrangler@4.151.1 login`.
 2. Generate the project name: `node -e "console.log('age-of-majority-' + require('crypto').randomBytes(16).toString('hex'))"`.
 3. Put it in `.env.local`: `CLOUDFLARE_PAGES_PROJECT=<the generated name>`.
-4. Create the project: `npx wrangler pages project create <the generated name> --production-branch main`.
+4. Create the project: `npx wrangler@4.151.1 pages project create <the generated name> --production-branch main`.
 
 ### Deploying
 
-Run `npm run deploy`. It stops without building when `src/families.local.ts` or `CLOUDFLARE_PAGES_PROJECT` is missing, then builds and uploads the card. The link is `https://<the generated name>.pages.dev`.
+Run `npm run deploy`. It stops without building when `src/families.local.ts` is missing or invalid, or when `CLOUDFLARE_PAGES_PROJECT` is missing or not `age-of-majority-` followed by 32 hexadecimal characters. Otherwise it builds the card, stops if the build does not contain every family name from your file, and uploads it. The link is `https://<the generated name>.pages.dev`.
 
 Send the birthday child a message like this, with the link:
 

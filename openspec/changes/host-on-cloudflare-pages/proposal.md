@@ -16,8 +16,9 @@ must not be findable by anyone who does not have its link.
 - The page tells search engines not to index it and sends no referrer to other sites, so the link does not leak.
 - Real wishes live in a git-ignored local file that the maintainer fills with the wishes the families send. The
   production build shows them; the dev server and all tests keep showing the Lorem ipsum placeholders.
-- Add an `npm run deploy` command that refuses to deploy without the local wishes file or the project name, builds the
-  app and uploads it to Cloudflare Pages with Wrangler (new dev dependency).
+- Add an `npm run deploy` command that refuses to deploy without a valid local wishes file or a project name in the
+  secret format, builds the app and uploads it to Cloudflare Pages with a version-pinned Wrangler (run with `npx`, no
+  new dependency).
 - No backend: families send their wishes to the maintainer instead of posting them themselves. The backend story (#3)
   is not needed for now.
 - No deploy from CI or Cloudflare's Git integration: they build from the repository, which does not contain the real
@@ -42,8 +43,7 @@ considered and rejected as too much friction for a gift; revoking a leaked link 
 ## Impact
 
 - Code: `src/families.ts` (pick local wishes in production builds), new git-ignored `src/families.local.ts` (not
-  committed), `index.html` (robots and referrer meta tags), `scripts/deploy.mjs`, `package.json` (`deploy` script,
-  `wrangler` dev dependency), README.
+  committed), `index.html` (robots and referrer meta tags), `scripts/deploy.mjs`, `package.json` (`deploy` script), README.
 - Systems: a Cloudflare account and a Pages project, set up by the maintainer outside the repository.
 - CI: unchanged.
 - Issue #3 (backend) can be closed as not needed for now; the maintainer decides on GitHub.

@@ -5,7 +5,8 @@
 ### Requirement: Messages are Lorem ipsum placeholders stored in the repo
 The repository SHALL store only Lorem ipsum placeholder families and messages. The production build SHALL show the
 families and messages from the git-ignored local wishes file when it exists, and the placeholders otherwise. The dev
-server and all tests SHALL always show the placeholders, whether or not the local wishes file exists.
+server and all tests SHALL always show the placeholders, whether or not the local wishes file exists. Every other
+scenario of this capability that names the placeholder families describes that placeholder data.
 
 #### Scenario: Message texts are placeholders
 - **WHEN** a visitor reads any message on the dev server

@@ -16,9 +16,9 @@ it as the production deployment of the Cloudflare Pages project named in the loc
   name present
 - **THEN** the card at the secret link shows the families and wishes from the local wishes file
 
-### Requirement: Deploy refuses to publish without its inputs
+### Requirement: Deploy refuses to publish without valid inputs
 The deploy command SHALL fail before building or uploading anything when the local wishes file or the project name is
-missing, and SHALL name what is missing in its error message.
+missing or invalid, and SHALL name the problem in its error message.
 
 #### Scenario: Maintainer deploys without the local wishes file
 - **WHEN** the maintainer runs the deploy command and the local wishes file does not exist
@@ -28,6 +28,18 @@ missing, and SHALL name what is missing in its error message.
 #### Scenario: Maintainer deploys without the project name
 - **WHEN** the maintainer runs the deploy command and the project name is not set
 - **THEN** the command fails with an error that names the missing setting and the file it belongs in
+- **AND** nothing is uploaded to Cloudflare Pages
+
+#### Scenario: Maintainer deploys with a project name that is not secret
+- **WHEN** the maintainer runs the deploy command and the project name is not `age-of-majority-` followed by 32
+  hexadecimal characters
+- **THEN** the command fails with an error that names the setting
+- **AND** nothing is uploaded to Cloudflare Pages
+
+#### Scenario: Maintainer deploys with a malformed wishes file
+- **WHEN** the maintainer runs the deploy command and the local wishes file has no families, a family without a name
+  or messages, a message without an author or text, or a Lorem ipsum placeholder text
+- **THEN** the command fails with an error that says what is wrong
 - **AND** nothing is uploaded to Cloudflare Pages
 
 ### Requirement: Real wishes and the secret link stay out of the repository

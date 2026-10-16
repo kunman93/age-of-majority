@@ -25,7 +25,7 @@ but stops serving when the daily transfer cap is reached.
 **Goals:**
 
 - Dev server, unit tests, BDD tests and CI never depend on whether the local wishes file or `.env.local` exist.
-- A malformed local wishes file fails the build, not the birthday.
+- A malformed local wishes file stops the deploy, not the birthday.
 - Neither the wishes nor the secret link ever appear in the repository.
 
 **Non-Goals:**
@@ -44,8 +44,8 @@ empty object when the file is missing, and passes it to a small pure function th
 `import.meta.env.PROD` is true and the file exists, and the placeholders otherwise. Vitest and the dev server are not
 production, so all tests keep the placeholders.
 
-`tsc -b` type-checks the local file with the rest of `src`, so a wish without an author or a misspelled field fails
-`npm run build`.
+The deploy script validates the local file (decision 5), because a build does not run the app and the glob accepts any
+export shape.
 
 *Alternatives*: a JSON file read through a Vite alias or env var (no type check, more config); one `VITE_` environment
 variable holding the JSON (no type check, and awkward for about 30 wishes); a plain static `import` (fails the build when
@@ -81,18 +81,20 @@ npm run deploy
   -> node --env-file-if-exists=.env.local scripts/deploy.mjs
        1. fail with the file name when src/families.local.ts is missing
        2. fail naming CLOUDFLARE_PAGES_PROJECT and .env.local when it is not set
-       3. npm run build
-       4. wrangler pages deploy dist --project-name $CLOUDFLARE_PAGES_PROJECT --branch main
+       3. fail when it is not age-of-majority-<32 hex characters
+       4. import the wishes file and validate it with src/validateFamilies.ts (Node strips the types)
+       5. npm run build, then fail when the bundle lacks any real family name
+       6. npx wrangler@<pinned> pages deploy dist --project-name $CLOUDFLARE_PAGES_PROJECT --branch main
 ```
 
 The script spawns the commands without a shell and exits with their exit code. `--branch main` makes every deploy the
 production deployment, whatever branch is checked out. The guards live in the deploy script, not in the build, so CI's
-production build still falls back to the placeholders. Wrangler is a pinned dev dependency so that the maintainer
-always uses the version the README describes.
+production build still falls back to the placeholders. Wrangler is run with `npx` at an exact version in the script, not as a dev dependency: it pulls in about 130 MB
+(`workerd`) that every `npm ci` and CI run would download for one manual command.
 
 *Alternatives*: an inline `package.json` script with `$CLOUDFLARE_PAGES_PROJECT` (shell-specific and no readable
 error); a git-ignored `wrangler.toml` holding the name (an unusual file to ignore, and no guard for the wishes file);
-`npx wrangler` (unpinned).
+an unpinned `npx wrangler`; a Wrangler dev dependency.
 
 ## Risks / Trade-offs
 
@@ -100,14 +102,16 @@ error); a git-ignored `wrangler.toml` holding the name (an unusual file to ignor
   name, deploying to it and deleting the old project.
 - [The local wishes file or `.env.local` is lost with the laptop] → The README tells the maintainer to keep a private
   backup of both.
-- [A deploy accidentally publishes the placeholders] → The deploy refuses without the local wishes file.
+- [A deploy accidentally publishes the placeholders or broken wishes] → The deploy refuses without a valid local wishes
+  file and checks that the bundle contains every real family name. It cannot check that the production build
+  *shows* them; the README tells the maintainer to preview with `npm run preview` first.
 - [The link leaks through a referrer or a search engine] → Meta tags from decision 4.
 
 ## Migration Plan
 
 1. Merge the change (no runtime effect: without the local file, the production build still shows the placeholders).
-2. The maintainer runs `npx wrangler login`, generates the project name, writes it to `.env.local` and creates the project
-   with `npx wrangler pages project create <name> --production-branch main`, following the README.
+2. The maintainer runs `npx wrangler@4.151.1 login`, generates the project name, writes it to `.env.local` and creates the project
+   with `npx wrangler@4.151.1 pages project create <name> --production-branch main`, following the README.
 3. The maintainer writes `src/families.local.ts`, runs `npm run deploy` and sends the link to the birthday child.
 
 Rollback: delete the Pages project in the Cloudflare dashboard.
