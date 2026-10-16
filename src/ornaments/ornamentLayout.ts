@@ -33,9 +33,6 @@ export type Composition = {
   pieces: readonly Piece[]
 }
 
-export const layerOf = (piece: Piece['piece']) =>
-  piece === 'stem' ? 'stem' : piece === 'dust' ? 'dust' : 'blossom'
-
 export const ornamentLayout: Record<Placement, readonly Composition[]> = {
   opening: [
     {

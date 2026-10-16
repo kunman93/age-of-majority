@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest'
-import { layerOf, ornamentLayout, PLACEMENTS } from './ornamentLayout'
+import { ornamentLayout, PLACEMENTS } from './ornamentLayout'
 
 const compositions = PLACEMENTS.flatMap((placement) =>
   ornamentLayout[placement].map((composition) => ({
@@ -17,14 +17,6 @@ it.each(PLACEMENTS)(
     ])
   },
 )
-
-it('gives every composition stems, blossoms and dust', () => {
-  for (const { pieces } of compositions) {
-    expect(new Set(pieces.map(({ piece }) => layerOf(piece)))).toEqual(
-      new Set(['stem', 'blossom', 'dust']),
-    )
-  }
-})
 
 it('draws each of the four compositions differently, not as a mirror copy', () => {
   const drawings = compositions.map(({ pieces }) => JSON.stringify(pieces))

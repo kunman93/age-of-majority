@@ -31,6 +31,22 @@ it.each(PLACEMENTS)('renders every piece of the %s', (placement) => {
   )
 })
 
+it.each(PLACEMENTS)(
+  'gives every composition of the %s stems, blossoms and dust',
+  (placement) => {
+    const { container } = render(<Ornaments placement={placement} />)
+
+    const compositions = [...container.firstElementChild!.children]
+    expect(compositions).toHaveLength(2)
+    for (const composition of compositions) {
+      const layers = [...composition.querySelectorAll('[data-ornament]')].map(
+        (piece) => piece.getAttribute('data-ornament-layer'),
+      )
+      expect(new Set(layers)).toEqual(new Set(['stem', 'blossom', 'dust']))
+    }
+  },
+)
+
 it('shows another composition in the showcase than in the opening', () => {
   const opening = render(<Ornaments placement="opening" />)
   const showcase = render(<Ornaments placement="showcase" />)
