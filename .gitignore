@@ -14,6 +14,9 @@ dist-ssr
 .env
 .env.*
 
+# Real wishes, never commit
+src/families.local.ts
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
