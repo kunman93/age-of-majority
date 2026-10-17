@@ -48,11 +48,11 @@ function FamilySection({
               className={`bg-plum border-ember relative space-y-3 rounded-lg border-l-4 p-5 shadow-lg shadow-black/30 sm:p-6 ${TAPE} ${PIN} ${SWING} ${TILTS[(firstCardIndex + index) % TILTS.length]}`}
             >
               <blockquote>
-                <p className="text-base leading-relaxed break-words sm:text-lg">
+                <p className="text-base leading-relaxed break-words whitespace-pre-line sm:text-lg">
                   {message.text}
                 </p>
               </blockquote>
-              <figcaption className="text-blush text-base font-semibold break-words">
+              <figcaption className="text-blush text-base font-semibold break-words whitespace-pre-line">
                 {message.author}
               </figcaption>
             </figure>
