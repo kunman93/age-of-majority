@@ -3,7 +3,7 @@ Feature: Home page
   Scenario: Visitor sees the birthday greeting
     Given the visitor prefers reduced motion
     When I open the home page
-    Then I see the heading "Happy 18th Birthday, Sara!"
+    Then I see the heading "Happy Halloween"
 
   Scenario: Visitor reads the intro
     When I open the home page

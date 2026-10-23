@@ -144,7 +144,7 @@ it('keeps the glow and the card when the canvas throws', async () => {
   expect(screen.getByTestId('background-glow')).toBeInTheDocument()
   expect(screen.queryByTestId('ember-canvas')).toBeNull()
   expect(
-    screen.getByRole('heading', { name: 'Happy 18th Birthday, Sara!' }),
+    screen.getByRole('heading', { name: 'Happy Halloween' }),
   ).toBeInTheDocument()
 })
 
