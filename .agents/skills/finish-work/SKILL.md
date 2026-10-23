@@ -1,13 +1,13 @@
 ---
-name: finish-story
-description: 'Finish a Story, bug fix or chore in the AGENTS.md implementation workflow: clean up history and create the PR, wait for CI, read PR review findings, finalize history (autosquash and rebase on origin/main), archive the change (Stories only), and merge. Use when the implementation is reviewed and it is time to push, open or update the PR, archive, or merge.'
+name: finish-work
+description: 'Finish a Story, bug fix or chore after its implementation is reviewed: clean up history and create the PR, wait for CI, read PR review findings, finalize history (autosquash and rebase on origin/main), archive the OpenSpec change if the branch has one, and merge. Use when it is time to push, open or update the PR, finalize, archive, or merge.'
 ---
 
 # Finish a Story, Bug Fix or Chore
 
-Procedures for steps 8 (Create PR), 9 (Archive) and 10 (Merge) of the Story Workflow in `AGENTS.md`. The Bug Fix and Chore Workflows use Create PR and Merge, and run Finalize history without its archive sub-step before Merge. The approval gates stay in `AGENTS.md`. Every step runs on Sonnet 5.5, so run the model and agent check from step 0 first.
+Procedures for the Create PR, Archive (Stories) or Finalize (bug fixes and chores), and Merge steps of the `implement-story`, `fix-bug` and `do-chore` workflow skills. The approval gates stay in those skills. Every step runs on Sonnet 5.5, so run the model and agent check of the workflow skill in use first.
 
-## Create PR (step 8)
+## Create PR
 
 Before creating the PR, clean up the history into atomic commits:
 
@@ -32,8 +32,8 @@ atomic commit with the `git-commit` skill instead.
 
 Wait with `gh pr checks <n> --watch`. Right after a push it may report "no checks reported" before the run registers;
 wait briefly and retry, it is not a failure. If `ci` fails, get the run id from `gh run list --branch <branch> --limit 1`
-(or the link printed by `gh pr checks`), read the log with `gh run view <run-id> --log-failed`, return to workflow step 6
-(Implement) and fix it with fixup commits. Do the same after pushing fixes for review findings.
+(or the link printed by `gh pr checks`), read the log with `gh run view <run-id> --log-failed`, return to the Implement step
+of the workflow skill in use and fix it with fixup commits. Do the same after pushing fixes for review findings.
 
 ### Read review findings
 
@@ -57,12 +57,14 @@ When the user reports the PR review is done, read the findings:
     }'
   ```
 
-If there are findings, return to step 6 (Implement), fix them with fixup commits, review again (step 7), and push. Then
-tell the user and wait for their next review report. Do not archive until the user approves.
+If there are findings, return to the Implement step of the workflow skill in use, fix them with fixup commits, run its
+Review step again, and push. Then
+tell the user and wait for their next review report. Do not finalize or archive until the user approves.
 
 ## Finalize history
 
-Squashes the fixups and rebases the branch on `origin/main`. Archive runs it with sub-step 4; Merge, and the pre-merge finalize of bug fixes and chores, run it without sub-step 4.
+Squashes the fixups and rebases the branch on `origin/main`. Sub-step 4 archives only if the branch has an unarchived
+OpenSpec change, so Stories archive here, while bug fixes, chores and any repeat run find nothing to archive.
 
 1. Create a backup: `git branch -f backup/<branch>` (`-f` so a stale backup never blocks).
 2. Squash the fixups: `GIT_SEQUENCE_EDITOR=: git rebase -i --autosquash $(git merge-base HEAD origin/main)`.
@@ -80,28 +82,31 @@ Squashes the fixups and rebases the branch on `origin/main`. Archive runs it wit
      it the conflicted files, the commit being replayed, the change name (if any), and these two definitions. It either
      resolves the conflict, or makes no edits and reports it as non-trivial, in which case ask the user.
 
-   If `main` brought in changes, run the commands from workflow step 2 (Verify clean state) and tell the user. If there
-   were conflicts, also run workflow step 7 (Review), push with
+   If `main` brought in changes, run all commands in the Commands section of `AGENTS.md` and tell the user. If there
+   were conflicts, also run the Review step of the workflow skill in use, push with
    `git push --force-with-lease --force-if-includes`, tell the user, and wait for their re-approval before continuing.
-4. (Archive only) Archive the completed change on the feature branch with the `openspec-archive-change` skill
-   (`/opsx-archive`) and commit.
+4. Check for an unarchived change:
+   `git diff --name-only --diff-filter=A origin/main...HEAD -- openspec/changes ':!openspec/changes/archive'`.
+   If it lists files, archive the completed change on the feature branch with the `openspec-archive-change` skill
+   (`/opsx-archive`) and commit. If it lists nothing, skip this sub-step. If it lists nothing during the Archive step of
+   `implement-story`, tell the user that no unarchived change was found on the branch.
 5. Push with `git push --force-with-lease --force-if-includes` and wait for `ci` with `gh pr checks <n> --watch`.
-   If `ci` fails, fix it with fixup commits (workflow step 6, Implement), push them normally, and run this procedure
-   again from sub-step 1, skipping sub-step 4 (the change is already archived).
+   If `ci` fails, fix it with fixup commits (the Implement step of the workflow skill in use), push them normally, and run this
+   procedure again from sub-step 1.
 6. Delete the backup only once `ci` is green: `git branch -D backup/<branch>`.
 
-## Archive (step 9)
+## Archive
 
 1. Wait for the user's explicit approval of the PR in the conversation. GitHub does not allow approving your own PR,
    so this is the approval.
-2. Run [Finalize history](#finalize-history) including sub-step 4.
+2. Run [Finalize history](#finalize-history).
 
-## Merge (step 10)
+## Merge
 
 1. Only when `ci` is green and the user has approved, merge the PR with a merge commit and delete the feature branch:
    `gh pr merge --merge --delete-branch`. Then run `git fetch --prune` to remove the stale remote-tracking branch.
    Run `git rev-list --left-right --count main...origin/main` and report to the user whether local `main` matches
    `origin/main` (`0 0`); never assume it, and ask before changing it.
-2. If GitHub refuses because `main` moved since step 9, run [Finalize history](#finalize-history) without sub-step 4
-   (this includes the Verify clean state checks; handle `ci` failures as described there), and tell the user.
+2. If GitHub refuses because `main` moved since the Archive or Finalize step, run [Finalize history](#finalize-history)
+   (this includes the Commands section checks; handle `ci` failures as described there), and tell the user.
 3. Never merge without the user's approval.
