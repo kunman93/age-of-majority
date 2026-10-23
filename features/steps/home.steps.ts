@@ -12,6 +12,10 @@ Then('I see the heading {string}', async ({ page }, name: string) => {
   await expect(page.getByRole('heading', { name, exact: true })).toBeVisible()
 })
 
+Then('I do not see the heading {string}', async ({ page }, name: string) => {
+  await expect(page.getByRole('heading', { name, exact: true })).toHaveCount(0)
+})
+
 Then(
   'the accessible text of the intro is {string}',
   async ({ page }, text: string) => {

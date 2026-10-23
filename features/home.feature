@@ -4,6 +4,7 @@ Feature: Home page
     Given the visitor prefers reduced motion
     When I open the home page
     Then I see the heading "Happy Halloween"
+    And I do not see the heading "Happy 18th Birthday, Sara!"
 
   Scenario: Visitor reads the intro
     When I open the home page
