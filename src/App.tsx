@@ -38,7 +38,7 @@ function App() {
         >
           <Ornaments placement="opening" className="short:hidden" />
           <h1 className="text-sun text-left text-4xl leading-tight font-bold break-words sm:text-5xl lg:text-6xl">
-            Happy 18th Birthday, Sara!
+            Happy Halloween
           </h1>
           <TypedIntro text={INTRO} />
         </header>
