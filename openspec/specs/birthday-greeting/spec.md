@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Greets visitors of the birthday card with a heading that names the occasion: reaching the age of majority.
+Greets visitors of the birthday card with a Halloween heading.
 
 ## Requirements
 
