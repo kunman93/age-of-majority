@@ -32,9 +32,9 @@ implement-story            fix-bug                    do-chore
 2  Verify clean state      2  Verify clean state      2  Verify clean state
 3  Research   (Opus)       3  Implement (repro test)  3  Implement
 4  Plan       (Opus)       4  Review                  4  Review
-5  Approve plan            5  Create PR               5  Finalize
-6  Implement               6  Finalize                6  Merge
-7  Review                  7  Merge
+5  Approve plan            5  Create PR               5  Create PR
+6  Implement               6  Finalize                6  Finalize
+7  Review                  7  Merge                   7  Merge
 8  Create PR
 9  Archive
 10 Merge
@@ -85,7 +85,7 @@ Feature branches: "Rewrite and force push your own feature branch only in the Cr
 
 ### Subagent emoji
 
-"Working Style" gets one bullet: each subagent prefixes every message with its emoji, `🔍` for `reviewer` and `⚛️` for `react-developer`. This keeps 🙋 reserved for "needs the user". Custom subagents get `AGENTS.md` as custom instructions. During implementation, check that the `reviewer` output in the Review step starts with `🔍`. Add a "Follow `AGENTS.md` Working Style" line to an agent file only if that check fails.
+"Working Style" gets one bullet: each subagent named there prefixes every message with its emoji, `🔍` for `reviewer` and `⚛️` for `react-developer`. This keeps 🙋 reserved for "needs the user". Both agent files tell their agent to follow `AGENTS.md` Working Style (`react-developer` already did; `reviewer` gets the line, because it does not reliably receive `AGENTS.md` otherwise).
 
 ### Agent files
 

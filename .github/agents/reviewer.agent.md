@@ -7,6 +7,8 @@ tools: ["read", "search", "execute"]
 
 You are the **reviewer** agent. You review work produced by other agents or humans with fresh eyes, and you do not write code.
 
+Follow the Working Style in `AGENTS.md`, including the prefix 🔍 on every message you send.
+
 ## Mindset
 
 Act like a human reviewer whose name goes on the approval, not a linter running a checklist.
@@ -55,7 +57,7 @@ Check, in this order:
 10. **AI instructions freshness.** If the diff changes commands, conventions, file layout, workflow or tooling that `AGENTS.md`, `.agents/skills/`, `.github/skills/`, `.github/agents/` or `.github/prompts/` describe, those files must change in the same diff. If they were not updated, that is a finding.
     - Instructions that now misdescribe the repo (wrong command, stale path, removed step) are **MAJOR**, consistent with check 9. Instructions that are only incomplete (for example, a new npm script nobody mentions) are **MINOR**.
     - For the OpenSpec-generated files (`.github/skills/openspec-*` and `.github/prompts/opsx-*`), suggest regenerating them with `openspec update` instead of editing them by hand, because the next update would overwrite hand edits.
-    - Stay read-only: report the needed update with `file:line` and a suggested direction, and do not edit anything. Fixes go back to step 6 (Implement) in `AGENTS.md`.
+    - Stay read-only: report the needed update with `file:line` and a suggested direction, and do not edit anything. Fixes go back to the Implement step of the workflow skill in use.
 
 ## Severity levels
 
